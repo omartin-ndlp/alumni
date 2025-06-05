@@ -1,0 +1,104 @@
+<% layout('layout') -%>
+
+<div class="row">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1>Tableau de bord</h1>
+            <span class="text-muted">Bienvenue, <%= user.prenom %> !</span>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-4 mb-4">
+        <div class="card h-100">
+            <div class="card-body text-center">
+                <i class="bi bi-people text-primary" style="font-size: 3rem;"></i>
+                <h5 class="card-title mt-3">Annuaire</h5>
+                <p class="card-text">Parcourez la liste des anciens étudiants</p>
+                <a href="/users" class="btn btn-primary">
+                    <i class="bi bi-search"></i> Consulter
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4 mb-4">
+        <div class="card h-100">
+            <div class="card-body text-center">
+                <i class="bi bi-building text-success" style="font-size: 3rem;"></i>
+                <h5 class="card-title mt-3">Employeurs</h5>
+                <p class="card-text">Découvrez où travaillent les anciens</p>
+                <a href="/users/employers/list" class="btn btn-success">
+                    <i class="bi bi-building"></i> Voir la liste
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4 mb-4">
+        <div class="card h-100">
+            <div class="card-body text-center">
+                <i class="bi bi-person-circle text-warning" style="font-size: 3rem;"></i>
+                <h5 class="card-title mt-3">Mon profil</h5>
+                <p class="card-text">Gérez vos informations personnelles</p>
+                <a href="/profile" class="btn btn-warning">
+                    <i class="bi bi-person"></i> Voir mon profil
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<% if (recentUsers && recentUsers.length > 0) { %>
+<div class="row mt-5">
+    <div class="col-12">
+        <h3>Nouveaux membres</h3>
+        <div class="row">
+            <% recentUsers.forEach(user => { %>
+            <div class="col-md-6 col-lg-4 mb-3">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center">
+                            <% if (user.profile_picture) { %>
+                            <img src="<%= user.profile_picture %>" class="rounded-circle me-3" 
+                                 style="width: 50px; height: 50px; object-fit: cover;" alt="Photo">
+                            <% } else { %>
+                            <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center me-3"
+                                 style="width: 50px; height: 50px;">
+                                <%= user.prenom.charAt(0) %><%= user.nom.charAt(0) %>
+                            </div>
+                            <% } %>
+                            <div>
+                                <h6 class="mb-0">
+                                    <a href="/users/<%= user.id %>" class="text-decoration-none">
+                                        <%= user.prenom %> <%= user.nom %>
+                                    </a>
+                                </h6>
+                                <small class="text-muted">
+                                    <%= user.section_nom %> - <%= user.annee_diplome %>
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <% }) %>
+        </div>
+    </div>
+</div>
+<% } %>
+
+<% if (isAdmin) { %>
+<div class="row mt-5">
+    <div class="col-12">
+        <div class="alert alert-primary">
+            <h5><i class="bi bi-gear"></i> Administration</h5>
+            <p class="mb-2">Accès rapide aux fonctions d'administration :</p>
+            <a href="/admin" class="btn btn-primary btn-sm me-2">Dashboard</a>
+            <a href="/admin/requests" class="btn btn-warning btn-sm me-2">Demandes en attente</a>
+            <a href="/admin/users" class="btn btn-info btn-sm">Gestion utilisateurs</a>
+        </div>
+    </div>
+</div>
+<% } %>

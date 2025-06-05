@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="/css/style.css" rel="stylesheet">
+</head>
+<body>
+    <% if (isLoggedIn) { %>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand" href="/dashboard">
+                <i class="bi bi-mortarboard"></i> Anciens BTS SN/CIEL LJV
+            </a>
+            
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/dashboard">
+                            <i class="bi bi-house"></i> Accueil
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/users">
+                            <i class="bi bi-people"></i> Annuaire
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/users/employers/list">
+                            <i class="bi bi-building"></i> Employeurs
+                        </a>
+                    </li>
+                    <% if (isAdmin) { %>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                            <i class="bi bi-gear"></i> Admin
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="/admin">Dashboard</a></li>
+                            <li><a class="dropdown-item" href="/admin/requests">Demandes</a></li>
+                            <li><a class="dropdown-item" href="/admin/users">Utilisateurs</a></li>
+                            <li><a class="dropdown-item" href="/admin/sections">Sections</a></li>
+                        </ul>
+                    </li>
+                    <% } %>
+                </ul>
+                
+                <ul class="navbar-nav">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                            <i class="bi bi-person-circle"></i> <%= user.prenom %> <%= user.nom %>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="/profile">Mon profil</a></li>
+                            <li><a class="dropdown-item" href="/profile/edit">Modifier mon profil</a></li>
+                            <li><a class="dropdown-item" href="/profile/employment">Mes emplois</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li>
+                                <form method="POST" action="/logout" class="d-inline">
+                                    <button type="submit" class="dropdown-item">
+                                        <i class="bi bi-box-arrow-right"></i> Déconnexion
+                                    </button>
+                                </form>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <% } %>
+
+    <main class="<%= isLoggedIn ? 'container mt-4' : '' %>">
+        <%- body %>
+    </main>
+
+    <% if (isLoggedIn) { %>
+    <footer class="bg-light mt-5 py-4">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <h6>Anciens BTS SN/CIEL LJV</h6>
+                    <p class="text-muted">Réseau des anciens étudiants</p>
+                </div>
+                <div class="col-md-6 text-end">
+                    <p class="text-muted">
+                        <small>&copy; <%= new Date().getFullYear() %> LJV - Tous droits réservés</small>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </footer>
+    <% } %>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/js/app.js"></script>
+</body>
+</html>

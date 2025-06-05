@@ -1,0 +1,96 @@
+<% layout('layout') -%>
+
+<div class="min-vh-100 d-flex align-items-center bg-light">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-8 col-lg-6">
+                <div class="card shadow">
+                    <div class="card-body p-5">
+                        <div class="text-center mb-4">
+                            <i class="bi bi-mortarboard text-primary" style="font-size: 3rem;"></i>
+                            <h1 class="h3 mt-3">Demande de compte</h1>
+                            <p class="text-muted">Rejoignez le réseau des anciens BTS SN/CIEL LJV</p>
+                        </div>
+
+                        <% if (error) { %>
+                        <div class="alert alert-danger" role="alert">
+                            <%= error %>
+                        </div>
+                        <% } %>
+
+                        <form method="POST" action="/register">
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="prenom" class="form-label">Prénom *</label>
+                                    <input type="text" class="form-control" id="prenom" name="prenom" 
+                                           value="<%= formData.prenom || '' %>" required>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="nom" class="form-label">Nom *</label>
+                                    <input type="text" class="form-control" id="nom" name="nom" 
+                                           value="<%= formData.nom || '' %>" required>
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="email" class="form-label">Adresse email *</label>
+                                <input type="email" class="form-control" id="email" name="email" 
+                                       value="<%= formData.email || '' %>" required>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="annee_diplome" class="form-label">Année de diplôme *</label>
+                                    <select class="form-select" id="annee_diplome" name="annee_diplome" required>
+                                        <option value="">Choisir...</option>
+                                        <% for (let year = new Date().getFullYear() + 1; year >= 1990; year--) { %>
+                                        <option value="<%= year %>" <%= formData.annee_diplome == year ? 'selected' : '' %>>
+                                            <%= year %>
+                                        </option>
+                                        <% } %>
+                                    </select>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="section_id" class="form-label">Section *</label>
+                                    <select class="form-select" id="section_id" name="section_id" required>
+                                        <option value="">Choisir...</option>
+                                        <% sections.forEach(section => { %>
+                                        <option value="<%= section.id %>" <%= formData.section_id == section.id ? 'selected' : '' %>>
+                                            <%= section.nom %>
+                                        </option>
+                                        <% }) %>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="mb-4">
+                                <label for="message" class="form-label">Message (optionnel)</label>
+                                <textarea class="form-control" id="message" name="message" rows="3" 
+                                          placeholder="Présentez-vous brièvement..."><%= formData.message || '' %></textarea>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary w-100 mb-3">
+                                <i class="bi bi-send"></i> Envoyer ma demande
+                            </button>
+                        </form>
+
+                        <div class="text-center">
+                            <p class="text-muted">Déjà un compte ?</p>
+                            <a href="/login" class="btn btn-outline-primary">
+                                <i class="bi bi-box-arrow-in-right"></i> Se connecter
+                            </a>
+                        </div>
+
+                        <div class="alert alert-info mt-4">
+                            <small>
+                                <i class="bi bi-info-circle"></i>
+                                Votre demande sera examinée par un administrateur. 
+                                Vous recevrez un email une fois votre compte activé.
+                            </small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
