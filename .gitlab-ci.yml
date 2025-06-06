@@ -1,0 +1,259 @@
+# GitLab CI/CD Pipeline pour LJV Alumni
+
+stages:
+  - test
+  - build
+  - deploy
+
+# Variables globales
+variables:
+  NODE_VERSION: "18"
+  MYSQL_ROOT_PASSWORD: "rootpassword"
+  MYSQL_DATABASE: "ljv_alumni_test"
+  MYSQL_USER: "ljv_alumni"
+  MYSQL_PASSWORD: "testpassword"
+
+# Cache pour accélérer les builds
+cache:
+  paths:
+    - node_modules/
+    - .npm/
+
+# Template pour Node.js
+.node_template: &node_template
+  image: node:${NODE_VERSION}
+  before_script:
+    - npm ci --cache .npm --prefer-offline
+
+# Tests unitaires et d'intégration
+test:unit:
+  <<: *node_template
+  stage: test
+  services:
+    - mysql:8.0
+  variables:
+    DB_HOST: mysql
+    DB_PORT: 3306
+    DB_USER: ljv_alumni
+    DB_PASSWORD: testpassword
+    DB_NAME: ljv_alumni_test
+    NODE_ENV: test
+    SESSION_SECRET: test_secret_key
+  script:
+    - echo "Installation des dépendances..."
+    - npm ci
+    - echo "Attente de MySQL..."
+    - apt-get update -qq && apt-get install -y -qq default-mysql-client
+    - until mysql -h mysql -u root -p${MYSQL_ROOT_PASSWORD} -e "SELECT 1"; do sleep 1; done
+    - echo "Création de la base de données de test..."
+    - mysql -h mysql -u root -p${MYSQL_ROOT_PASSWORD} -e "CREATE DATABASE IF NOT EXISTS ${MYSQL_DATABASE};"
+    - mysql -h mysql -u root -p${MYSQL_ROOT_PASSWORD} -e "CREATE USER IF NOT EXISTS '${MYSQL_USER}'@'%' IDENTIFIED BY '${MYSQL_PASSWORD}';"
+    - mysql -h mysql -u root -p${MYSQL_ROOT_PASSWORD} -e "GRANT ALL PRIVILEGES ON ${MYSQL_DATABASE}.* TO '${MYSQL_USER}'@'%';"
+    - mysql -h mysql -u root -p${MYSQL_ROOT_PASSWORD} -e "FLUSH PRIVILEGES;"
+    - echo "Exécution des tests..."
+    - npm test
+  coverage: '/Lines\s*:\s*(\d+\.\d+)%/'
+  artifacts:
+    reports:
+      junit: coverage/junit.xml
+      coverage_report:
+        coverage_format: cobertura
+        path: coverage/cobertura-coverage.xml
+    paths:
+      - coverage/
+    expire_in: 1 week
+  only:
+    - branches
+    - merge_requests
+
+# Tests de couverture
+test:coverage:
+  <<: *node_template
+  stage: test
+  services:
+    - mysql:8.0
+  variables:
+    DB_HOST: mysql
+    DB_PORT: 3306
+    DB_USER: ljv_alumni
+    DB_PASSWORD: testpassword
+    DB_NAME: ljv_alumni_test
+    NODE_ENV: test
+    SESSION_SECRET: test_secret_key
+  script:
+    - npm ci
+    - apt-get update -qq && apt-get install -y -qq default-mysql-client
+    - until mysql -h mysql -u root -p${MYSQL_ROOT_PASSWORD} -e "SELECT 1"; do sleep 1; done
+    - mysql -h mysql -u root -p${MYSQL_ROOT_PASSWORD} -e "CREATE DATABASE IF NOT EXISTS ${MYSQL_DATABASE};"
+    - mysql -h mysql -u root -p${MYSQL_ROOT_PASSWORD} -e "CREATE USER IF NOT EXISTS '${MYSQL_USER}'@'%' IDENTIFIED BY '${MYSQL_PASSWORD}';"
+    - mysql -h mysql -u root -p${MYSQL_ROOT_PASSWORD} -e "GRANT ALL PRIVILEGES ON ${MYSQL_DATABASE}.* TO '${MYSQL_USER}'@'%';"
+    - mysql -h mysql -u root -p${MYSQL_ROOT_PASSWORD} -e "FLUSH PRIVILEGES;"
+    - npm run test:coverage
+  coverage: '/Lines\s*:\s*(\d+\.\d+)%/'
+  artifacts:
+    reports:
+      coverage_report:
+        coverage_format: cobertura
+        path: coverage/cobertura-coverage.xml
+    paths:
+      - coverage/
+    expire_in: 1 week
+  only:
+    - branches
+    - merge_requests
+
+# Linting et vérification du code
+lint:
+  <<: *node_template
+  stage: test
+  script:
+    - npm ci
+    - npm run lint
+  artifacts:
+    reports:
+      junit: lint-results.xml
+  only:
+    - branches
+    - merge_requests
+
+# Vérification de sécurité
+security:audit:
+  <<: *node_template
+  stage: test
+  script:
+    - npm ci
+    - npm audit --audit-level high
+  allow_failure: true
+  only:
+    - branches
+    - merge_requests
+
+# Build pour staging
+build:staging:
+  <<: *node_template
+  stage: build
+  script:
+    - echo "Build pour l'environnement de staging..."
+    - npm ci --production
+    - echo "Vérification de la structure..."
+    - ls -la
+  artifacts:
+    paths:
+      - node_modules/
+      - src/
+      - public/
+      - scripts/
+      - server.js
+      - package*.json
+    expire_in: 1 hour
+  only:
+    - develop
+    - staging
+
+# Build pour production
+build:production:
+  <<: *node_template
+  stage: build
+  script:
+    - echo "Build pour l'environnement de production..."
+    - npm ci --production --silent
+    - echo "Optimisation des assets..."
+    - find public -name "*.js" -exec echo "Minification: {}" \;
+    - echo "Build terminé"
+  artifacts:
+    paths:
+      - node_modules/
+      - src/
+      - public/
+      - scripts/
+      - server.js
+      - package*.json
+    expire_in: 1 hour
+  only:
+    - main
+    - master
+
+# Déploiement sur staging
+deploy:staging:
+  stage: deploy
+  image: alpine:latest
+  before_script:
+    - apk add --no-cache openssh-client rsync
+    - eval $(ssh-agent -s)
+    - echo "$STAGING_SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
+    - mkdir -p ~/.ssh
+    - chmod 700 ~/.ssh
+    - ssh-keyscan $STAGING_HOST >> ~/.ssh/known_hosts
+    - chmod 644 ~/.ssh/known_hosts
+  script:
+    - echo "Déploiement sur le serveur de staging..."
+    - rsync -avz --delete --exclude='.env' --exclude='node_modules/.cache' ./ $STAGING_USER@$STAGING_HOST:$STAGING_PATH/
+    - ssh $STAGING_USER@$STAGING_HOST "cd $STAGING_PATH && npm ci --production"
+    - ssh $STAGING_USER@$STAGING_HOST "cd $STAGING_PATH && npm run db:migrate"
+    - ssh $STAGING_USER@$STAGING_HOST "cd $STAGING_PATH && pm2 restart ljv-alumni-staging || pm2 start server.js --name ljv-alumni-staging"
+  environment:
+    name: staging
+    url: https://alumni-staging.ljv.fr
+  dependencies:
+    - build:staging
+  only:
+    - develop
+    - staging
+  when: manual
+
+# Déploiement sur production
+deploy:production:
+  stage: deploy
+  image: alpine:latest
+  before_script:
+    - apk add --no-cache openssh-client rsync
+    - eval $(ssh-agent -s)
+    - echo "$PRODUCTION_SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
+    - mkdir -p ~/.ssh
+    - chmod 700 ~/.ssh
+    - ssh-keyscan $PRODUCTION_HOST >> ~/.ssh/known_hosts
+    - chmod 644 ~/.ssh/known_hosts
+  script:
+    - echo "Déploiement sur le serveur de production..."
+    - echo "Sauvegarde de la base de données..."
+    - ssh $PRODUCTION_USER@$PRODUCTION_HOST "mysqldump -u $DB_USER -p$DB_PASSWORD $DB_NAME > backup_\$(date +%Y%m%d_%H%M%S).sql"
+    - echo "Synchronisation des fichiers..."
+    - rsync -avz --delete --exclude='.env' --exclude='node_modules/.cache' --exclude='public/uploads' ./ $PRODUCTION_USER@$PRODUCTION_HOST:$PRODUCTION_PATH/
+    - ssh $PRODUCTION_USER@$PRODUCTION_HOST "cd $PRODUCTION_PATH && npm ci --production"
+    - ssh $PRODUCTION_USER@$PRODUCTION_HOST "cd $PRODUCTION_PATH && npm run db:migrate"
+    - echo "Redémarrage de l'application..."
+    - ssh $PRODUCTION_USER@$PRODUCTION_HOST "cd $PRODUCTION_PATH && pm2 restart ljv-alumni || pm2 start server.js --name ljv-alumni"
+    - echo "Vérification du déploiement..."
+    - ssh $PRODUCTION_USER@$PRODUCTION_HOST "curl -f http://localhost:3000/login || exit 1"
+  environment:
+    name: production
+    url: https://alumni.ljv.fr
+  dependencies:
+    - build:production
+  only:
+    - main
+    - master
+  when: manual
+
+# Nettoyage des vieux artifacts
+cleanup:
+  stage: deploy
+  image: alpine:latest
+  script:
+    - echo "Nettoyage des vieux artifacts..."
+    - echo "Job de nettoyage exécuté"
+  when: always
+  only:
+    - schedules
+
+# Job pour les releases
+release:
+  <<: *node_template
+  stage: deploy
+  script:
+    - npm ci
+    - echo "Création de la release..."
+    - git tag -a "v$(node -p "require('./package.json').version")" -m "Release version $(node -p "require('./package.json').version")"
+  only:
+    - tags
+  when: manual

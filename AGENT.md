@@ -48,3 +48,19 @@ This file contains instructions for AI coding agents working in this repository.
 - express-session for session management
 - express-validator for input validation
 - Rate limiting with express-rate-limit
+
+## CI/CD (GitLab)
+- `.gitlab-ci.yml` - Pipeline configuration
+- Automated testing on all branches and MRs
+- Code quality checks with ESLint
+- Security audits with npm audit
+- Automated deployments to staging/production
+- Database migrations and backups
+- Multi-stage builds (test, build, deploy)
+
+## Deployment
+- `npm run deploy:staging` - Deploy to staging
+- `npm run deploy:production` - Deploy to production
+- `npm run db:backup` - Create database backup
+- Docker support with docker-compose.yml
+- PM2 configuration in ecosystem.config.js
