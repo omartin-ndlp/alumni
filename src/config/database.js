@@ -10,6 +10,13 @@ const config = {
   timezone: '+00:00'
 };
 
+//console.log('YOUHOUHOUHUOHOUH DATABSE')
+//console.log(process.env.DB_HOST)
+//console.log(process.env.DB_USER)
+//console.log(process.env.DB_NAME)
+
+
+
 let pool;
 
 const createConnection = async () => {
@@ -18,12 +25,10 @@ const createConnection = async () => {
       ...config,
       waitForConnections: true,
       connectionLimit: 10,
-      queueLimit: 0,
-      acquireTimeout: 60000,
-      timeout: 60000
+      queueLimit: 0
     });
     
-    console.log('Connexion à la base de données établie');
+    console.log(`Connexion à la base de données ${process.env.DB_NAME} @ ${process.env.DB_HOST}  établie`);
     return pool;
   } catch (error) {
     console.error('Erreur de connexion à la base de données:', error);

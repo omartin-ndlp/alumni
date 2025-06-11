@@ -7,6 +7,9 @@ const compression = require('compression');
 const rateLimit = require('express-rate-limit');
 require('dotenv').config();
 
+// Initialize database connection
+const { createConnection } = require('./src/config/database');
+
 const app = express();
 const PORT = process.env.PORT || 3000;
 
@@ -49,8 +52,11 @@ app.use(session({
 }));
 
 // Configuration du moteur de templates
+const expressLayouts = require('express-ejs-layouts');
+app.use(expressLayouts);
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'src', 'views'));
+app.set('layout', 'layout');
 
 // Fichiers statiques
 app.use(express.static(path.join(__dirname, 'public')));
@@ -81,10 +87,26 @@ app.use((req, res) => {
   });
 });
 
-// Démarrage du serveur
-app.listen(PORT, () => {
-  console.log(`Serveur démarré sur le port ${PORT}`);
-  console.log(`Mode: ${process.env.NODE_ENV || 'development'}`);
-});
+// Initialisation et démarrage du serveur
+async function startServer() {
+  try {
+    // Initialiser la connexion à la base de données
+    await createConnection();
+    
+    // Démarrer le serveur
+    app.listen(PORT, () => {
+      console.log(`Serveur démarré sur le port ${PORT}`);
+      console.log(`Mode: ${process.env.NODE_ENV || 'development'}`);
+    });
+  } catch (error) {
+    console.error('Erreur lors du démarrage du serveur:', error);
+    process.exit(1);
+  }
+}
+
+// Démarrer seulement si ce fichier est exécuté directement
+if (require.main === module) {
+  startServer();
+}
 
 module.exports = app;

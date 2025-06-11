@@ -49,6 +49,10 @@ describe('User Model', () => {
       const [sections] = await db.execute('SELECT id FROM sections LIMIT 1');
       const sectionId = sections[0].id;
 
+console.log('WAAAAAHAHAHAHAHA create');
+console.log(sectionId);
+
+
       const userData = {
         email: 'newuser@test.com',
         password: 'plainpassword',

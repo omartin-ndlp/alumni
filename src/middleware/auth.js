@@ -5,6 +5,7 @@ const addUserToLocals = async (req, res, next) => {
   res.locals.user = req.session.user || null;
   res.locals.isLoggedIn = !!req.session.user;
   res.locals.isAdmin = req.session.user?.is_admin || false;
+  res.locals.title = res.locals.title || 'Anciens BTS SN/CIEL LJV'; // Add default title
   next();
 };
 
@@ -42,11 +43,10 @@ const redirectIfLoggedIn = (req, res, next) => {
   next();
 };
 
-module.exports = [
-  addUserToLocals,
-  {
-    requireAuth,
-    requireAdmin,
-    redirectIfLoggedIn
-  }
-];
+// Export the main middleware function for app.use()
+module.exports = addUserToLocals;
+
+// Export other middleware functions as properties
+module.exports.requireAuth = requireAuth;
+module.exports.requireAdmin = requireAdmin;
+module.exports.redirectIfLoggedIn = redirectIfLoggedIn;

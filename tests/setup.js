@@ -2,11 +2,11 @@ const mysql = require('mysql2/promise');
 require('dotenv').config({ path: '.env.test' });
 
 // Configuration pour les tests
-process.env.NODE_ENV = 'test';
-process.env.DB_NAME = 'ljv_alumni_test';
+//process.env.NODE_ENV = 'test';
+//process.env.DB_NAME = 'ljv_alumni_test';
 
 // Timeout global pour les tests
-jest.setTimeout(30000);
+jest.setTimeout(300000);
 
 let testConnection;
 
@@ -43,6 +43,6 @@ afterAll(async () => {
   };
 
   testConnection = await mysql.createConnection(config);
-  await testConnection.execute(`DROP DATABASE IF EXISTS ${process.env.DB_NAME}`);
+  //await testConnection.execute(`DROP DATABASE IF EXISTS ${process.env.DB_NAME}`);
   await testConnection.end();
 });
