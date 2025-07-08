@@ -23,6 +23,7 @@ app.use(helmet({
       imgSrc: ["'self'", "data:", "https:"],
     },
   },
+  hsts: process.env.NODE_ENV === 'production',
 }));
 
 // Rate limiting
