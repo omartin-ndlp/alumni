@@ -10,9 +10,11 @@
 }
 
 body {
-    background-color: #f8f9fa; /* Light gray background */
+    background-color: #f4f7f6; /* Lighter background for the whole app */
+    overflow-x: hidden; /* Prevent horizontal scroll */
 }
 
+/* General Card Styles */
 .card {
     border-radius: 0.75rem;
     box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
@@ -30,8 +32,10 @@ body {
     padding: 1.5rem; /* Consistent padding for card bodies */
 }
 
+/* Navbar (Top bar) */
 .navbar {
-    margin-bottom: 2rem;
+    margin-bottom: 0; /* Remove margin from top navbar */
+    border-bottom: 1px solid var(--border-color);
 }
 
 /* Login Page Specific Styles */
@@ -108,4 +112,92 @@ h3 {
 .btn-warning:hover {
     background-color: darken(#f39c12, 10%);
     border-color: darken(#f39c12, 10%);
+}
+
+/* Sidebar Styles */
+#wrapper {
+    display: flex;
+}
+
+#sidebar-wrapper {
+    min-height: 100vh;
+    margin-left: -15rem; /* Hidden by default */
+    transition: margin .25s ease-out;
+    background-color: var(--dark-bg);
+    width: 15rem;
+    position: fixed; /* Fixed sidebar */
+    z-index: 1000; /* Ensure it's above content */
+}
+
+#wrapper.toggled #sidebar-wrapper {
+    margin-left: 0; /* Show on toggle */
+}
+
+#page-content-wrapper {
+    min-width: 100vw;
+    margin-left: 0; /* Default for full width */
+    padding-left: 0; /* Remove default padding */
+    transition: margin .25s ease-out, padding-left .25s ease-out;
+}
+
+#wrapper.toggled #page-content-wrapper {
+    margin-left: 15rem; /* Adjust content for sidebar */
+    padding-left: 15rem; /* Add padding to content */
+}
+
+.sidebar-heading {
+    padding: 0.875rem 1.25rem;
+    font-size: 1.2rem;
+    color: var(--light-text);
+    background-color: #34495e; /* Slightly lighter dark for heading */
+}
+
+.list-group-item {
+    border: none; /* Remove borders between list items */
+    color: var(--light-text);
+    background-color: var(--dark-bg);
+    padding: 0.85rem 1.25rem; /* Slightly increased vertical padding */
+    transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
+    display: flex; /* Use flexbox for alignment */
+    align-items: center; /* Vertically align items */
+    white-space: nowrap; /* Prevent text wrapping */
+    overflow: hidden; /* Hide overflow */
+    text-overflow: ellipsis; /* Add ellipsis for truncated text */
+    line-height: 1.5; /* Ensure consistent line height */
+}
+
+.list-group-item i {
+    margin-right: 0.75rem; /* Space between icon and text */
+}
+
+.list-group-item:hover {
+    background-color: #34495e; /* Darker on hover */
+    color: var(--secondary-color); /* Highlight text on hover */
+}
+
+.list-group-item.active {
+    background-color: var(--primary-color) !important;
+    color: white !important;
+}
+
+/* Media queries for responsiveness */
+@media (min-width: 768px) {
+    #sidebar-wrapper {
+        margin-left: 0; /* Always visible on larger screens */
+    }
+
+    #page-content-wrapper {
+        min-width: 0; /* Reset min-width */
+        width: 100%; /* Take full width */
+        padding-left: 15rem; /* Always have padding for sidebar */
+    }
+
+    #wrapper.toggled #sidebar-wrapper {
+        margin-left: -15rem; /* Hide on toggle for larger screens */
+    }
+
+    #wrapper.toggled #page-content-wrapper {
+        margin-left: 0; /* Reset margin for content */
+        padding-left: 0; /* Remove padding when sidebar is hidden */
+    }
 }
