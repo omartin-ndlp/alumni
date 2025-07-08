@@ -36,6 +36,7 @@ const upload = multer({
 router.get('/', auth.requireAuth, async (req, res) => {
   try {
     const user = await User.findById(req.session.user.id);
+    console.log('User data for /profile:', user);
     const db = getConnection();
     
     // Récupérer l'historique des emplois
@@ -46,11 +47,14 @@ router.get('/', auth.requireAuth, async (req, res) => {
       WHERE ue.user_id = ?
       ORDER BY ue.is_current DESC, ue.date_debut DESC
     `, [user.id]);
+    console.log('Employment data for /profile:', employment);
 
     res.render('profile/view', {
       title: 'Mon profil - Anciens BTS SN/CIEL LJV',
-      user,
-      employment
+      displayUser: user,
+      employment,
+      isOwnProfile: true,
+      canViewContact: !user.opt_out_contact || true // Always true for own profile
     });
   } catch (error) {
     console.error('Erreur profil:', error);

@@ -16,7 +16,12 @@ class User {
   static async findById(id) {
     const db = getConnection();
     const [rows] = await db.execute(`
-      SELECT u.*, s.nom as section_nom 
+      SELECT 
+        u.id, u.email, u.password_hash, u.prenom, u.nom, u.annee_diplome, u.section_id,
+        u.is_admin, u.is_approved, u.is_active, u.profile_picture, u.adresse, u.ville,
+        u.code_postal, u.pays, u.telephone, u.linkedin, u.twitter, u.facebook, u.site_web,
+        u.statut_emploi, u.opt_out_contact, u.opt_out_directory, u.created_at, u.updated_at, u.last_login,
+        s.nom as section_nom 
       FROM users u 
       JOIN sections s ON u.section_id = s.id 
       WHERE u.id = ?
