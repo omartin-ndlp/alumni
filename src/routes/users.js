@@ -10,39 +10,54 @@ const router = express.Router();
 router.get('/', auth.requireAuth, async (req, res) => {
   try {
     const { search, sort, annee_diplome, section_id, employer_id, page = 1 } = req.query;
-    
+    const limit = 10; // Number of users per page
+    const offset = (parseInt(page) - 1) * limit;
+
     const filters = {
       search,
       sort: sort || 'name',
-      show_opted_out: false // Ne pas afficher ceux qui ont opt-out
+      show_opted_out: false,
+      limit,
+      offset
     };
-    
+
     if (annee_diplome) filters.annee_diplome = annee_diplome;
     if (section_id) filters.section_id = section_id;
     if (employer_id) filters.employer_id = employer_id;
-    
+
     const users = await User.getAll(filters);
-    
-    // Récupérer les sections et employeurs pour les filtres
+
     const db = getConnection();
     const [sections] = await db.execute('SELECT * FROM sections ORDER BY nom');
     const employers = await Employer.getWithEmployeeCount();
-    
-    // Générer la liste des années disponibles
+
     const [years] = await db.execute(`
       SELECT DISTINCT annee_diplome 
       FROM users 
       WHERE is_approved = TRUE AND is_active = TRUE 
       ORDER BY annee_diplome DESC
     `);
-    
+
+    // Get total count for pagination
+    const [totalUsersResult] = await db.execute(`
+      SELECT COUNT(*) as total FROM users WHERE is_approved = TRUE AND is_active = TRUE
+    `);
+    const totalUsers = totalUsersResult[0].total;
+    const totalPages = Math.ceil(totalUsers / limit);
+
     res.render('users/list', {
       title: 'Annuaire des anciens - Anciens BTS SN/CIEL LJV',
       users,
       sections,
       employers,
       years: years.map(y => y.annee_diplome),
-      filters: req.query
+      filters: req.query,
+      pagination: {
+        current: parseInt(page),
+        total: totalPages,
+        hasNext: parseInt(page) < totalPages,
+        hasPrev: parseInt(page) > 1
+      }
     });
     
   } catch (error) {

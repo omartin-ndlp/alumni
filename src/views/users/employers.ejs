@@ -1,0 +1,33 @@
+<div class="container-fluid">
+    <h1 class="mb-4">Liste des employeurs</h1>
+
+    <% if (employers && employers.length > 0) { %>
+    <div class="row">
+        <% employers.forEach(employer => { %>
+        <div class="col-md-6 col-lg-4 mb-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title"><%= employer.nom %></h5>
+                    <p class="card-text text-muted">
+                        <% if (employer.ville) { %>
+                            <%= employer.ville %>
+                        <% } %>
+                        <% if (employer.secteur) { %>
+                            <%= employer.secteur %>
+                        <% } %>
+                    </p>
+                    <p class="card-text">Nombre d'employés: <%= employer.employee_count %></p>
+                    <a href="/users/employers/<%= employer.id %>" class="btn btn-primary btn-sm">
+                        Voir les employés
+                    </a>
+                </div>
+            </div>
+        </div>
+        <% }); %>
+    </div>
+    <% } else { %>
+    <div class="alert alert-info" role="alert">
+        Aucun employeur trouvé.
+    </div>
+    <% } %>
+</div>

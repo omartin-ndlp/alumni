@@ -1,0 +1,119 @@
+<div class="container-fluid">
+    <h1 class="mb-4">Annuaire des anciens</h1>
+
+    <!-- Filter and Search Form -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <form action="/users" method="GET" class="row g-3 align-items-end">
+                <div class="col-md-4">
+                    <label for="search" class="form-label">Recherche</label>
+                    <input type="text" class="form-control" id="search" name="search" placeholder="Nom, prénom, employeur..." value="<%= filters.search || '' %>">
+                </div>
+                <div class="col-md-2">
+                    <label for="annee_diplome" class="form-label">Année</label>
+                    <select class="form-select" id="annee_diplome" name="annee_diplome">
+                        <option value="">Toutes</option>
+                        <% years.forEach(year => { %>
+                            <option value="<%= year %>" <%= filters.annee_diplome == year ? 'selected' : '' %>><%= year %></option>
+                        <% }); %>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label for="section_id" class="form-label">Section</label>
+                    <select class="form-select" id="section_id" name="section_id">
+                        <option value="">Toutes</option>
+                        <% sections.forEach(section => { %>
+                            <option value="<%= section.id %>" <%= filters.section_id == section.id ? 'selected' : '' %>><%= section.nom %></option>
+                        <% }); %>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label for="employer_id" class="form-label">Employeur</label>
+                    <select class="form-select" id="employer_id" name="employer_id">
+                        <option value="">Tous</option>
+                        <% employers.forEach(employer => { %>
+                            <option value="<%= employer.id %>" <%= filters.employer_id == employer.id ? 'selected' : '' %>><%= employer.nom %></option>
+                        <% }); %>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label for="sort" class="form-label">Trier par</label>
+                    <select class="form-select" id="sort" name="sort">
+                        <option value="name" <%= filters.sort == 'name' ? 'selected' : '' %>>Nom</option>
+                        <option value="year" <%= filters.sort == 'year' ? 'selected' : '' %>>Année de diplôme</option>
+                    </select>
+                </div>
+                <div class="col-md-auto">
+                    <button type="submit" class="btn btn-primary"><i class="bi bi-funnel"></i> Filtrer</button>
+                </div>
+                <div class="col-md-auto">
+                    <a href="/users" class="btn btn-outline-secondary"><i class="bi bi-x-circle"></i> Réinitialiser</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- User List -->
+    <% if (users.length > 0) { %>
+    <div class="row">
+        <% users.forEach(user => { %>
+        <div class="col-md-6 col-lg-4 mb-4">
+            <div class="card h-100">
+                <div class="card-body d-flex flex-column">
+                    <div class="d-flex align-items-center mb-3">
+                        <% if (user.profile_picture) { %>
+                        <img src="<%= user.profile_picture %>" class="rounded-circle me-3" 
+                             style="width: 60px; height: 60px; object-fit: cover;" alt="Photo de profil">
+                        <% } else { %>
+                        <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center me-3"
+                             style="width: 60px; height: 60px; font-size: 1.5rem;">
+                            <%= user.prenom.charAt(0) %><%= user.nom.charAt(0) %>
+                        </div>
+                        <% } %>
+                        <div>
+                            <h5 class="card-title mb-0">
+                                <a href="/users/<%= user.id %>" class="text-decoration-none text-dark">
+                                    <%= user.prenom %> <%= user.nom %>
+                                </a>
+                            </h5>
+                            <p class="card-subtitle text-muted"><%= user.section_nom %> - <%= user.annee_diplome %></p>
+                        </div>
+                    </div>
+                    <% if (user.current_position && user.current_employer) { %>
+                    <p class="card-text mt-auto"><small class="text-muted"><%= user.current_position %> chez <%= user.current_employer %></small></p>
+                    <% } %>
+                </div>
+            </div>
+        </div>
+        <% }); %>
+    </div>
+
+    <!-- Pagination (if needed) -->
+    <% if (pagination && pagination.total > 1) { %>
+    <nav aria-label="Page navigation">
+        <ul class="pagination justify-content-center">
+            <li class="page-item <%= !pagination.hasPrev ? 'disabled' : '' %>">
+                <a class="page-link" href="?<%= new URLSearchParams({...filters, page: pagination.current - 1}).toString() %>" aria-label="Previous">
+                    <span aria-hidden="true">&laquo;</span>
+                </a>
+            </li>
+            <% for (let i = 1; i <= pagination.total; i++) { %>
+                <li class="page-item <%= pagination.current == i ? 'active' : '' %>">
+                    <a class="page-link" href="?<%= new URLSearchParams({...filters, page: i}).toString() %>"><%= i %></a>
+                </li>
+            <% } %>
+            <li class="page-item <%= !pagination.hasNext ? 'disabled' : '' %>">
+                <a class="page-link" href="?<%= new URLSearchParams({...filters, page: pagination.current + 1}).toString() %>" aria-label="Next">
+                    <span aria-hidden="true">&raquo;</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+    <% } %>
+
+    <% } else { %>
+    <div class="alert alert-info" role="alert">
+        Aucun ancien trouvé correspondant à vos critères.
+    </div>
+    <% } %>
+</div>

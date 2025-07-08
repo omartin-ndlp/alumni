@@ -1,0 +1,43 @@
+<div class="container-fluid">
+    <h1 class="mb-4"><%= employer.nom %></h1>
+
+    <div class="card mb-4">
+        <div class="card-body">
+            <h5 class="card-title">Détails de l'employeur</h5>
+            <p class="card-text"><strong>Secteur:</strong> <%= employer.secteur || 'N/A' %></p>
+            <p class="card-text"><strong>Ville:</strong> <%= employer.ville || 'N/A' %></p>
+            <p class="card-text"><strong>Description:</strong> <%= employer.description || 'N/A' %></p>
+        </div>
+    </div>
+
+    <% if (employees && employees.length > 0) { %>
+    <div class="card mb-4">
+        <div class="card-body">
+            <h5 class="card-title">Employés (<%= employees.length %>)</h5>
+            <div class="list-group list-group-flush">
+                <% employees.forEach(employee => { %>
+                <a href="/users/<%= employee.id %>" class="list-group-item list-group-item-action d-flex align-items-center">
+                    <% if (employee.profile_picture) { %>
+                    <img src="<%= employee.profile_picture %>" class="rounded-circle me-3" 
+                         style="width: 40px; height: 40px; object-fit: cover;" alt="Photo de profil">
+                    <% } else { %>
+                    <div class="rounded-circle bg-secondary text-white d-flex align-items-center justify-content-center me-3"
+                         style="width: 40px; height: 40px; font-size: 0.9rem;">
+                        <%= employee.prenom.charAt(0) %><%= employee.nom.charAt(0) %>
+                    </div>
+                    <% } %>
+                    <div>
+                        <h6 class="mb-0"><%= employee.prenom %> <%= employee.nom %></h6>
+                        <small class="text-muted"><%= employee.poste %> (<%= new Date(employee.date_debut).getFullYear() %> - <%= employee.is_current ? 'Actuel' : (employee.date_fin ? new Date(employee.date_fin).getFullYear() : 'N/A') %>)</small>
+                    </div>
+                </a>
+                <% }); %>
+            </div>
+        </div>
+    </div>
+    <% } else { %>
+    <div class="alert alert-info" role="alert">
+        Aucun employé trouvé pour cet employeur.
+    </div>
+    <% } %>
+</div>

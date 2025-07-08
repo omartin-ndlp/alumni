@@ -113,6 +113,12 @@ console.log(db);
       query += ' ORDER BY u.created_at DESC';
     }
     
+    // Add LIMIT and OFFSET for pagination
+    if (filters.limit !== undefined && filters.offset !== undefined) {
+      query += ' LIMIT ? OFFSET ?';
+      params.push(filters.limit, filters.offset);
+    }
+
     const [rows] = await db.execute(query, params);
     return rows;
   }
