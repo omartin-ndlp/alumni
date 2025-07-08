@@ -73,7 +73,6 @@ router.get('/', auth.requireAuth, async (req, res) => {
 router.get('/:id', auth.requireAuth, async (req, res) => {
   try {
     const user = await User.findById(req.params.id);
-    console.log('User data for /users/:id:', user);
     
     if (!user || !user.is_approved || !user.is_active) {
       return res.status(404).render('error', {
@@ -104,7 +103,6 @@ router.get('/:id', auth.requireAuth, async (req, res) => {
       `, [user.id]);
       employment = employmentData;
     }
-    console.log('Employment data for /users/:id:', employment);
     
     // Masquer les informations de contact si opt-out et pas le propriétaire/admin
     const canViewContact = !user.opt_out_contact || req.session.user.id === user.id || req.session.user.is_admin;

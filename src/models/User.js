@@ -33,16 +33,6 @@ class User {
     const db = getConnection();
     const hashedPassword = await bcrypt.hash(userData.password, 12);
 
-
-console.log('WOULOUWLOULWOULWOU USer');
-console.log(userData.email);
-console.log(hashedPassword);
-console.log(userData.prenom);
-console.log(userData.nom);
-console.log(userData.annee_diplome);
-console.log(userData.section_id);
-console.log(db);
-    
     const [result] = await db.execute(`
       INSERT INTO users (
         email, password_hash, prenom, nom, annee_diplome, section_id,

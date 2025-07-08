@@ -99,16 +99,10 @@
             const sidebarToggle = document.getElementById("sidebarToggle");
             const wrapper = document.getElementById("wrapper");
 
-            console.log('sidebarToggle element:', sidebarToggle);
-            console.log('wrapper element:', wrapper);
-
             if (sidebarToggle && wrapper) {
                 sidebarToggle.addEventListener("click", () => {
                     wrapper.classList.toggle("toggled");
-                    console.log('Sidebar toggled!');
                 });
-            } else {
-                console.log('Sidebar toggle elements not found.');
             }
         });
     </script>

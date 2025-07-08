@@ -36,7 +36,6 @@ const upload = multer({
 router.get('/', auth.requireAuth, async (req, res) => {
   try {
     const user = await User.findById(req.session.user.id);
-    console.log('User data for /profile:', user);
     const db = getConnection();
     
     // Récupérer l'historique des emplois
@@ -47,7 +46,6 @@ router.get('/', auth.requireAuth, async (req, res) => {
       WHERE ue.user_id = ?
       ORDER BY ue.is_current DESC, ue.date_debut DESC
     `, [user.id]);
-    console.log('Employment data for /profile:', employment);
 
     res.render('profile/view', {
       title: 'Mon profil - Anciens BTS SN/CIEL LJV',
