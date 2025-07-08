@@ -1,6 +1,6 @@
-# Agent Instructions
+# Gemini Agent Instructions
 
-This file contains instructions for AI coding agents working in this repository.
+This file contains instructions for the Gemini AI agent working in this repository.
 
 ## Commands
 - Dev server: `npm run dev` (starts with nodemon)
