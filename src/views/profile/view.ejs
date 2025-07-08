@@ -1,0 +1,153 @@
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-lg-4">
+            <div class="card mb-4">
+                <div class="card-body text-center">
+                    <% if (user.profile_picture) { %>
+                    <img src="<%= user.profile_picture %>" alt="avatar" class="rounded-circle img-fluid" style="width: 150px; height: 150px; object-fit: cover;">
+                    <% } else { %>
+                    <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center mx-auto mb-3"
+                         style="width: 150px; height: 150px; font-size: 4rem;">
+                        <%= user.prenom.charAt(0) %><%= user.nom.charAt(0) %>
+                    </div>
+                    <% } %>
+                    <h5 class="my-3"><%= user.prenom %> <%= user.nom %></h5>
+                    <p class="text-muted mb-1"><%= user.section_nom %> - <%= user.annee_diplome %></p>
+                    <% if (user.current_position && user.current_employer) { %>
+                    <p class="text-muted mb-4"><%= user.current_position %> chez <%= user.current_employer %></p>
+                    <% } %>
+                    <div class="d-flex justify-content-center mb-2">
+                        <a href="/profile/edit" class="btn btn-primary">Modifier le profil</a>
+                    </div>
+                </div>
+            </div>
+            <div class="card mb-4 mb-lg-0">
+                <div class="card-body">
+                    <h5 class="mb-4">Informations de contact</h5>
+                    <ul class="list-group list-group-flush rounded-3">
+                        <% if (user.email) { %>
+                        <li class="list-group-item d-flex justify-content-between align-items-center p-3">
+                            <i class="bi bi-envelope-fill text-warning me-2"></i>
+                            <p class="mb-0"><%= user.email %></p>
+                        </li>
+                        <% } %>
+                        <% if (user.telephone) { %>
+                        <li class="list-group-item d-flex justify-content-between align-items-center p-3">
+                            <i class="bi bi-phone-fill text-warning me-2"></i>
+                            <p class="mb-0"><%= user.telephone %></p>
+                        </li>
+                        <% } %>
+                        <% if (user.linkedin) { %>
+                        <li class="list-group-item d-flex justify-content-between align-items-center p-3">
+                            <i class="bi bi-linkedin text-primary me-2"></i>
+                            <a href="<%= user.linkedin %>" target="_blank" class="mb-0">LinkedIn</a>
+                        </li>
+                        <% } %>
+                        <% if (user.twitter) { %>
+                        <li class="list-group-item d-flex justify-content-between align-items-center p-3">
+                            <i class="bi bi-twitter text-info me-2"></i>
+                            <a href="<%= user.twitter %>" target="_blank" class="mb-0">Twitter</a>
+                        </li>
+                        <% } %>
+                        <% if (user.facebook) { %>
+                        <li class="list-group-item d-flex justify-content-between align-items-center p-3">
+                            <i class="bi bi-facebook text-primary me-2"></i>
+                            <a href="<%= user.facebook %>" target="_blank" class="mb-0">Facebook</a>
+                        </li>
+                        <% } %>
+                        <% if (user.site_web) { %>
+                        <li class="list-group-item d-flex justify-content-between align-items-center p-3">
+                            <i class="bi bi-globe text-secondary me-2"></i>
+                            <a href="<%= user.site_web %>" target="_blank" class="mb-0">Site Web</a>
+                        </li>
+                        <% } %>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-8">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="mb-4">Détails du profil</h5>
+                    <div class="row">
+                        <div class="col-sm-3">
+                            <p class="mb-0">Nom complet</p>
+                        </div>
+                        <div class="col-sm-9">
+                            <p class="text-muted mb-0"><%= user.prenom %> <%= user.nom %></p>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="row">
+                        <div class="col-sm-3">
+                            <p class="mb-0">Email</p>
+                        </div>
+                        <div class="col-sm-9">
+                            <p class="text-muted mb-0"><%= user.email %></p>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="row">
+                        <div class="col-sm-3">
+                            <p class="mb-0">Année de diplôme</p>
+                        </div>
+                        <div class="col-sm-9">
+                            <p class="text-muted mb-0"><%= user.annee_diplome %></p>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="row">
+                        <div class="col-sm-3">
+                            <p class="mb-0">Section</p>
+                        </div>
+                        <div class="col-sm-9">
+                            <p class="text-muted mb-0"><%= user.section_nom %></p>
+                        </div>
+                    </div>
+                    <% if (user.adresse || user.ville || user.code_postal || user.pays) { %>
+                    <hr>
+                    <div class="row">
+                        <div class="col-sm-3">
+                            <p class="mb-0">Adresse</p>
+                        </div>
+                        <div class="col-sm-9">
+                            <p class="text-muted mb-0">
+                                <%= user.adresse ? user.adresse + ', ' : '' %>
+                                <%= user.code_postal ? user.code_postal + ' ' : '' %>
+                                <%= user.ville ? user.ville + ', ' : '' %>
+                                <%= user.pays || '' %>
+                            </p>
+                        </div>
+                    </div>
+                    <% } %>
+                </div>
+            </div>
+
+            <% if (employment && employment.length > 0) { %>
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="mb-4">Historique d'emplois</h5>
+                    <% employment.forEach(job => { %>
+                    <div class="mb-3">
+                        <h6><%= job.poste %> chez <%= job.employer_name %></h6>
+                        <p class="text-muted mb-1">
+                            <%= new Date(job.date_debut).toLocaleDateString('fr-FR', { year: 'numeric', month: 'long' }) %> -
+                            <% if (job.is_current) { %>
+                                Actuel
+                            <% } else if (job.date_fin) { %>
+                                <%= new Date(job.date_fin).toLocaleDateString('fr-FR', { year: 'numeric', month: 'long' }) %>
+                            <% } else { %>
+                                Date de fin non spécifiée
+                            <% } %>
+                        </p>
+                        <% if (job.secteur) { %><p class="text-muted mb-1"><small>Secteur: <%= job.secteur %></small></p><% } %>
+                        <% if (job.ville) { %><p class="text-muted mb-0"><small>Ville: <%= job.ville %></small></p><% } %>
+                    </div>
+                    <% if (employment.indexOf(job) < employment.length - 1) { %><hr><% } %>
+                    <% }); %>
+                </div>
+            </div>
+            <% } %>
+        </div>
+    </div>
+</div>

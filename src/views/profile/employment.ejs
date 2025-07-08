@@ -1,0 +1,77 @@
+<div class="container-fluid">
+    <h1 class="mb-4">Mes emplois</h1>
+
+    <div class="card mb-4">
+        <div class="card-body">
+            <h5 class="card-title mb-3">Ajouter un nouvel emploi</h5>
+            <form action="/profile/employment/add" method="POST">
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label for="employer_name" class="form-label">Nom de l'employeur</label>
+                        <input type="text" class="form-control" id="employer_name" name="employer_name" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="poste" class="form-label">Poste</label>
+                        <input type="text" class="form-control" id="poste" name="poste" required>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label for="date_debut" class="form-label">Date de début</label>
+                        <input type="date" class="form-control" id="date_debut" name="date_debut" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="date_fin" class="form-label">Date de fin (optionnel)</label>
+                        <input type="date" class="form-control" id="date_fin" name="date_fin">
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label for="secteur" class="form-label">Secteur (optionnel)</label>
+                        <input type="text" class="form-control" id="secteur" name="secteur">
+                    </div>
+                    <div class="col-md-6">
+                        <label for="ville" class="form-label">Ville (optionnel)</label>
+                        <input type="text" class="form-control" id="ville" name="ville">
+                    </div>
+                </div>
+                <div class="mb-3 form-check">
+                    <input type="checkbox" class="form-check-input" id="is_current" name="is_current">
+                    <label class="form-check-label" for="is_current">Emploi actuel</label>
+                </div>
+                <button type="submit" class="btn btn-primary">Ajouter l'emploi</button>
+            </form>
+        </div>
+    </div>
+
+    <% if (employment && employment.length > 0) { %>
+    <div class="card mb-4">
+        <div class="card-body">
+            <h5 class="card-title mb-3">Historique d'emplois</h5>
+            <ul class="list-group list-group-flush">
+                <% employment.forEach(job => { %>
+                <li class="list-group-item">
+                    <h6><%= job.poste %> chez <%= job.employer_name %></h6>
+                    <p class="text-muted mb-1">
+                        <%= new Date(job.date_debut).toLocaleDateString('fr-FR', { year: 'numeric', month: 'long' }) %> -
+                        <% if (job.is_current) { %>
+                            Actuel
+                        <% } else if (job.date_fin) { %>
+                            <%= new Date(job.date_fin).toLocaleDateString('fr-FR', { year: 'numeric', month: 'long' }) %>
+                        <% } else { %>
+                            Date de fin non spécifiée
+                        <% } %>
+                    </p>
+                    <% if (job.secteur) { %><p class="text-muted mb-1"><small>Secteur: <%= job.secteur %></small></p><% } %>
+                    <% if (job.ville) { %><p class="text-muted mb-0"><small>Ville: <%= job.ville %></small></p><% } %>
+                </li>
+                <% }); %>
+            </ul>
+        </div>
+    </div>
+    <% } else { %>
+    <div class="alert alert-info" role="alert">
+        Aucun emploi enregistré.
+    </div>
+    <% } %>
+</div>
