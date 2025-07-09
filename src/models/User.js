@@ -125,7 +125,7 @@ class User {
     const values = [];
     
     const allowedFields = [
-      'prenom', 'nom', 'profile_picture', 'adresse', 'ville', 'code_postal', 'pays',
+      'prenom', 'nom', 'annee_diplome', 'profile_picture', 'adresse', 'ville', 'code_postal', 'pays',
       'telephone', 'linkedin', 'twitter', 'facebook', 'site_web', 'statut_emploi',
       'opt_out_contact', 'opt_out_directory'
     ];

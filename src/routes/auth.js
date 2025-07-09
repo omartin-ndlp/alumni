@@ -150,15 +150,13 @@ router.post('/register', [
       });
     }
 
-    // Créer la demande d'inscription
+    // Créer la demande d\'inscription
     await db.execute(`
       INSERT INTO registration_requests (email, prenom, nom, annee_diplome, section_id, message)
       VALUES (?, ?, ?, ?, ?, ?)
     `, [email, prenom, nom, annee_diplome, section_id, message || null]);
 
-    res.render('auth/register-success', {
-      title: 'Demande envoyée - Anciens BTS SN/CIEL LJV'
-    });
+    res.redirect('/register-success');
 
   } catch (error) {
     console.error('Erreur d\'inscription:', error);
@@ -203,3 +201,10 @@ router.get('/dashboard', auth.requireAuth, async (req, res) => {
 });
 
 module.exports = router;
+
+// New route for register success page
+router.get('/register-success', (req, res) => {
+  res.render('auth/register-success', {
+    title: 'Demande envoyée - Anciens BTS SN/CIEL LJV'
+  });
+});

@@ -117,6 +117,7 @@ router.post('/edit', [
     const updateData = {
       prenom: req.body.prenom,
       nom: req.body.nom,
+      annee_diplome: req.body.annee_diplome, // Add this line
       adresse: req.body.adresse || null,
       ville: req.body.ville || null,
       code_postal: req.body.code_postal || null,
