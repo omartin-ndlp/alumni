@@ -38,7 +38,15 @@ router.post('/login', [
     const { email, password } = req.body;
     const user = await User.findByEmail(email);
 
-    if (!user || !(await User.verifyPassword(password, user.password_hash))) {
+    if (!user) {
+      return res.render('auth/login', {
+        title: 'Connexion - Anciens BTS SN/CIEL LJV',
+        error: 'Email ou mot de passe incorrect',
+        redirect: req.body.redirect || '/dashboard'
+      });
+    }
+
+    if (!(await User.verifyPassword(password, user.password_hash))) {
       return res.render('auth/login', {
         title: 'Connexion - Anciens BTS SN/CIEL LJV',
         error: 'Email ou mot de passe incorrect',
@@ -51,6 +59,12 @@ router.post('/login', [
         title: 'Connexion - Anciens BTS SN/CIEL LJV',
         error: 'Compte désactivé',
         redirect: req.body.redirect || '/dashboard'
+      });
+    }
+
+    if (!user.is_approved) {
+      return res.render('pending-approval', {
+        title: 'Compte en attente d\'approbation'
       });
     }
 

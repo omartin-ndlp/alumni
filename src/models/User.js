@@ -31,7 +31,7 @@ class User {
 
   static async create(userData) {
     const db = getConnection();
-    const hashedPassword = await bcrypt.hash(userData.password, 12);
+    const hashedPassword = await bcrypt.hash(userData.password, 10);
 
     const [result] = await db.execute(`
       INSERT INTO users (
@@ -180,7 +180,7 @@ class User {
     if (approve) {
       // Créer le compte utilisateur
       const tempPassword = Math.random().toString(36).slice(-12);
-      const hashedPassword = await bcrypt.hash(tempPassword, 12);
+      const hashedPassword = await bcrypt.hash(tempPassword, 10);
       
       await db.execute(`
         INSERT INTO users (
