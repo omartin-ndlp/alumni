@@ -421,4 +421,103 @@ describe('User Functional Flows', () => {
       expect(requests.length).toBe(0);
     });
   });
+
+  describe('User Directory Admin Filter', () => {
+    let regularUserAgent;
+    let sectionId;
+    const regularUser = {
+      email: 'regular.user@example.com',
+      password: 'password123',
+      firstName: 'Regular',
+      lastName: 'User',
+      sectionName: 'SN',
+      promo: 2020,
+    };
+    const adminUser = {
+      email: 'admin.directory@example.com',
+      password: 'adminpass',
+      firstName: 'Admin',
+      lastName: 'Directory',
+      sectionName: 'SN',
+      promo: 2010,
+    };
+
+    beforeAll(async () => {
+      const [sections] = await db.execute('SELECT id FROM sections WHERE nom = ?', [regularUser.sectionName]);
+      sectionId = sections[0].id;
+    });
+
+    beforeEach(async () => {
+      // Create and approve a regular user
+      const hashedPasswordRegular = await bcrypt.hash(regularUser.password, 12);
+      await db.execute(`
+        INSERT INTO users (email, password_hash, prenom, nom, annee_diplome, section_id, is_approved, is_admin, is_active)
+        VALUES (?, ?, ?, ?, ?, ?, TRUE, FALSE, TRUE)
+      `, [
+        regularUser.email,
+        hashedPasswordRegular,
+        regularUser.firstName,
+        regularUser.lastName,
+        regularUser.promo,
+        sectionId,
+      ]);
+
+      // Create and approve an admin user
+      const hashedPasswordAdmin = await bcrypt.hash(adminUser.password, 12);
+      await db.execute(`
+        INSERT INTO users (email, password_hash, prenom, nom, annee_diplome, section_id, is_approved, is_admin, is_active)
+        VALUES (?, ?, ?, ?, ?, ?, TRUE, TRUE, TRUE)
+      `, [
+        adminUser.email,
+        hashedPasswordAdmin,
+        adminUser.firstName,
+        adminUser.lastName,
+        adminUser.promo,
+        sectionId,
+      ]);
+
+      // Log in as the regular user
+      regularUserAgent = request.agent(app);
+      await regularUserAgent.post('/login').send({
+        email: regularUser.email,
+        password: regularUser.password,
+      }).expect(302);
+    });
+
+    test('should hide admin users by default in the directory (server-rendered HTML)', async () => {
+      const res = await regularUserAgent.get('/users').expect(200);
+      expect(res.text).not.toContain(adminUser.firstName + ' ' + adminUser.lastName);
+      expect(res.text).toContain(regularUser.firstName + ' ' + regularUser.lastName);
+    });
+
+    test('should show admin users when the switch is toggled on (server-rendered HTML)', async () => {
+      const res = await regularUserAgent.get('/users?show_admins=true').expect(200);
+      expect(res.text).toContain(adminUser.firstName + ' ' + adminUser.lastName);
+      expect(res.text).toContain(regularUser.firstName + ' ' + regularUser.lastName);
+    });
+
+    test('should hide admin users when the switch is toggled off after being on (server-rendered HTML)', async () => {
+      const res = await regularUserAgent.get('/users?show_admins=false').expect(200);
+      expect(res.text).not.toContain(adminUser.firstName + ' ' + adminUser.lastName);
+      expect(res.text).toContain(regularUser.firstName + ' ' + regularUser.lastName);
+    });
+
+    test('should filter out admin users by default via API', async () => {
+      const res = await regularUserAgent.get('/users/api/users').expect(200);
+      expect(res.body.users.some(u => u.email === adminUser.email)).toBe(false);
+      expect(res.body.users.some(u => u.email === regularUser.email)).toBe(true);
+    });
+
+    test('should include admin users when show_admins is true via API', async () => {
+      const res = await regularUserAgent.get('/users/api/users?show_admins=true').expect(200);
+      expect(res.body.users.some(u => u.email === adminUser.email)).toBe(true);
+      expect(res.body.users.some(u => u.email === regularUser.email)).toBe(true);
+    });
+
+    test('should exclude admin users when show_admins is false via API', async () => {
+      const res = await regularUserAgent.get('/users/api/users?show_admins=false').expect(200);
+      expect(res.body.users.some(u => u.email === adminUser.email)).toBe(false);
+      expect(res.body.users.some(u => u.email === regularUser.email)).toBe(true);
+    });
+  });
 });

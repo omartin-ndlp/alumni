@@ -12,6 +12,9 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Validation des formulaires
     initFormValidation();
+
+    // Show/Hide Admins Switch
+    initShowAdminsSwitch();
 });
 
 // Auto-suggestion d'employeurs
@@ -227,4 +230,262 @@ function initFileUploads() {
 // Initialiser les uploads si présents
 if (document.querySelector('input[type="file"]')) {
     initFileUploads();
+}
+
+function initShowAdminsSwitch() {
+    const showAdminsSwitch = document.getElementById('showAdminsSwitch');
+    if (!showAdminsSwitch) return;
+
+    // Get initial state from localStorage or data attribute
+    let showAdmins = localStorage.getItem('showAdmins') === 'true';
+    if (localStorage.getItem('showAdmins') === null) {
+        showAdmins = showAdminsSwitch.dataset.initialState === 'true';
+    }
+    showAdminsSwitch.checked = showAdmins;
+    
+    // Function to update the user list via AJAX
+    async function updateUserList() {
+        const currentUrl = new URL(window.location.href);
+        const params = new URLSearchParams(currentUrl.search);
+
+        // Update show_admins parameter
+        params.set('show_admins', showAdminsSwitch.checked);
+        
+        // Preserve other filters
+        const form = document.querySelector('.card-body form');
+        if (form) {
+            new FormData(form).forEach((value, key) => {
+                if (key !== 'show_admins') { // Avoid duplicating
+                    params.set(key, value);
+                }
+            });
+        }
+
+        // Remove page parameter to reset to first page on filter change
+        params.delete('page');
+
+        const queryString = params.toString();
+        const apiUrl = `/users/api/users?${queryString}`;
+
+        try {
+            const response = await makeRequest(apiUrl);
+            
+            // Update user list
+            const userListContainer = document.querySelector('.row'); // Assuming this contains the user cards
+            if (userListContainer) {
+                userListContainer.innerHTML = ''; // Clear current list
+                if (response.users.length > 0) {
+                    response.users.forEach(user => {
+                        const userCard = `
+                            <div class="col-md-6 col-lg-4 mb-4">
+                                <div class="card h-100">
+                                    <div class="card-body d-flex flex-column">
+                                        <div class="d-flex align-items-center mb-3">
+                                            ${user.profile_picture ? 
+                                                `<img src="${user.profile_picture}" class="rounded-circle me-3" 
+                                                    style="width: 60px; height: 60px; object-fit: cover;" alt="Photo de profil">` :
+                                                `<div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center me-3"
+                                                    style="width: 60px; height: 60px; font-size: 1.5rem;">
+                                                    ${user.prenom.charAt(0)}${user.nom.charAt(0)}
+                                                </div>`
+                                            }
+                                            <div>
+                                                <h5 class="card-title mb-0">
+                                                    <a href="/users/${user.id}" class="text-decoration-none text-dark">
+                                                        ${user.prenom} ${user.nom}
+                                                    </a>
+                                                </h5>
+                                                <p class="card-subtitle text-muted">${user.section_nom} - ${user.annee_diplome}</p>
+                                            </div>
+                                        </div>
+                                        ${user.current_position && user.current_employer ? 
+                                            `<p class="card-text mt-auto"><small class="text-muted">${user.current_position} chez ${user.current_employer}</small></p>` : ''
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                        userListContainer.insertAdjacentHTML('beforeend', userCard);
+                    });
+                } else {
+                    userListContainer.innerHTML = `
+                        <div class="alert alert-info" role="alert">
+                            Aucun ancien trouvé correspondant à vos critères.
+                        </div>
+                    `;
+                }
+            }
+
+            // Update pagination
+            const paginationNav = document.querySelector('.pagination');
+            if (paginationNav) {
+                paginationNav.innerHTML = ''; // Clear current pagination
+                const pagination = response.pagination;
+                const baseUrl = `/users?${params.toString()}`; // Base URL for pagination links
+
+                const prevLink = `
+                    <li class="page-item ${!pagination.hasPrev ? 'disabled' : ''}">
+                        <a class="page-link" href="${baseUrl}&page=${pagination.current - 1}" aria-label="Previous">
+                            <span aria-hidden="true">&laquo;</span>
+                        </a>
+                    </li>
+                `;
+                paginationNav.insertAdjacentHTML('beforeend', prevLink);
+
+                for (let i = 1; i <= pagination.total; i++) {
+                    const pageLink = `
+                        <li class="page-item ${pagination.current == i ? 'active' : ''}">
+                            <a class="page-link" href="${baseUrl}&page=${i}">${i}</a>
+                        </li>
+                    `;
+                    paginationNav.insertAdjacentHTML('beforeend', pageLink);
+                }
+
+                const nextLink = `
+                    <li class="page-item ${!pagination.hasNext ? 'disabled' : ''}">
+                        <a class="page-link" href="${baseUrl}&page=${pagination.current + 1}" aria-label="Next">
+                            <span aria-hidden="true">&raquo;</span>
+                        </a>
+                    </li>
+                `;
+                paginationNav.insertAdjacentHTML('beforeend', nextLink);
+            }
+
+            // Update URL in browser without reloading
+            window.history.pushState({ path: currentUrl.pathname + '?' + queryString }, '', currentUrl.pathname + '?' + queryString);
+
+        } catch (error) {
+            console.error('Error updating user list:', error);
+            // Optionally display an error message to the user
+        }
+    }
+
+    // Event listener for the switch
+    showAdminsSwitch.addEventListener('change', function() {
+        localStorage.setItem('showAdmins', this.checked);
+        updateUserList();
+    });
+
+    // Intercept form submission to use AJAX
+    const filterForm = document.querySelector('.card-body form');
+    if (filterForm) {
+        filterForm.addEventListener('submit', function(e) {
+            e.preventDefault(); // Prevent default form submission
+            updateUserList();
+        });
+    }
+
+    // Update pagination links to use AJAX
+    document.addEventListener('click', function(e) {
+        if (e.target.matches('.pagination .page-link')) {
+            e.preventDefault();
+            const pageUrl = new URL(e.target.href);
+            const currentUrl = new URL(window.location.href);
+            const params = new URLSearchParams(currentUrl.search);
+            
+            // Get page from clicked link
+            const page = pageUrl.searchParams.get('page');
+            if (page) {
+                params.set('page', page);
+            } else {
+                params.delete('page'); // If no page param, it's likely the first page
+            }
+
+            // Ensure show_admins is preserved
+            params.set('show_admins', showAdminsSwitch.checked);
+
+            const queryString = params.toString();
+            const apiUrl = `/users/api/users?${queryString}`;
+
+            makeRequest(apiUrl)
+                .then(response => {
+                    // Update user list
+                    const userListContainer = document.querySelector('.row');
+                    if (userListContainer) {
+                        userListContainer.innerHTML = '';
+                        if (response.users.length > 0) {
+                            response.users.forEach(user => {
+                                const userCard = `
+                                    <div class="col-md-6 col-lg-4 mb-4">
+                                        <div class="card h-100">
+                                            <div class="card-body d-flex flex-column">
+                                                <div class="d-flex align-items-center mb-3">
+                                                    ${user.profile_picture ? 
+                                                        `<img src="${user.profile_picture}" class="rounded-circle me-3" 
+                                                            style="width: 60px; height: 60px; object-fit: cover;" alt="Photo de profil">` :
+                                                        `<div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center me-3"
+                                                            style="width: 60px; height: 60px; font-size: 1.5rem;">
+                                                            ${user.prenom.charAt(0)}${user.nom.charAt(0)}
+                                                        </div>`
+                                                    }
+                                                    <div>
+                                                        <h5 class="card-title mb-0">
+                                                            <a href="/users/${user.id}" class="text-decoration-none text-dark">
+                                                                ${user.prenom} ${user.nom}
+                                                            </a>
+                                                        </h5>
+                                                        <p class="card-subtitle text-muted">${user.section_nom} - ${user.annee_diplome}</p>
+                                                    </div>
+                                                </div>
+                                                ${user.current_position && user.current_employer ? 
+                                                    `<p class="card-text mt-auto"><small class="text-muted">${user.current_position} chez ${user.current_employer}</small></p>` : ''
+                                                }
+                                            </div>
+                                        </div>
+                                    </div>
+                                `;
+                                userListContainer.insertAdjacentHTML('beforeend', userCard);
+                            });
+                        } else {
+                            userListContainer.innerHTML = `
+                                <div class="alert alert-info" role="alert">
+                                    Aucun ancien trouvé correspondant à vos critères.
+                                </div>
+                            `;
+                        }
+                    }
+
+                    // Update pagination links
+                    const paginationNav = document.querySelector('.pagination');
+                    if (paginationNav) {
+                        paginationNav.innerHTML = ''; // Clear current pagination
+                        const pagination = response.pagination;
+                        const newBaseUrl = `/users?${params.toString()}`; // Base URL for pagination links
+
+                        const prevLink = `
+                            <li class="page-item ${!pagination.hasPrev ? 'disabled' : ''}">
+                                <a class="page-link" href="${newBaseUrl}&page=${pagination.current - 1}" aria-label="Previous">
+                                    <span aria-hidden="true">&laquo;</span>
+                                </a>
+                            </li>
+                        `;
+                        paginationNav.insertAdjacentHTML('beforeend', prevLink);
+
+                        for (let i = 1; i <= pagination.total; i++) {
+                            const pageLink = `
+                                <li class="page-item ${pagination.current == i ? 'active' : ''}">
+                                    <a class="page-link" href="${newBaseUrl}&page=${i}">${i}</a>
+                                </li>
+                            `;
+                            paginationNav.insertAdjacentHTML('beforeend', pageLink);
+                        }
+
+                        const nextLink = `
+                            <li class="page-item ${!pagination.hasNext ? 'disabled' : ''}">
+                                <a class="page-link" href="${newBaseUrl}&page=${pagination.current + 1}" aria-label="Next">
+                                    <span aria-hidden="true">&raquo;</span>
+                                </a>
+                            </li>
+                        `;
+                        paginationNav.insertAdjacentHTML('beforeend', nextLink);
+                    }
+
+                    // Update URL in browser without reloading
+                    window.history.pushState({ path: pageUrl.pathname + '?' + pageUrl.searchParams.toString() }, '', pageUrl.pathname + '?' + pageUrl.searchParams.toString());
+                })
+                .catch(error => {
+                    console.error('Error updating user list via pagination:', error);
+                });
+        }
+    });
 }

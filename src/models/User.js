@@ -95,6 +95,10 @@ class User {
       query += ' AND u.opt_out_directory = FALSE';
     }
     
+    if (!filters.show_admins) {
+      query += ' AND u.is_admin = FALSE';
+    }
+    
     // Tri
     if (filters.sort === 'name') {
       query += ' ORDER BY u.nom, u.prenom';

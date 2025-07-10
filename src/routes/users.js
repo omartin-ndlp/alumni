@@ -5,11 +5,12 @@ const { getConnection } = require('../config/database');
 const auth = require('../middleware/auth');
 
 const router = express.Router();
+const db = getConnection();
 
 // Liste des anciens
 router.get('/', auth.requireAuth, async (req, res) => {
   try {
-    const { search, sort, annee_diplome, section_id, employer_id, page = 1 } = req.query;
+    const { search, sort, annee_diplome, section_id, employer_id, page = 1, show_admins } = req.query;
     const limit = 10; // Number of users per page
     const offset = (parseInt(page) - 1) * limit;
 
@@ -17,13 +18,13 @@ router.get('/', auth.requireAuth, async (req, res) => {
       search,
       sort: sort || 'name',
       show_opted_out: false,
+      show_admins: show_admins === 'true', // Convert string to boolean
       limit,
       offset
     };
 
     const users = await User.getAll(filters);
 
-    const db = getConnection();
     const [sections] = await db.execute('SELECT * FROM sections ORDER BY nom');
     const employers = await Employer.getWithEmployeeCount();
 
@@ -47,7 +48,7 @@ router.get('/', auth.requireAuth, async (req, res) => {
       sections,
       employers,
       years: years.map(y => y.annee_diplome),
-      filters: req.query,
+      filters: { ...req.query, show_admins: show_admins === 'true' },
       pagination: {
         current: parseInt(page),
         total: totalPages,
@@ -171,7 +172,7 @@ router.get('/employers/:id', auth.requireAuth, async (req, res) => {
 // API endpoint for fetching users (for AJAX)
 router.get('/api/users', auth.requireAuth, async (req, res) => {
   try {
-    const { search, sort, annee_diplome, section_id, employer_id, page = 1 } = req.query;
+    const { search, sort, annee_diplome, section_id, employer_id, page = 1, show_admins } = req.query;
     const limit = 10; // Number of users per page
     const offset = (parseInt(page) - 1) * limit;
 
@@ -179,6 +180,7 @@ router.get('/api/users', auth.requireAuth, async (req, res) => {
       search,
       sort: sort || 'name',
       show_opted_out: false,
+      show_admins: show_admins === 'true', // Convert string to boolean
       limit,
       offset
     };
