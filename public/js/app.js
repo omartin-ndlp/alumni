@@ -236,12 +236,42 @@ function initShowAdminsSwitch() {
     const showAdminsSwitch = document.getElementById('showAdminsSwitch');
     if (!showAdminsSwitch) return;
 
-    // Get initial state from localStorage or data attribute
-    let showAdmins = localStorage.getItem('showAdmins') === 'true';
-    if (localStorage.getItem('showAdmins') === null) {
-        showAdmins = showAdminsSwitch.dataset.initialState === 'true';
+    const urlParams = new URLSearchParams(window.location.search);
+    const showAdminsInUrl = urlParams.get('show_admins');
+
+    let currentShowAdminsState;
+
+    if (showAdminsInUrl !== null) {
+        // URL parameter dictates the state
+        currentShowAdminsState = showAdminsInUrl === 'true';
+        localStorage.setItem('showAdmins', currentShowAdminsState); // Update localStorage to match URL
+    } else {
+        // No URL parameter, check localStorage
+        const showAdminsFromStorage = localStorage.getItem('showAdmins');
+        if (showAdminsFromStorage === null) {
+            // No state in localStorage, default to false
+            currentShowAdminsState = false;
+            localStorage.setItem('showAdmins', currentShowAdminsState); // Save default to localStorage
+        } else {
+            // Use state from localStorage
+            currentShowAdminsState = showAdminsFromStorage === 'true';
+        }
     }
-    showAdminsSwitch.checked = showAdmins;
+
+    showAdminsSwitch.checked = currentShowAdminsState;
+
+    // Now, ensure the displayed list matches the switch state.
+    // The server rendered the page based on `req.query.show_admins`.
+    // If `currentShowAdminsState` is different from what the server rendered,
+    // we need to trigger an AJAX update.
+    const serverRenderedShowAdmins = showAdminsSwitch.dataset.initialState === 'true';
+
+    if (currentShowAdminsState !== serverRenderedShowAdmins) {
+        // Add a small delay to ensure DOM is fully rendered before AJAX update
+        setTimeout(() => {
+            updateUserList();
+        }, 50); // 50ms delay
+    }
     
     // Function to update the user list via AJAX
     async function updateUserList() {
@@ -271,7 +301,7 @@ function initShowAdminsSwitch() {
             const response = await makeRequest(apiUrl);
             
             // Update user list
-            const userListContainer = document.querySelector('.row'); // Assuming this contains the user cards
+            const userListContainer = document.querySelector('#user-cards-container');
             if (userListContainer) {
                 userListContainer.innerHTML = ''; // Clear current list
                 if (response.users.length > 0) {
