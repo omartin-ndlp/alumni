@@ -21,10 +21,6 @@ router.get('/', auth.requireAuth, async (req, res) => {
       offset
     };
 
-    if (annee_diplome) filters.annee_diplome = annee_diplome;
-    if (section_id) filters.section_id = section_id;
-    if (employer_id) filters.employer_id = employer_id;
-
     const users = await User.getAll(filters);
 
     const db = getConnection();
@@ -169,6 +165,50 @@ router.get('/employers/:id', auth.requireAuth, async (req, res) => {
       message: 'Erreur lors du chargement de l\'employeur',
       error: {}
     });
+  }
+});
+
+// API endpoint for fetching users (for AJAX)
+router.get('/api/users', auth.requireAuth, async (req, res) => {
+  try {
+    const { search, sort, annee_diplome, section_id, employer_id, page = 1 } = req.query;
+    const limit = 10; // Number of users per page
+    const offset = (parseInt(page) - 1) * limit;
+
+    const filters = {
+      search,
+      sort: sort || 'name',
+      show_opted_out: false,
+      limit,
+      offset
+    };
+
+    if (annee_diplome) filters.annee_diplome = annee_diplome;
+    if (section_id) filters.section_id = section_id;
+    if (employer_id) filters.employer_id = employer_id;
+
+    const users = await User.getAll(filters);
+
+    // Get total count for pagination
+    const [totalUsersResult] = await db.execute(`
+      SELECT COUNT(*) as total FROM users WHERE is_approved = TRUE AND is_active = TRUE
+    `);
+    const totalUsers = totalUsersResult[0].total;
+    const totalPages = Math.ceil(totalUsers / limit);
+
+    res.json({
+      users,
+      pagination: {
+        current: parseInt(page),
+        total: totalPages,
+        hasNext: parseInt(page) < totalPages,
+        hasPrev: parseInt(page) > 1
+      }
+    });
+
+  } catch (error) {
+    console.error('Erreur API utilisateurs:', error);
+    res.status(500).json({ error: 'Erreur lors du chargement des utilisateurs' });
   }
 });
 

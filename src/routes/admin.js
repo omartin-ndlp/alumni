@@ -15,6 +15,9 @@ router.get('/', async (req, res) => {
   try {
     const db = getConnection();
     
+    // Run cleanup for registration requests
+    await User.cleanUpRegistrationRequests();
+    
     // Statistiques générales
     const [stats] = await db.execute(`
       SELECT 

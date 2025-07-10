@@ -23,7 +23,14 @@
                         <td><%= request.nom %></td>
                         <td><%= request.annee_diplome %></td>
                         <td><%= request.section_nom %></td>
-                        <td><%= request.message || 'N/A' %></td>
+                        <td>
+                            <% if (request.message && request.message.length > 50) { %>
+                                <%= request.message.substring(0, 50) %>...
+                                <a href="#" class="read-more-btn" data-full-message="<%= request.message %>" data-bs-toggle="modal" data-bs-target="#messageModal">Voir plus</a>
+                            <% } else { %>
+                                <%= request.message || 'N/A' %>
+                            <% } %>
+                        </td>
                         <td><%= request.created_at.toLocaleDateString() %></td>
                         <td>
                             <form action="/admin/requests/<%= request.id %>/approve" method="POST" style="display:inline;">
@@ -43,3 +50,33 @@
         </div>
     <% } %>
 </div>
+
+<!-- Message Modal -->
+<div class="modal fade" id="messageModal" tabindex="-1" aria-labelledby="messageModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="messageModalLabel">Message complet</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body" id="fullMessageContent">
+        <!-- Full message will be loaded here -->
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const messageModal = document.getElementById('messageModal');
+    messageModal.addEventListener('show.bs.modal', function (event) {
+      const button = event.relatedTarget;
+      const fullMessage = button.getAttribute('data-full-message');
+      const modalBody = messageModal.querySelector('#fullMessageContent');
+      modalBody.textContent = fullMessage;
+    });
+  });
+</script>

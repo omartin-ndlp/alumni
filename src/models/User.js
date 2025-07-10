@@ -200,6 +200,16 @@ class User {
     
     return approve;
   }
+
+  static async cleanUpRegistrationRequests() {
+    const db = getConnection();
+    // Find registration requests for which a user already exists and is approved
+    await db.execute(`
+      DELETE rr FROM registration_requests rr
+      JOIN users u ON rr.email = u.email
+      WHERE u.is_approved = TRUE
+    `);
+  }
 }
 
 module.exports = User;
