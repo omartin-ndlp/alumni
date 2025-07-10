@@ -276,4 +276,149 @@ describe('User Functional Flows', () => {
       expect(loginRes.headers.location).toBe('/dashboard');
     });
   });
+
+  describe('Admin Requests Page', () => {
+    let adminAgent;
+    let sectionIdAdmin;
+    const adminUser = {
+      email: 'admin.requests@example.com',
+      password: 'adminpass',
+      firstName: 'Admin',
+      lastName: 'Requests',
+      sectionName: 'SN',
+      promo: 2010,
+    };
+
+    beforeAll(async () => {
+      const [sections] = await db.execute('SELECT id FROM sections WHERE nom = ?', [adminUser.sectionName]);
+      sectionIdAdmin = sections[0].id;
+    });
+
+    beforeEach(async () => {
+      // Create and log in admin user
+      const hashedPasswordAdmin = await bcrypt.hash(adminUser.password, 12);
+      await db.execute(`
+        INSERT INTO users (email, password_hash, prenom, nom, annee_diplome, section_id, is_approved, is_admin, is_active)
+        VALUES (?, ?, ?, ?, ?, ?, TRUE, TRUE, TRUE)
+      `, [
+        adminUser.email,
+        hashedPasswordAdmin,
+        adminUser.firstName,
+        adminUser.lastName,
+        adminUser.promo,
+        sectionIdAdmin,
+      ]);
+
+      adminAgent = request.agent(app);
+      await adminAgent.post('/login').send({
+        email: adminUser.email,
+        password: adminUser.password,
+      }).expect(302);
+    });
+
+    test('should display pending registration requests', async () => {
+      const pendingRequest = {
+        email: 'pending.display@example.com',
+        prenom: 'Pending',
+        nom: 'Display',
+        annee_diplome: 2023,
+        section_id: sectionIdAdmin,
+        message: 'Please approve me!',
+      };
+
+      await db.execute(`
+        INSERT INTO registration_requests (email, prenom, nom, annee_diplome, section_id, message)
+        VALUES (?, ?, ?, ?, ?, ?)
+      `, [
+        pendingRequest.email,
+        pendingRequest.prenom,
+        pendingRequest.nom,
+        pendingRequest.annee_diplome,
+        pendingRequest.section_id,
+        pendingRequest.message,
+      ]);
+
+      const res = await adminAgent.get('/admin/requests').expect(200);
+
+      expect(res.text).toContain('Demandes d\'inscription en attente');
+      expect(res.text).toContain(pendingRequest.email);
+      expect(res.text).toContain(pendingRequest.prenom);
+      expect(res.text).toContain(pendingRequest.nom);
+      expect(res.text).toContain(pendingRequest.annee_diplome.toString());
+      expect(res.text).toContain(pendingRequest.message);
+      expect(res.text).toContain('Approuver');
+      expect(res.text).toContain('Rejeter');
+    });
+
+    test('should allow an admin to approve a pending request', async () => {
+      const pendingRequest = {
+        email: 'pending.approve@example.com',
+        prenom: 'Pending',
+        nom: 'Approve',
+        annee_diplome: 2024,
+        section_id: sectionIdAdmin,
+        message: 'Please approve me!',
+      };
+
+      const [insertResult] = await db.execute(`
+        INSERT INTO registration_requests (email, prenom, nom, annee_diplome, section_id, message)
+        VALUES (?, ?, ?, ?, ?, ?)
+      `, [
+        pendingRequest.email,
+        pendingRequest.prenom,
+        pendingRequest.nom,
+        pendingRequest.annee_diplome,
+        pendingRequest.section_id,
+        pendingRequest.message,
+      ]);
+      const requestId = insertResult.insertId;
+
+      const approveRes = await adminAgent.post(`/admin/requests/${requestId}/approve`).expect(302);
+      expect(approveRes.headers.location).toBe('/admin/requests?success=approved');
+
+      // Verify user is created in DB
+      const [users] = await db.execute('SELECT * FROM users WHERE email = ?', [pendingRequest.email]);
+      expect(users.length).toBe(1);
+      expect(users[0].is_approved).toBe(1);
+
+      // Verify request is deleted
+      const [requests] = await db.execute('SELECT * FROM registration_requests WHERE id = ?', [requestId]);
+      expect(requests.length).toBe(0);
+    });
+
+    test('should allow an admin to reject a pending request', async () => {
+      const pendingRequest = {
+        email: 'pending.reject@example.com',
+        prenom: 'Pending',
+        nom: 'Reject',
+        annee_diplome: 2025,
+        section_id: sectionIdAdmin,
+        message: 'Please reject me!',
+      };
+
+      const [insertResult] = await db.execute(`
+        INSERT INTO registration_requests (email, prenom, nom, annee_diplome, section_id, message)
+        VALUES (?, ?, ?, ?, ?, ?)
+      `, [
+        pendingRequest.email,
+        pendingRequest.prenom,
+        pendingRequest.nom,
+        pendingRequest.annee_diplome,
+        pendingRequest.section_id,
+        pendingRequest.message,
+      ]);
+      const requestId = insertResult.insertId;
+
+      const rejectRes = await adminAgent.post(`/admin/requests/${requestId}/reject`).expect(302);
+      expect(rejectRes.headers.location).toBe('/admin/requests?success=rejected');
+
+      // Verify user is NOT created in DB
+      const [users] = await db.execute('SELECT * FROM users WHERE email = ?', [pendingRequest.email]);
+      expect(users.length).toBe(0);
+
+      // Verify request is deleted
+      const [requests] = await db.execute('SELECT * FROM registration_requests WHERE id = ?', [requestId]);
+      expect(requests.length).toBe(0);
+    });
+  });
 });

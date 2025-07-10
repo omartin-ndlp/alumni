@@ -1,0 +1,45 @@
+<div class="container mt-4">
+    <h1 class="mb-4">Demandes d'inscription en attente</h1>
+
+    <% if (requests.length > 0) { %>
+        <table class="table table-striped table-hover">
+            <thead class="thead-dark">
+                <tr>
+                    <th>Email</th>
+                    <th>Prénom</th>
+                    <th>Nom</th>
+                    <th>Année Diplôme</th>
+                    <th>Section</th>
+                    <th>Message</th>
+                    <th>Date Demande</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% requests.forEach(function(request) { %>
+                    <tr>
+                        <td><%= request.email %></td>
+                        <td><%= request.prenom %></td>
+                        <td><%= request.nom %></td>
+                        <td><%= request.annee_diplome %></td>
+                        <td><%= request.section_nom %></td>
+                        <td><%= request.message || 'N/A' %></td>
+                        <td><%= request.created_at.toLocaleDateString() %></td>
+                        <td>
+                            <form action="/admin/requests/<%= request.id %>/approve" method="POST" style="display:inline;">
+                                <button type="submit" class="btn btn-success btn-sm">Approuver</button>
+                            </form>
+                            <form action="/admin/requests/<%= request.id %>/reject" method="POST" style="display:inline; margin-left: 5px;">
+                                <button type="submit" class="btn btn-danger btn-sm">Rejeter</button>
+                            </form>
+                        </td>
+                    </tr>
+                <% }); %>
+            </tbody>
+        </table>
+    <% } else { %>
+        <div class="alert alert-info" role="alert">
+            Aucune demande d'inscription en attente pour le moment.
+        </div>
+    <% } %>
+</div>

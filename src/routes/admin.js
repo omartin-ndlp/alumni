@@ -75,7 +75,7 @@ router.get('/requests', async (req, res) => {
     const requests = await User.getPendingApprovals();
     
     res.render('admin/requests', {
-      title: 'Demandes d\'inscription - Administration',
+      title: "Demandes d'inscription - Administration",
       requests
     });
     
