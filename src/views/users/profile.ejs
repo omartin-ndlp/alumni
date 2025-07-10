@@ -1,3 +1,168 @@
 <div class="container-fluid">
-    <%- include('../partials/_user_profile_details', { displayUser: displayUser, employment: employment, isOwnProfile: isOwnProfile, canViewContact: canViewContact }) %>
+    <div class="row">
+    <div class="col-lg-4">
+        <div class="card mb-4">
+            <div class="card-body text-center">
+                <% if (displayUser.profile_picture) { %>
+                <img src="<%= displayUser.profile_picture %>" alt="avatar" class="rounded-circle img-fluid" style="width: 150px; height: 150px; object-fit: cover;">
+                <% } else { %>
+                <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center mx-auto mb-3"
+                     style="width: 150px; height: 150px; font-size: 4rem;">
+                    <%= displayUser.prenom.charAt(0) %><%= displayUser.nom.charAt(0) %>
+                </div>
+                <% } %>
+                <h5 class="my-3"><%= displayUser.prenom %> <%= displayUser.nom %></h5>
+                <p class="text-muted mb-1">
+                    Section: <%= displayUser.section_nom %> | Année: <%= displayUser.annee_diplome %>
+                </p>
+                <% if (displayUser.current_position && displayUser.current_employer) { %>
+                <p class="text-muted mb-4"><%= displayUser.current_position %> chez <%= displayUser.current_employer %></p>
+                <% } %>
+                <% if (isOwnProfile) { %>
+                <div class="d-flex justify-content-center mb-2">
+                    <a href="/profile/edit" class="btn btn-primary">Modifier le profil</a>
+                </div>
+                <% } %>
+            </div>
+        </div>
+        <% if (canViewContact) { %>
+        <div class="card mb-4 mb-lg-0">
+            <div class="card-body">
+                <h5 class="mb-4">Informations de contact</h5>
+                <ul class="list-group list-group-flush rounded-3">
+                    <% if (displayUser.email) { %>
+                    <li class="list-group-item d-flex justify-content-between align-items-center p-3">
+                        <i class="bi bi-envelope-fill text-warning me-2"></i>
+                        <p class="mb-0"><%= displayUser.email %></p>
+                    </li>
+                    <% } %>
+                    <% if (displayUser.telephone) { %>
+                    <li class="list-group-item d-flex justify-content-between align-items-center p-3">
+                        <i class="bi bi-phone-fill text-warning me-2"></i>
+                        <p class="mb-0"><%= displayUser.telephone %></p>
+                    </li>
+                    <% } %>
+                    <% if (displayUser.linkedin) { %>
+                    <li class="list-group-item d-flex justify-content-between align-items-center p-3">
+                        <i class="bi bi-linkedin text-primary me-2"></i>
+                        <a href="<%= displayUser.linkedin %>" target="_blank" class="mb-0">LinkedIn</a>
+                    </li>
+                    <% } %>
+                    <% if (displayUser.twitter) { %>
+                    <li class="list-group-item d-flex justify-content-between align-items-center p-3">
+                        <i class="bi bi-twitter text-info me-2"></i>
+                        <a href="<%= displayUser.twitter %>" target="_blank" class="mb-0">Twitter</a>
+                    </li>
+                    <% } %>
+                    <% if (displayUser.facebook) { %>
+                    <li class="list-group-item d-flex justify-content-between align-items-center p-3">
+                        <i class="bi bi-facebook text-primary me-2"></i>
+                        <a href="<%= displayUser.facebook %>" target="_blank" class="mb-0">Facebook</a>
+                    </li>
+                    <% } %>
+                    <% if (displayUser.site_web) { %>
+                    <li class="list-group-item d-flex justify-content-between align-items-center p-3">
+                        <i class="bi bi-globe text-secondary me-2"></i>
+                        <a href="<%= displayUser.site_web %>" target="_blank" class="mb-0">Site Web</a>
+                    </li>
+                    <% } %>
+                </ul>
+            </div>
+        </div>
+        <% } %>
+    </div>
+    <div class="col-lg-8">
+        <div class="card mb-4">
+            <div class="card-body">
+                <h5 class="mb-4">Détails du profil</h5>
+                <div class="row">
+                    <div class="col-sm-3">
+                        <p class="mb-0">Nom complet</p>
+                    </div>
+                    <div class="col-sm-9">
+                        <p class="text-muted mb-0"><%= displayUser.prenom %> <%= displayUser.nom %></p>
+                    </div>
+                </div>
+                <hr>
+                <div class="row">
+                    <div class="col-sm-3">
+                        <p class="mb-0">Email</p>
+                    </div>
+                    <div class="col-sm-9">
+                        <p class="text-muted mb-0"><%= displayUser.email %></p>
+                    </div>
+                </div>
+                <hr>
+                <div class="row">
+                    <div class="col-sm-3">
+                        <p class="mb-0">Année de diplôme</p>
+                    </div>
+                    <div class="col-sm-9">
+                        <p class="text-muted mb-0"><%= displayUser.annee_diplome %></p>
+                    </div>
+                </div>
+                <hr>
+                <div class="row">
+                    <div class="col-sm-3">
+                        <p class="mb-0">Section</p>
+                    </div>
+                    <div class="col-sm-9">
+                        <p class="text-muted mb-0"><%= displayUser.section_nom %></p>
+                    </div>
+                </div>
+                <hr>
+                <div class="row">
+                    <div class="col-sm-3">
+                        <p class="mb-0">Adresse</p>
+                    </div>
+                    <div class="col-sm-9">
+                        <p class="text-muted mb-0">
+                            <% 
+                                let addressParts = [];
+                                if (displayUser.adresse) addressParts.push(displayUser.adresse);
+                                if (displayUser.code_postal) addressParts.push(displayUser.code_postal);
+                                if (displayUser.ville) addressParts.push(displayUser.ville);
+                                if (displayUser.pays) addressParts.push(displayUser.pays);
+                                
+                                if (addressParts.length > 0) {
+                                    %><%= addressParts.join(', ') %><% 
+                                } else {
+                                    %>N/A<% 
+                                }
+                            %>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <% if (employment && employment.length > 0) { %>
+        <div class="card mb-4">
+            <div class="card-body">
+                <h5 class="mb-4">Historique d'emplois</h5>
+                <% employment.forEach(job => {
+                    const startDate = new Date(job.date_debut).toLocaleDateString('fr-FR', { year: 'numeric', month: 'long' });
+                    let endDate = '';
+                    if (job.is_current) {
+                        endDate = 'Actuel';
+                    } else if (job.date_fin) {
+                        endDate = new Date(job.date_fin).toLocaleDateString('fr-FR', { year: 'numeric', month: 'long' });
+                    } else {
+                        endDate = 'Date de fin non spécifiée';
+                    }
+                %>
+                <div class="mb-3">
+                    <h6><%= job.poste %> chez <%= job.employer_name %></h6>
+                    <p class="text-muted mb-1">
+                        <%= startDate %> - <%= endDate %>
+                    </p>
+                    <% if (job.secteur) { %><p class="text-muted mb-1"><small>Secteur: <%= job.secteur %></small></p><% } %>
+                    <% if (job.ville) { %><p class="text-muted mb-0"><small>Ville: <%= job.ville %></small></p><% } %>
+                </div>
+                <% if (employment.indexOf(job) < employment.length - 1) { %><hr><% } %>
+                <% }); %>
+            </div>
+        </div>
+        <% } %>
+    </div>
 </div>
