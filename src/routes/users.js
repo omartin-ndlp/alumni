@@ -5,7 +5,6 @@ const { getConnection } = require('../config/database');
 const auth = require('../middleware/auth');
 
 const router = express.Router();
-const db = getConnection();
 
 // Liste des anciens
 router.get('/', auth.requireAuth, async (req, res) => {
@@ -24,6 +23,8 @@ router.get('/', auth.requireAuth, async (req, res) => {
     };
 
     const users = await User.getAll(filters);
+
+    const db = getConnection();
 
     const [sections] = await db.execute('SELECT * FROM sections ORDER BY nom');
     const employers = await Employer.getWithEmployeeCount();
@@ -191,7 +192,7 @@ router.get('/api/users', auth.requireAuth, async (req, res) => {
 
     const users = await User.getAll(filters);
 
-    // Get total count for pagination
+    const db = getConnection();
     const [totalUsersResult] = await db.execute(`
       SELECT COUNT(*) as total FROM users WHERE is_approved = TRUE AND is_active = TRUE
     `);
