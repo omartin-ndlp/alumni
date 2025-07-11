@@ -159,4 +159,4 @@ if (require.main === module) {
   main();
 }
 
-module.exports = { runMigrations };
+module.exports = { runMigrations, main };
