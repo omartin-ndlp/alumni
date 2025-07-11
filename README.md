@@ -122,9 +122,6 @@ Après l'initialisation, un compte administrateur est créé :
 # Lancer tous les tests
 npm test
 
-# Tests en mode watch
-npm run test:watch
-
 # Tests avec couverture
 npm run test:coverage
 ```
@@ -173,7 +170,6 @@ ljv-alumni/
 npm start              # Démarrer en production
 npm run dev            # Démarrer en développement avec nodemon
 npm test               # Lancer les tests
-npm run test:watch     # Tests en mode watch
 npm run test:coverage  # Tests avec couverture de code
 npm run lint           # Vérifier le code avec ESLint
 npm run lint:fix       # Corriger automatiquement les erreurs ESLint
