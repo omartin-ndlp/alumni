@@ -10,17 +10,22 @@ const config = {
 };
 
 async function createDatabase() {
+  const dbName = process.env.DB_NAME || 'ljv_alumni';
+  console.log(`Attempting to create database: ${dbName}`);
   const connection = await mysql.createConnection(config);
   
-  await connection.execute(`CREATE DATABASE IF NOT EXISTS ${process.env.DB_NAME || 'ljv_alumni'} CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci`);
+  await connection.execute(`CREATE DATABASE IF NOT EXISTS ${dbName} CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci`);
   
   await connection.end();
+  console.log(`Database ${dbName} created/ensured.`);
 }
 
 async function runMigrations() {
+  const dbName = process.env.DB_NAME || 'ljv_alumni';
+  console.log(`Attempting to run migrations on database: ${dbName}`);
   const connection = await mysql.createConnection({
     ...config,
-    database: process.env.DB_NAME || 'ljv_alumni'
+    database: dbName
   });
 
   try {

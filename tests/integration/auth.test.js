@@ -3,14 +3,6 @@ const { createConnection, closeConnection, getConnection, releaseConnection } = 
 describe('Auth Integration', () => {
   let connection;
 
-  beforeAll(async () => {
-    await createConnection();
-  });
-
-  afterAll(async () => {
-    await closeConnection();
-  });
-
   beforeEach(async () => {
     connection = await getConnection();
     await connection.beginTransaction();

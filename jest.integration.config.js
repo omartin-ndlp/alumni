@@ -5,5 +5,7 @@ module.exports = {
   setupFilesAfterEnv: [],
   verbose: true,
   
+  globalSetup: './tests/globalSetup.js',
+  globalSetup: './tests/globalSetup.js',
   globalTeardown: './tests/globalTeardown.js',
 };
