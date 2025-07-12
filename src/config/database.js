@@ -43,7 +43,15 @@ const getConnection = () => {
   return pool;
 };
 
+const closeConnection = async () => {
+  if (pool) {
+    await pool.end();
+    console.log('Connexion à la base de données fermée.');
+  }
+};
+
 module.exports = {
   createConnection,
-  getConnection
+  getConnection,
+  closeConnection
 };

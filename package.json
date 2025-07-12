@@ -10,6 +10,7 @@
     "lint:fix": "eslint . --fix",
     "test": "jest",
     "test:coverage": "jest --coverage",
+    "test:integration": "jest --config jest.integration.config.js",
     "db:migrate": "node scripts/migrate.js",
     "db:seed": "node scripts/seed.js",
     "db:backup": "node scripts/backup.js",
