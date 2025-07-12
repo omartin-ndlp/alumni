@@ -8,6 +8,7 @@ const mockGetConnection = jest.fn(() => ({
 
 jest.mock('../../src/config/database', () => ({
   getConnection: mockGetConnection,
+  releaseConnection: jest.fn(), // Mock releaseConnection
 }));
 
 // Mock bcrypt.hash and bcrypt.compare
@@ -77,8 +78,8 @@ describe('User Model', () => {
       };
       mockExecute.mockResolvedValueOnce([{ insertId: 10 }]);
 
-      const insertId = await User.create(userData);
-      expect(insertId).toBe(10);
+      const createdUser = await User.create(userData);
+      expect(createdUser).toEqual({ id: 10, ...userData });
       expect(bcrypt.hash).toHaveBeenCalledWith('password123', 10);
       expect(mockExecute).toHaveBeenCalledWith(expect.any(String), [
         userData.email,
