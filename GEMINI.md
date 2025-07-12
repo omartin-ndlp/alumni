@@ -99,3 +99,5 @@ To avoid Jest tests hanging or running indefinitely, ensure the following:
     -   When using `async/await`, ensure all promises are `await`ed within your `async` test functions.
     -   If not using `async/await`, `return` promises from your tests or use the `done()` callback for older asynchronous patterns.
 -   **Debugging:** Use the `--detectOpenHandles` flag (e.g., `npm test -- --detectOpenHandles`) to identify resources preventing Jest from exiting.
+## Important Instructions
+-   **Do not commit or delete commits without explicit approval.**
