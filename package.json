@@ -11,6 +11,8 @@
     "test": "jest",
     "test:coverage": "jest --coverage",
     "test:integration": "jest --config jest.integration.config.js",
+    "test:integration:conn": "npm run test:integration -- -t \"should connect to the database and retrieve tables\"",
+    "test:integration:tx": "npm run test:integration -- -t \"should insert a new section and roll it back|should confirm previous section insertion was rolled back\"",
     "db:migrate": "node scripts/migrate.js",
     "db:seed": "node scripts/seed.js",
     "db:backup": "node scripts/backup.js",

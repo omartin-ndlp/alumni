@@ -132,10 +132,10 @@ async function runMigrations() {
       ) ENGINE=InnoDB
     `);
 
-    console.log('✅ Toutes les tables ont été créées avec succès');
+    console.log('Toutes les tables ont été créées avec succès');
 
   } catch (error) {
-    console.error('❌ Erreur lors de la création des tables:', error);
+    console.error('Erreur lors de la création des tables:', error);
     throw error;
   } finally {
     await connection.end();
@@ -144,13 +144,13 @@ async function runMigrations() {
 
 async function main() {
   try {
-    console.log('🚀 Début de la migration...');
+    console.log('Début de la migration...');
     await createDatabase();
-    console.log('✅ Base de données créée');
+    console.log('Base de données créée');
     await runMigrations();
-    console.log('✅ Migration terminée avec succès');
+    console.log('Migration terminée avec succès');
   } catch (error) {
-    console.error('❌ Erreur de migration:', error);
+    console.error('Erreur de migration:', error);
     process.exit(1);
   }
 }

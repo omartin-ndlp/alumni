@@ -28,7 +28,7 @@ const createConnection = async () => {
       queueLimit: 0
     });
     
-    console.log(`Connexion à la base de données ${process.env.DB_NAME} @ ${process.env.DB_HOST}  établie`);
+    console.log(`Connexion à la base de données ${process.env.DB_NAME} @ ${process.env.DB_HOST} établie`);
     return pool;
   } catch (error) {
     console.error('Erreur de connexion à la base de données:', error);
@@ -36,11 +36,17 @@ const createConnection = async () => {
   }
 };
 
-const getConnection = () => {
+const getConnection = async () => {
   if (!pool) {
     throw new Error('Base de données non initialisée');
   }
-  return pool;
+  return pool.getConnection(); // Get a connection from the pool
+};
+
+const releaseConnection = (connection) => {
+  if (connection) {
+    connection.release();
+  }
 };
 
 const closeConnection = async () => {
@@ -53,5 +59,6 @@ const closeConnection = async () => {
 module.exports = {
   createConnection,
   getConnection,
-  closeConnection
+  closeConnection,
+  releaseConnection
 };
