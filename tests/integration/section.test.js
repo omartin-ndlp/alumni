@@ -1,7 +1,17 @@
 const { getConnection, releaseConnection } = require('../../src/config/database');
 
 describe('Section Table Database Interactions', () => {
-  let connection; // Re-add connection declaration
+  let connection;
+
+  beforeEach(async () => {
+    connection = await getConnection();
+    await connection.beginTransaction();
+  });
+
+  afterEach(async () => {
+    await connection.rollback();
+    releaseConnection(connection);
+  });
 
   test('should create and retrieve a new section', async () => {
     const sectionName = `Test Section ${Date.now()}`;
