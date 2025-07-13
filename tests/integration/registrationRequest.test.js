@@ -3,7 +3,17 @@ const User = require('../../src/models/User');
 const bcrypt = require('bcryptjs');
 
 describe('Registration Request Database Interactions', () => {
-  let connection; // Re-add connection declaration
+  let connection;
+
+  beforeEach(async () => {
+    connection = await getConnection();
+    await connection.beginTransaction();
+  });
+
+  afterEach(async () => {
+    await connection.rollback();
+    releaseConnection(connection);
+  });
 
   test('should retrieve pending registration requests', async () => {
     const requestData = {
