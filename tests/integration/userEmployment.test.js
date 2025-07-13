@@ -4,7 +4,18 @@ const Employer = require('../../src/models/Employer');
 const bcrypt = require('bcryptjs');
 
 describe('User Employment Database Interactions', () => {
+  let connection;
   let testSectionId = 1;
+
+  beforeEach(async () => {
+    connection = await getConnection();
+    await connection.beginTransaction();
+  });
+
+  afterEach(async () => {
+    await connection.rollback();
+    releaseConnection(connection);
+  });
 
   test('should correctly retrieve user employment details via User.getAll', async () => {
     // Create a user
