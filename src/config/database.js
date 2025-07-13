@@ -5,6 +5,11 @@ const dotenv = require('dotenv');
 
 const createConnection = async () => {
   try {
+    if (global.__TEST_DB_POOL__) {
+      console.log('Using existing database pool (global).');
+      return global.__TEST_DB_POOL__;
+    }
+
     let dbPassword = process.env.DB_PASSWORD;
     let dbName = process.env.DB_NAME || 'ljv_alumni';
     let dbHost = process.env.DB_HOST || 'localhost';
@@ -39,7 +44,7 @@ const createConnection = async () => {
       throw new Error('DB_PASSWORD is not set.');
     }
 
-    const pool = mysql.createPool({
+    global.__TEST_DB_POOL__ = mysql.createPool({
       ...config,
       waitForConnections: true,
       connectionLimit: 10,
@@ -47,7 +52,7 @@ const createConnection = async () => {
     });
 
     console.log(`Connexion à la base de données ${config.database} @ ${config.host} établie`);
-    return pool;
+    return global.__TEST_DB_POOL__;
   } catch (error) {
     console.error('Erreur de connexion à la base de données:', error);
     throw error; // Throw error instead of exiting
@@ -56,7 +61,7 @@ const createConnection = async () => {
 
 const getConnection = async () => {
   if (!global.__TEST_DB_POOL__) {
-    throw new Error('Base de données non initialisée');
+    throw new Error('Base de données non initialisée. Appelez createConnection() d\'abord.');
   }
   return global.__TEST_DB_POOL__.getConnection(); // Get a connection from the pool
 };
@@ -71,6 +76,7 @@ const closeConnection = async () => {
   if (global.__TEST_DB_POOL__) {
     await global.__TEST_DB_POOL__.end();
     console.log('Connexion à la base de données fermée.');
+    global.__TEST_DB_POOL__ = null; // Clear the pool reference
   }
 };
 

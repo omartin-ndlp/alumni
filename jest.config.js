@@ -5,5 +5,7 @@ module.exports = {
   ],
   testPathIgnorePatterns: ['/node_modules/'],
   verbose: true,
-  setupFilesAfterEnv: ['./tests/setupEachTestFile.js', './tests/setupIntegrationTests.js'],
+  setupFilesAfterEnv: ['./tests/setupEachTestFile.js'],
+  globalSetup: './tests/globalSetup.js',
+  globalTeardown: './tests/globalTeardown.js',
 };
