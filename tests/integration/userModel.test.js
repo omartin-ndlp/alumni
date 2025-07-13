@@ -3,6 +3,18 @@ const User = require('../../src/models/User');
 const bcrypt = require('bcryptjs');
 
 describe('User Model Database Interactions', () => {
+  let connection;
+
+  beforeEach(async () => {
+    connection = await getConnection();
+    await connection.beginTransaction();
+  });
+
+  afterEach(async () => {
+    await connection.rollback();
+    releaseConnection(connection);
+  });
+
   test('should create a new user in the database', async () => {
     const uniqueEmail = `new.user.${Date.now()}@example.com`;
     const userData = {
