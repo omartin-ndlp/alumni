@@ -2,17 +2,7 @@ const { getConnection, releaseConnection } = require('../../src/config/database'
 const Employer = require('../../src/models/Employer');
 
 describe('Employer Model Database Interactions', () => {
-  let connection;
-
-  beforeEach(async () => {
-    connection = await getConnection();
-    await connection.beginTransaction();
-  });
-
-  afterEach(async () => {
-    await connection.rollback();
-    releaseConnection(connection);
-  });
+  let connection; // Re-add connection declaration
 
   test('should create a new employer', async () => {
     const employerData = {

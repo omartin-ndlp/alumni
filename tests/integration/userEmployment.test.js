@@ -4,20 +4,7 @@ const Employer = require('../../src/models/Employer');
 const bcrypt = require('bcryptjs');
 
 describe('User Employment Database Interactions', () => {
-  let connection;
   let testSectionId = 1;
-
-  beforeEach(async () => {
-    connection = await getConnection();
-    await connection.beginTransaction();
-    // Ensure a section exists for user creation
-    await connection.query('INSERT INTO sections (id, nom) VALUES (?, ?) ON DUPLICATE KEY UPDATE nom=nom', [testSectionId, 'Test Section']);
-  });
-
-  afterEach(async () => {
-    await connection.rollback();
-    releaseConnection(connection);
-  });
 
   test('should correctly retrieve user employment details via User.getAll', async () => {
     // Create a user
@@ -45,12 +32,12 @@ describe('User Employment Database Interactions', () => {
     );
 
     // Retrieve all users and check for employment details
-    const users = await User.getAll({}, connection);
+    const { users } = await User.getAll({}, connection);
     const foundUser = users.find(u => u.id === userId);
 
     expect(foundUser).toBeDefined();
-    expect(foundUser.current_position).toBe(position);
-    expect(foundUser.current_employer).toBe(employerName);
+    expect(foundUser.current_poste).toBe(position);
+    expect(foundUser.employer_nom).toBe(employerName);
   });
 
   test('should correctly retrieve employees for an employer via Employer.getEmployees', async () => {
@@ -85,7 +72,7 @@ describe('User Employment Database Interactions', () => {
     expect(foundEmployee).toBeDefined();
     expect(foundEmployee.email).toBe(userEmail);
     expect(foundEmployee.poste).toBe(position);
-    expect(foundEmployee.section_nom).toBe('Test Section');
+    expect(foundEmployee.section_nom).toBe('SN IR');
   });
 
   test('should allow direct creation and deletion of user_employment records', async () => {

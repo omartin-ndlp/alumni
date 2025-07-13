@@ -1,5 +1,4 @@
 const mysql = require('mysql2/promise');
-require('dotenv').config();
 
 const config = {
   host: process.env.DB_HOST || 'localhost',
@@ -18,6 +17,17 @@ async function createDatabase() {
   
   await connection.end();
   console.log(`Database ${dbName} created/ensured.`);
+}
+
+async function dropDatabase() {
+  const dbName = process.env.DB_NAME || 'ljv_alumni';
+  console.log(`Attempting to drop database: ${dbName}`);
+  const connection = await mysql.createConnection(config);
+  
+  await connection.execute(`DROP DATABASE IF EXISTS ${dbName}`);
+  
+  await connection.end();
+  console.log(`Database ${dbName} dropped.`);
 }
 
 async function runMigrations() {
@@ -156,7 +166,27 @@ async function main() {
     console.log('Migration terminée avec succès');
   } catch (error) {
     console.error('Erreur de migration:', error);
-    process.exit(1);
+    throw error;
+  }
+}
+
+async function seedCommonData() {
+  const dbName = process.env.DB_NAME || 'ljv_alumni';
+  console.log(`Seeding common data into database: ${dbName}`);
+  const connection = await mysql.createConnection({
+    ...config,
+    database: dbName
+  });
+
+  try {
+    await connection.query("INSERT INTO sections (id, nom, description) VALUES (1, 'SN IR', 'Systèmes Numériques - Informatique et Réseaux'), (2, 'SN ER', 'Systèmes Numériques - Électronique et Réseaux'), (3, 'CIEL IR', 'Cybersécurité, Informatique et réseaux, ÉLectronique - Informatique et Réseaux') ON DUPLICATE KEY UPDATE nom=VALUES(nom), description=VALUES(description)");
+        await connection.query("INSERT INTO employers (id, nom) VALUES (1, 'Google'), (2, 'Microsoft'), (3, 'Apple') ON DUPLICATE KEY UPDATE nom=VALUES(nom)");
+    console.log('Common data seeded successfully.');
+  } catch (error) {
+    console.error('Error seeding common data:', error);
+    throw error;
+  } finally {
+    await connection.end();
   }
 }
 
@@ -164,4 +194,4 @@ if (require.main === module) {
   main();
 }
 
-module.exports = { runMigrations, main };
+module.exports = { runMigrations: main, main, dropDatabase, seedCommonData };

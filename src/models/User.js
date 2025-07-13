@@ -97,69 +97,89 @@ class User {
       if (!connection) {
         connection = await getConnection();
       }
-      let query = `
-        SELECT u.*, s.nom as section_nom,
-               ue.poste as current_position,
-               e.nom as current_employer
-        FROM users u 
-        JOIN sections s ON u.section_id = s.id 
-        LEFT JOIN user_employment ue ON u.id = ue.user_id AND ue.is_current = TRUE
-        LEFT JOIN employers e ON ue.employer_id = e.id
-        WHERE u.is_approved = TRUE AND u.is_active = TRUE
-      `;
-      
+
+      const {
+        annee_diplome,
+        section_id,
+        employer_id,
+        search,
+        sortBy,
+        limit,
+        offset,
+        show_opted_out = false,
+        show_admins = false,
+      } = filters;
+
       const params = [];
-      
-      if (filters.annee_diplome) {
-        query += ' AND u.annee_diplome = ?';
-        params.push(filters.annee_diplome);
+      let whereClauses = ['u.is_approved = TRUE', 'u.is_active = TRUE'];
+
+      if (annee_diplome) {
+        whereClauses.push('u.annee_diplome = ?');
+        params.push(annee_diplome);
       }
-      
-      if (filters.section_id) {
-        query += ' AND u.section_id = ?';
-        params.push(filters.section_id);
+      if (section_id) {
+        whereClauses.push('u.section_id = ?');
+        params.push(section_id);
       }
-      
-      if (filters.employer_id) {
-        query += ' AND ue.employer_id = ?';
-        params.push(filters.employer_id);
+      if (employer_id) {
+        whereClauses.push('ue.employer_id = ?');
+        params.push(employer_id);
       }
-      
-      if (filters.search) {
-        query += ' AND (u.nom LIKE ? OR u.prenom LIKE ? OR e.nom LIKE ?)';
-        const searchTerm = `%${filters.search}%`;
-        params.push(searchTerm, searchTerm, searchTerm);
+      if (search) {
+        whereClauses.push('(u.nom LIKE ? OR u.prenom LIKE ? OR u.email LIKE ? OR e.nom LIKE ?)');
+        const searchTerm = `%${search}%`;
+        params.push(searchTerm, searchTerm, searchTerm, searchTerm);
       }
-      
-      if (!filters.show_opted_out) {
-        query += ' AND u.opt_out_directory = FALSE';
+      if (!show_opted_out) {
+        whereClauses.push('u.opt_out_directory = FALSE');
       }
-      
-      if (!filters.show_admins) {
-        query += ' AND u.is_admin = FALSE';
-      }
-      
-      // Tri
-      if (filters.sort === 'name') {
-        query += ' ORDER BY u.nom, u.prenom';
-      } else if (filters.sort === 'year') {
-        query += ' ORDER BY u.annee_diplome DESC, u.nom, u.prenom';
-      } else if (filters.sort === 'section') {
-        query += ' ORDER BY s.nom, u.annee_diplome DESC, u.nom';
-      } else if (filters.sort === 'employer') {
-        query += ' ORDER BY e.nom, u.nom, u.prenom';
-      } else {
-        query += ' ORDER BY u.created_at DESC';
-      }
-      
-      // Add LIMIT and OFFSET for pagination
-      if (filters.limit !== undefined && filters.offset !== undefined) {
-        query += ' LIMIT ? OFFSET ?';
-        params.push(filters.limit, filters.offset);
+      if (!show_admins) {
+        whereClauses.push('u.is_admin = FALSE');
       }
 
-      const [rows] = await connection.execute(query, params);
-      return rows;
+      const fromAndJoins = `
+        FROM users u
+        JOIN sections s ON u.section_id = s.id
+        LEFT JOIN user_employment ue ON u.id = ue.user_id AND ue.is_current = TRUE
+        LEFT JOIN employers e ON ue.employer_id = e.id
+      `;
+      const whereQuery = `WHERE ${whereClauses.join(' AND ')}`;
+
+      const countQuery = `SELECT COUNT(DISTINCT u.id) as total ${fromAndJoins} ${whereQuery}`;
+      const [countRows] = await connection.execute(countQuery, params);
+      const total = countRows[0].total;
+
+      let orderByClause = 'ORDER BY u.created_at DESC';
+      if (sortBy === 'name') {
+        orderByClause = 'ORDER BY u.nom ASC, u.prenom ASC';
+      } else if (sortBy === 'year') {
+        orderByClause = 'ORDER BY u.annee_diplome DESC, u.nom ASC, u.prenom ASC';
+      } else if (sortBy === 'section') {
+        orderByClause = 'ORDER BY s.nom ASC, u.annee_diplome DESC, u.nom ASC';
+      } else if (sortBy === 'employer') {
+        orderByClause = 'ORDER BY e.nom ASC, u.nom ASC, u.prenom ASC';
+      } else if (sortBy === 'created_at') {
+        orderByClause = 'ORDER BY u.created_at DESC';
+      }
+
+      const limitClause = (limit !== undefined && offset !== undefined) ? 'LIMIT ? OFFSET ?' : '';
+      const limitParams = (limit !== undefined && offset !== undefined) ? [limit, offset] : [];
+
+      const dataQuery = `
+        SELECT
+          u.id, u.email, u.prenom, u.nom, u.annee_diplome, u.created_at,
+          s.id as section_id, s.nom as section_nom,
+          e.id as employer_id, e.nom as employer_nom,
+          ue.poste as current_poste
+        ${fromAndJoins}
+        ${whereQuery}
+        ${orderByClause}
+        ${limitClause}
+      `;
+
+      const [users] = await connection.execute(dataQuery, [...params, ...limitParams]);
+      return { users, total };
+
     } finally {
       if (!dbConnection) {
         releaseConnection(connection);

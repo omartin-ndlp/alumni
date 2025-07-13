@@ -1,31 +1,56 @@
 const mysql = require('mysql2/promise');
+const fs = require('fs');
+const path = require('path');
+const dotenv = require('dotenv');
 
 const createConnection = async () => {
   try {
+    let dbPassword = process.env.DB_PASSWORD;
+    let dbName = process.env.DB_NAME || 'ljv_alumni';
+    let dbHost = process.env.DB_HOST || 'localhost';
+    let dbPort = process.env.DB_PORT || 3306;
+    let dbUser = process.env.DB_USER || 'ljv_alumni';
+
+    if (process.env.NODE_ENV === 'test') {
+      console.log('NODE_ENV is test. Attempting to read from .env.test');
+      const envTestPath = path.resolve(__dirname, '../../.env.test');
+      const envConfig = dotenv.parse(fs.readFileSync(envTestPath));
+      dbPassword = envConfig.DB_PASSWORD;
+      dbName = envConfig.DB_NAME || dbName;
+      dbHost = envConfig.DB_HOST || dbHost;
+      dbPort = envConfig.DB_PORT || dbPort;
+      dbUser = envConfig.DB_USER || dbUser;
+      console.log('DB_PASSWORD read from .env.test:', dbPassword ? '[SET]' : '[UNSET]');
+    }
+
+    console.log('Final DB_PASSWORD value:', dbPassword ? '[SET]' : '[UNSET]');
+
     const config = {
-      host: process.env.DB_HOST || 'localhost',
-      port: process.env.DB_PORT || 3306,
-      user: process.env.DB_USER || 'ljv_alumni',
-      password: process.env.DB_PASSWORD,
-      database: process.env.DB_NAME || 'ljv_alumni',
+      host: dbHost,
+      port: parseInt(dbPort),
+      user: dbUser,
+      password: dbPassword,
+      database: dbName,
       charset: 'utf8mb4',
       timezone: '+00:00'
     };
 
     if (!config.password) {
-      throw new Error('DB_PASSWORD is not set in environment variables.');
+      throw new Error('DB_PASSWORD is not set.');
     }
-    global.__TEST_DB_POOL__ = mysql.createPool({
+
+    const pool = mysql.createPool({
       ...config,
       waitForConnections: true,
       connectionLimit: 10,
       queueLimit: 0
     });
 
-    console.log(`Connexion à la base de données ${process.env.DB_NAME} @ ${process.env.DB_HOST} établie`);
+    console.log(`Connexion à la base de données ${config.database} @ ${config.host} établie`);
+    return pool;
   } catch (error) {
     console.error('Erreur de connexion à la base de données:', error);
-    process.exit(1);
+    throw error; // Throw error instead of exiting
   }
 };
 

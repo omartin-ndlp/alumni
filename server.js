@@ -6,7 +6,7 @@ const morgan = require('morgan');
 const compression = require('compression');
 const rateLimit = require('express-rate-limit');
 if (process.env.NODE_ENV !== 'test') {
-  require('dotenv').config();
+  require('dotenv').config({ override: true });
 }
 
 // Initialize database connection

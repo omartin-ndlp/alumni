@@ -102,3 +102,90 @@ To avoid Jest tests hanging or running indefinitely, ensure the following:
 -   **Test Isolation (Integration Tests):** For integration tests involving the database, use a transaction-based approach. Start a transaction in `beforeEach` and roll it back in `afterEach` to ensure each test runs in an isolated, clean database state.
 ## Important Instructions
 -   **Do not commit or delete commits without explicit approval.**
+
+# Parameter Handling Strategy for `site-alumni` Project
+
+This document outlines the **mandated** strategy for handling environment variables and sensitive parameters within this project. Adhering to these guidelines is crucial for consistent behavior, security, and maintainability across development, testing, and production environments.
+
+## Core Principles
+
+1.  **Environment Differentiation (`NODE_ENV`):** The `NODE_ENV` environment variable is fundamental. It dictates application behavior across `development`, `production`, and `test` environments. **Do not remove or bypass `NODE_ENV` checks.**
+2.  **File-Based Configuration:** All environment-specific variables, especially sensitive ones, **must** be stored in `.env` files and **never** hardcoded or committed to version control.
+3.  **Precedence and Security:** Values from `.env` files must always take precedence over shell environment variables. Sensitive credentials for tests should be sourced directly from files to avoid reliance on the shell environment.
+
+## Implementation Details
+
+### 1. `NODE_ENV` Usage
+
+*   **Purpose:** `NODE_ENV` is used by various parts of the application (e.g., `server.js`, `src/config/database.js`, `helmet` middleware) to adapt behavior based on the current environment.
+*   **Values:** Typically `development`, `production`, or `test`.
+*   **Handling:**
+    *   When running the main application (`npm start`, `npm run dev`), `NODE_ENV` is usually `undefined` or `development` (as set in `.env`).
+    *   When running tests (`npm test`), Jest's setup ensures `NODE_ENV` is set to `test`.
+
+### 2. `.env` Files
+
+*   **`.env` (for Application):**
+    *   **Location:** Project root (`/Users/olivier/dev/site-alumni/.env`).
+    *   **Content:** Contains environment variables for `development` and `production` modes (e.g., `DB_HOST`, `DB_USER`, `DB_PASSWORD`, `PORT`, `SESSION_SECRET`).
+    *   **Version Control:** **Must be `.gitignore`d.**
+    *   **Changes Made:**
+        *   **`server.js`**: Modified the `dotenv.config()` call to `require('dotenv').config({ override: true });`.
+        *   **Reason:** This ensures that any variables defined in `.env` will overwrite existing shell environment variables with the same name, guaranteeing that the values from the file are used. This applies when `NODE_ENV` is not `test`.
+
+*   **`.env.test` (for Tests):**
+    *   **Location:** Project root (`/Users/olivier/dev/site-alumni/.env.test`).
+    *   **Content:** Contains environment variables specifically for the `test` environment (e.g., `DB_HOST`, `DB_USER`, `DB_PASSWORD`, `DB_NAME` for the test database).
+    *   **Version Control:** **Must be `.gitignore`d.**
+    *   **Changes Made:**
+        *   **`tests/globalSetup.js`**: Modified the `dotenv.config()` call to `dotenv.config({ path: path.resolve(__dirname, '../.env.test'), override: true });`.
+        *   **Reason:** This ensures that when Jest starts, the variables from `.env.test` are loaded into `process.env` and take precedence over any existing shell environment variables.
+
+### 3. Database Credential Handling (Critical for Tests)
+
+This is the **mandated and most critical part** of the parameter handling strategy, especially for sensitive database credentials in the test environment.
+
+*   **`src/config/database.js`**:
+    *   **Changes Made:**
+        *   **Added Imports:** `const fs = require('fs');`, `const path = require('path');`, `const dotenv = require('dotenv');`.
+        *   **Modified `createConnection` function:**
+            ```javascript
+            // Inside createConnection function
+            if (process.env.NODE_ENV === 'test') {
+              const envTestPath = path.resolve(__dirname, '../../.env.test');
+              const envConfig = dotenv.parse(fs.readFileSync(envTestPath));
+              dbPassword = envConfig.DB_PASSWORD;
+              dbName = envConfig.DB_NAME || dbName;
+              dbHost = envConfig.DB_HOST || dbHost;
+              dbPort = envConfig.DB_PORT || dbPort;
+              dbUser = envConfig.DB_USER || dbUser;
+            }
+            // ... rest of the function uses dbPassword, dbName, etc.
+            ```
+    *   **Reason:** This change ensures that when `NODE_ENV` is `test`, the `createConnection` function **directly reads and parses the `.env.test` file** to obtain `DB_PASSWORD` and other database connection details. This completely bypasses `process.env` for these specific variables in the test environment.
+    *   **Benefit:** This makes the tests robust against scenarios where `DB_PASSWORD` might be explicitly unset or empty in the shell environment, as the value is always sourced from the `.env.test` file. This is a security best practice as it avoids relying on shell environment variables for sensitive data during testing.
+    *   **For Non-Test Environments:** When `NODE_ENV` is not `test`, `createConnection` continues to rely on `process.env` (which is populated by `dotenv` from the main `.env` file, as configured in `server.js`).
+
+### 4. Test Setup and Teardown
+
+*   **`tests/integration/auth.test.js` (and other integration test files):**
+    *   **Changes Made:** Removed the local `let connection;` declaration and implemented explicit `beforeEach` and `afterEach` blocks within the `describe` block to acquire, use, and release database connections and manage transactions.
+    *   **Reason:** This ensures that each test has a fresh, isolated database state and cleans up after itself, preventing test interference. It also makes the test file self-contained regarding its database connection management.
+
+*   **`jest.config.js`**:
+    *   **Changes Made:** Added `'./tests/setupIntegrationTests.js'` to the `setupFilesAfterEnv` array.
+    *   **Reason:** This ensures that the global `beforeEach` and `afterEach` hooks defined in `tests/setupIntegrationTests.js` (which manage database connections and transactions for integration tests) are executed by Jest for every integration test file.
+
+## Summary of Parameter Flow
+
+1.  **Application Run (`npm start`/`npm run dev`):**
+    *   `server.js` checks `NODE_ENV`. If not `test`, it calls `dotenv.config({ override: true })`, loading variables from `.env` into `process.env`.
+    *   `src/config/database.js` then reads database credentials from `process.env`.
+    *   Other application code reads general variables from `process.env`.
+
+2.  **Test Run (`npm test`):**
+    *   Jest's `globalSetup.js` runs first, setting `NODE_ENV` to `test` and loading variables from `.env.test` into `process.env` using `dotenv.config({ path: ..., override: true })`.
+    *   For database connections, `src/config/database.js` detects `NODE_ENV === 'test'` and **directly reads** `DB_PASSWORD` (and other DB credentials) from `.env.test` using `fs` and `dotenv.parse`, bypassing `process.env` for these specific values.
+    *   Other test code and setup files (like `setupEachTestFile.js`, `setupIntegrationTests.js`) read general variables from `process.env`.
+
+This comprehensive approach ensures that environment variables are handled securely, reliably, and consistently across all operational modes of the `site-alumni` project.

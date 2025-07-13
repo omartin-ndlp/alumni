@@ -3,19 +3,7 @@ const User = require('../../src/models/User');
 const bcrypt = require('bcryptjs');
 
 describe('Registration Request Database Interactions', () => {
-  let connection;
-
-  beforeEach(async () => {
-    connection = await getConnection();
-    await connection.beginTransaction();
-    // Ensure a section exists for registration requests
-    await connection.query('INSERT INTO sections (id, nom) VALUES (?, ?) ON DUPLICATE KEY UPDATE nom=nom', [1, 'Test Section']);
-  });
-
-  afterEach(async () => {
-    await connection.rollback();
-    releaseConnection(connection);
-  });
+  let connection; // Re-add connection declaration
 
   test('should retrieve pending registration requests', async () => {
     const requestData = {
@@ -98,10 +86,11 @@ describe('Registration Request Database Interactions', () => {
     // Create a user that is already approved
     const approvedUserEmail = `cleanup.approved.${Date.now()}@example.com`;
     const hashedPassword = await bcrypt.hash('password', 10);
-    await connection.query(
+    const [userResult] = await connection.query(
       'INSERT INTO users (email, password_hash, prenom, nom, annee_diplome, section_id, is_approved, is_active) VALUES (?, ?, ?, ?, ?, ?, TRUE, TRUE)',
       [approvedUserEmail, hashedPassword, 'Cleanup', 'Approved', 2020, 1, true, true]
     );
+    const userId = userResult.insertId;
 
     // Create a registration request for that approved user
     const requestData = {

@@ -1,4 +1,4 @@
-const { createConnection, closeConnection, getConnection, releaseConnection } = require('../../src/config/database');
+const { getConnection, releaseConnection } = require('../../src/config/database');
 
 describe('Auth Integration', () => {
   let connection;
@@ -12,6 +12,7 @@ describe('Auth Integration', () => {
     await connection.rollback();
     releaseConnection(connection);
   });
+  
 
   test('should have a placeholder test', () => {
     expect(true).toBe(true);

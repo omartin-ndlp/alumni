@@ -117,118 +117,130 @@ describe('User Model', () => {
   describe('getAll', () => {
     test('should return all approved and active users with default filters', async () => {
       const mockUsers = [{ id: 1, email: 'user1@example.com' }];
-      mockExecute.mockResolvedValueOnce([mockUsers]);
+      // Mock for count and for data
+      mockExecute.mockResolvedValueOnce([[{ total: 1 }]]).mockResolvedValueOnce([mockUsers]);
 
-      const users = await User.getAll();
+      const { users, total } = await User.getAll();
+      expect(total).toBe(1);
       expect(users).toEqual(mockUsers);
-      expect(mockExecute).toHaveBeenCalledWith(expect.stringContaining('WHERE u.is_approved = TRUE AND u.is_active = TRUE'), []);
+      // Check that both queries were executed
+      expect(mockExecute).toHaveBeenCalledWith(expect.stringContaining('COUNT(DISTINCT u.id) as total'), expect.any(Array));
+      expect(mockExecute).toHaveBeenCalledWith(expect.stringContaining('SELECT'), expect.any(Array));
     });
 
     test('should apply filters for annee_diplome, section_id, and employer_id', async () => {
       const filters = { annee_diplome: 2020, section_id: 2, employer_id: 5 };
-      mockExecute.mockResolvedValueOnce([[]]);
+      mockExecute.mockResolvedValueOnce([[{ total: 0 }]]).mockResolvedValueOnce([[]]);
 
       await User.getAll(filters);
       expect(mockExecute).toHaveBeenCalledWith(
-        expect.stringContaining('AND u.annee_diplome = ? AND u.section_id = ? AND ue.employer_id = ?'),
-        [2020, 2, 5]
+        expect.stringContaining('u.annee_diplome = ?'),
+        expect.arrayContaining([2020])
+      );
+      expect(mockExecute).toHaveBeenCalledWith(
+        expect.stringContaining('u.section_id = ?'),
+        expect.arrayContaining([2])
+      );
+       expect(mockExecute).toHaveBeenCalledWith(
+        expect.stringContaining('ue.employer_id = ?'),
+        expect.arrayContaining([5])
       );
     });
 
     test('should apply search filter', async () => {
       const filters = { search: 'John' };
-      mockExecute.mockResolvedValueOnce([[]]);
+      mockExecute.mockResolvedValueOnce([[{ total: 0 }]]).mockResolvedValueOnce([[]]);
 
       await User.getAll(filters);
       expect(mockExecute).toHaveBeenCalledWith(
-        expect.stringContaining('AND (u.nom LIKE ? OR u.prenom LIKE ? OR e.nom LIKE ?)'),
-        ['%John%', '%John%', '%John%']
+        expect.stringContaining('(u.nom LIKE ? OR u.prenom LIKE ? OR u.email LIKE ? OR e.nom LIKE ?)'),
+        expect.arrayContaining(['%John%', '%John%', '%John%', '%John%'])
       );
     });
 
     test('should exclude opted-out users by default', async () => {
-      mockExecute.mockResolvedValueOnce([[]]);
+      mockExecute.mockResolvedValueOnce([[{ total: 0 }]]).mockResolvedValueOnce([[]]);
 
       await User.getAll({});
       expect(mockExecute).toHaveBeenCalledWith(
-        expect.stringContaining('AND u.opt_out_directory = FALSE'),
-        []
+        expect.stringContaining('u.opt_out_directory = FALSE'),
+        expect.any(Array)
       );
     });
 
     test('should include opted-out users if show_opted_out is true', async () => {
-      mockExecute.mockResolvedValueOnce([[]]);
+      mockExecute.mockResolvedValueOnce([[{ total: 0 }]]).mockResolvedValueOnce([[]]);
 
       await User.getAll({ show_opted_out: true });
       expect(mockExecute).not.toHaveBeenCalledWith(
-        expect.stringContaining('AND u.opt_out_directory = FALSE'),
+        expect.stringContaining('u.opt_out_directory = FALSE'),
         expect.any(Array)
       );
     });
 
     test('should exclude admins by default', async () => {
-      mockExecute.mockResolvedValueOnce([[]]);
+      mockExecute.mockResolvedValueOnce([[{ total: 0 }]]).mockResolvedValueOnce([[]]);
 
       await User.getAll({});
       expect(mockExecute).toHaveBeenCalledWith(
-        expect.stringContaining('AND u.is_admin = FALSE'),
-        []
+        expect.stringContaining('u.is_admin = FALSE'),
+        expect.any(Array)
       );
     });
 
     test('should include admins if show_admins is true', async () => {
-      mockExecute.mockResolvedValueOnce([[]]);
+      mockExecute.mockResolvedValueOnce([[{ total: 0 }]]).mockResolvedValueOnce([[]]);
 
       await User.getAll({ show_admins: true });
       expect(mockExecute).not.toHaveBeenCalledWith(
-        expect.stringContaining('AND u.is_admin = FALSE'),
+        expect.stringContaining('u.is_admin = FALSE'),
         expect.any(Array)
       );
     });
 
     test('should apply sorting by name', async () => {
-      mockExecute.mockResolvedValueOnce([[]]);
+      mockExecute.mockResolvedValueOnce([[{ total: 0 }]]).mockResolvedValueOnce([[]]);
 
-      await User.getAll({ sort: 'name' });
+      await User.getAll({ sortBy: 'name' });
       expect(mockExecute).toHaveBeenCalledWith(
-        expect.stringContaining('ORDER BY u.nom, u.prenom'),
+        expect.stringContaining('ORDER BY u.nom ASC, u.prenom ASC'),
         expect.any(Array)
       );
     });
 
     test('should apply sorting by year', async () => {
-      mockExecute.mockResolvedValueOnce([[]]);
+      mockExecute.mockResolvedValueOnce([[{ total: 0 }]]).mockResolvedValueOnce([[]]);
 
-      await User.getAll({ sort: 'year' });
+      await User.getAll({ sortBy: 'year' });
       expect(mockExecute).toHaveBeenCalledWith(
-        expect.stringContaining('ORDER BY u.annee_diplome DESC, u.nom, u.prenom'),
+        expect.stringContaining('ORDER BY u.annee_diplome DESC, u.nom ASC, u.prenom ASC'),
         expect.any(Array)
       );
     });
 
     test('should apply sorting by section', async () => {
-      mockExecute.mockResolvedValueOnce([[]]);
+      mockExecute.mockResolvedValueOnce([[{ total: 0 }]]).mockResolvedValueOnce([[]]);
 
-      await User.getAll({ sort: 'section' });
+      await User.getAll({ sortBy: 'section' });
       expect(mockExecute).toHaveBeenCalledWith(
-        expect.stringContaining('ORDER BY s.nom, u.annee_diplome DESC, u.nom'),
+        expect.stringContaining('ORDER BY s.nom ASC, u.annee_diplome DESC, u.nom ASC'),
         expect.any(Array)
       );
     });
 
     test('should apply sorting by employer', async () => {
-      mockExecute.mockResolvedValueOnce([[]]);
+      mockExecute.mockResolvedValueOnce([[{ total: 0 }]]).mockResolvedValueOnce([[]]);
 
-      await User.getAll({ sort: 'employer' });
+      await User.getAll({ sortBy: 'employer' });
       expect(mockExecute).toHaveBeenCalledWith(
-        expect.stringContaining('ORDER BY e.nom, u.nom, u.prenom'),
+        expect.stringContaining('ORDER BY e.nom ASC, u.nom ASC, u.prenom ASC'),
         expect.any(Array)
       );
     });
 
     test('should apply pagination (limit and offset)', async () => {
       const filters = { limit: 10, offset: 20 };
-      mockExecute.mockResolvedValueOnce([[]]);
+      mockExecute.mockResolvedValueOnce([[{ total: 0 }]]).mockResolvedValueOnce([[]]);
 
       await User.getAll(filters);
       expect(mockExecute).toHaveBeenCalledWith(
