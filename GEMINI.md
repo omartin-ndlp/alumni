@@ -100,6 +100,18 @@ To avoid Jest tests hanging or running indefinitely, ensure the following:
     -   If not using `async/await`, `return` promises from your tests or use the `done()` callback for older asynchronous patterns.
 -   **Debugging:** Use the `--detectOpenHandles` flag (e.g., `npm test -- --detectOpenHandles`) to identify resources preventing Jest from exiting.
 -   **Test Isolation (Integration Tests):** For integration tests involving the database, use a transaction-based approach. Start a transaction in `beforeEach` and roll it back in `afterEach` to ensure each test runs in an isolated, clean database state.
+
+## Jest Test Execution Strategy (`--runInBand`)
+
+This project mandates the use of the `--runInBand` flag for all Jest test commands (`npm test`, `npm run test:coverage`, `npm run test:unit`, `npm run test:integration`).
+
+**Rationale:**
+
+During development, an intermittent and alternating pass/fail pattern was observed when running integration tests in Jest's default multi-process worker environment. This issue was traced to the inconsistent propagation of global state, specifically the `global.__TEST_DB_POOL__` database connection pool, from the main Jest process (where `globalSetup` runs) to the individual test worker processes.
+
+While `globalSetup` successfully initializes the database pool, Jest's worker processes do not reliably inherit this global state. This leads to tests failing when they attempt to acquire a database connection from an `undefined` or inaccessible pool. The "every other time" failure pattern was a strong indicator of a resource contention or state leakage issue related to the database connection pool's lifecycle across these separate processes.
+
+By using `--runInBand`, all tests are forced to execute serially within a single Node.js process. This eliminates the multi-process communication overhead and ensures that the `global.__TEST_DB_POOL__` (initialized by `globalSetup`) is consistently available throughout the entire test run, thereby resolving the intermittent failures and providing reliable test results. While this sacrifices the performance benefits of parallel test execution, it prioritizes test stability and consistency, which is crucial for a robust CI/CD pipeline.
 ## Important Instructions
 -   **Do not commit or delete commits without explicit approval.**
 

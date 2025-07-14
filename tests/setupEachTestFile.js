@@ -3,6 +3,9 @@ const { getConnection, releaseConnection } = require('../src/config/database');
 const isIntegrationTest = (testPath) => testPath.includes('tests/integration/');
 
 beforeAll(async () => {
+  console.log('--- setupEachTestFile START ---');
+  console.log('Setup Each Test File PID:', process.pid, 'PPID:', process.ppid);
+  console.log('Setup Each Test File - Keys in global:', Object.keys(global));
   if (isIntegrationTest(expect.getState().testPath)) {
     // Ensure the test database is clean before running tests
     const connection = await getConnection();
