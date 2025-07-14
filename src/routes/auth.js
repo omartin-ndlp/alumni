@@ -96,7 +96,7 @@ router.post('/login', [
 // Page d'inscription
 router.get('/register', auth.redirectIfLoggedIn, async (req, res) => {
   try {
-    const db = getConnection();
+    const db = await getConnection();
     const [sections] = await db.execute('SELECT * FROM sections ORDER BY nom');
     
     res.render('auth/register', {
@@ -123,7 +123,7 @@ router.post('/register', [
   body('section_id').isInt({ min: 1 }).withMessage('Section requise')
 ], async (req, res) => {
   try {
-    const db = getConnection();
+    const db = await getConnection();
     const [sections] = await db.execute('SELECT * FROM sections ORDER BY nom');
     
     const errors = validationResult(req);
@@ -174,7 +174,7 @@ router.post('/register', [
 
   } catch (error) {
     console.error('Erreur d\'inscription:', error);
-    const db = getConnection();
+    const db = await getConnection();
     const [sections] = await db.execute('SELECT * FROM sections ORDER BY nom');
     
     res.render('auth/register', {

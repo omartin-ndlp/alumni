@@ -55,6 +55,9 @@ const createConnection = async () => {
 };
 
 const getConnection = async () => {
+  if (process.env.NODE_ENV === 'test' && global.__TEST_DB_CONNECTION__) {
+    return global.__TEST_DB_CONNECTION__;
+  }
   if (!global.__TEST_DB_POOL__) {
     throw new Error('Base de données non initialisée. Appelez createConnection() d\'abord.');
   }
@@ -62,6 +65,10 @@ const getConnection = async () => {
 };
 
 const releaseConnection = (connection) => {
+  if (process.env.NODE_ENV === 'test' && connection === global.__TEST_DB_CONNECTION__) {
+    // Do not release connection if it's the test's transaction-bound connection
+    return;
+  }
   if (connection) {
     connection.release();
   }

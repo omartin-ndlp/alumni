@@ -91,13 +91,16 @@ app.use((req, res) => {
 });
 
 // Initialisation et démarrage du serveur
+let server;
+
+// Initialisation et démarrage du serveur
 async function startServer() {
   try {
     // Initialiser la connexion à la base de données
     await createConnection();
     
     // Démarrer le serveur
-    app.listen(PORT, () => {
+    server = app.listen(PORT, () => {
       console.log(`Serveur démarré sur le port ${PORT}`);
       console.log(`Mode: ${process.env.NODE_ENV || 'development'}`);
     });
@@ -113,3 +116,4 @@ if (require.main === module) {
 }
 
 module.exports = app;
+module.exports.server = server;
