@@ -3,9 +3,6 @@ const path = require('path');
 const { createConnection } = require('../src/config/database');
 
 module.exports = async () => {
-  console.log('--- GLOBAL SETUP START ---');
-  console.log('Global Setup PID:', process.pid, 'PPID:', process.ppid);
-  console.log('Global Setup - Keys in global:', Object.keys(global));
   try {
     dotenv.config({ path: path.resolve(__dirname, '../.env.test'), override: true });
     process.env.NODE_ENV = 'test';
