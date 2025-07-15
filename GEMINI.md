@@ -101,6 +101,24 @@ To avoid Jest tests hanging or running indefinitely, ensure the following:
 -   **Debugging:** Use the `--detectOpenHandles` flag (e.g., `npm test -- --detectOpenHandles`) to identify resources preventing Jest from exiting.
 -   **Test Isolation (Integration Tests):** For integration tests involving the database, use a transaction-based approach. Start a transaction in `beforeEach` and roll it back in `afterEach` to ensure each test runs in an isolated, clean database state.
 
+- **Preventing Jest from Hanging (TCPSERVERWRAP):**
+    -   **Problem:** Jest hangs after test completion, or `--detectOpenHandles` reports `TCPSERVERWRAP`
+     handles. This typically occurs in integration tests using `supertest` with an Express application, as
+     `supertest` creates an internal HTTP server instance that is not automatically closed by Jest.
+    -   **Solution:** Ensure an `afterAll` hook is present in the test suite. Inside this hook, explicitly
+     close the `supertest` agent's underlying server.
+    -   **Example Code for `afterAll`:**
+          ```afterAll(async () => {
+            // Ensure 'agent' is accessible in this scope (e.g., declared in describe block)
+            if (agent && agent.server && agent.server.close) {
+              await new Promise(resolve => agent.server.close(resolve));
+            }
+          });
+          ```
+     -   **Principle:** Always ensure that any HTTP server instances or other long-lived asynchronous
+     resources initiated during integration tests are explicitly and gracefully shut down in `afterAll` hooks to
+     allow Jest to exit cleanly.
+
 ## Jest Test Execution Strategy (`--runInBand`)
 
 This project mandates the use of the `--runInBand` flag for all Jest test commands (`npm test`, `npm run test:coverage`, `npm run test:unit`, `npm run test:integration`).
