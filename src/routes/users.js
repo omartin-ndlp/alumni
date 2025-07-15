@@ -24,7 +24,7 @@ router.get('/', auth.requireAuth, async (req, res) => {
 
     const users = await User.getAll(filters);
 
-    const db = getConnection();
+    const db = await getConnection();
 
     const [sections] = await db.execute('SELECT * FROM sections ORDER BY nom');
     const employers = await Employer.getWithEmployeeCount();
@@ -87,7 +87,7 @@ router.get('/:id', auth.requireAuth, async (req, res) => {
       });
     }
     
-    const db = getConnection();
+    const db = await getConnection();
     
     // Récupérer l'historique des emplois (seulement si pas d'opt-out)
     let employment = [];
@@ -192,7 +192,7 @@ router.get('/api/users', auth.requireAuth, async (req, res) => {
 
     const users = await User.getAll(filters);
 
-    const db = getConnection();
+    const db = await getConnection();
     const [totalUsersResult] = await db.execute(`
       SELECT COUNT(*) as total FROM users WHERE is_approved = TRUE AND is_active = TRUE
     `);
