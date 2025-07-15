@@ -1,2 +1,78 @@
-<h1>My Profile</h1>
-<p>This is a placeholder for the profile page.</p>
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="mt-4">Profil de <%= displayUser.prenom %> <%= displayUser.nom %></h1>
+        <% if (isOwnProfile) { %>
+            <div>
+                <a href="/profile/edit" class="btn btn-primary me-2">Modifier mon profil</a>
+                <a href="/profile/employment" class="btn btn-info">Mes emplois</a>
+            </div>
+        <% } %>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card mb-4">
+                <div class="card-header">Informations personnelles</div>
+                <div class="card-body">
+                    <p><strong>Email:</strong> <%= displayUser.email %></p>
+                    <p><strong>Année de diplôme:</strong> <%= displayUser.annee_diplome %></p>
+                    <p><strong>Section:</strong> <%= displayUser.section_nom %></p>
+                    <% if (displayUser.statut_emploi) { %>
+                        <p><strong>Statut d'emploi:</strong> <%= displayUser.statut_emploi %></p>
+                    <% } %>
+                    <% if (displayUser.adresse && displayUser.ville && displayUser.code_postal) { %>
+                        <p><strong>Adresse:</strong> <%= displayUser.adresse %>, <%= displayUser.code_postal %> <%= displayUser.ville %>, <%= displayUser.pays %></p>
+                    <% } %>
+                </div>
+            </div>
+
+            <div class="card mb-4">
+                <div class="card-header">Contact</div>
+                <div class="card-body">
+                    <% if (canViewContact) { %>
+                        <p><strong>Téléphone:</strong> <%= displayUser.telephone || 'Non renseigné' %></p>
+                        <p><strong>LinkedIn:</strong> <%= displayUser.linkedin ? `<a href="${displayUser.linkedin}" target="_blank">${displayUser.linkedin}</a>` : 'Non renseigné' %></p>
+                        <p><strong>Twitter:</strong> <%= displayUser.twitter ? `<a href="${displayUser.twitter}" target="_blank">${displayUser.twitter}</a>` : 'Non renseigné' %></p>
+                        <p><strong>Facebook:</strong> <%= displayUser.facebook ? `<a href="${displayUser.facebook}" target="_blank">${displayUser.facebook}</a>` : 'Non renseigné' %></p>
+                        <p><strong>Site Web:</strong> <%= displayUser.site_web ? `<a href="${displayUser.site_web}" target="_blank">${displayUser.site_web}</a>` : 'Non renseigné' %></p>
+                    <% } else { %>
+                        <p class="text-muted">Les informations de contact sont masquées par l'utilisateur.</p>
+                    <% } %>
+                </div>
+            </div>
+
+            <div class="card mb-4">
+                <div class="card-header">Historique des emplois</div>
+                <div class="card-body">
+                    <% if (employment && employment.length > 0) { %>
+                        <ul class="list-group list-group-flush">
+                            <% employment.forEach(job => { %>
+                                <li class="list-group-item">
+                                    <strong><%= job.poste %></strong> chez <%= job.employer_name %>
+                                    (<%= job.date_debut %> - <%= job.is_current ? 'Actuel' : job.date_fin %>)
+                                    <% if (job.secteur) { %><br><small>Secteur: <%= job.secteur %></small><% } %>
+                                    <% if (job.ville) { %><br><small>Lieu: <%= job.ville %></small><% } %>
+                                </li>
+                            <% }); %>
+                        </ul>
+                    <% } else { %>
+                        <p>Aucun emploi enregistré.</p>
+                    <% } %>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card mb-4">
+                <div class="card-header">Photo de profil</div>
+                <div class="card-body text-center">
+                    <% if (displayUser.profile_picture) { %>
+                        <img src="<%= displayUser.profile_picture %>" alt="Photo de profil" class="img-fluid rounded-circle mb-3" style="width: 150px; height: 150px; object-fit: cover;">
+                    <% } else { %>
+                        <i class="bi bi-person-circle" style="font-size: 100px;"></i>
+                    <% } %>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

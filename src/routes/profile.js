@@ -36,7 +36,7 @@ const upload = multer({
 router.get('/', auth.requireAuth, async (req, res) => {
   try {
     const user = await User.findById(req.session.user.id);
-    const db = getConnection();
+    const db = await getConnection();
     
     // Récupérer l'historique des emplois
     const [employment] = await db.execute(`
@@ -67,7 +67,7 @@ router.get('/', auth.requireAuth, async (req, res) => {
 router.get('/edit', auth.requireAuth, async (req, res) => {
   try {
     const user = await User.findById(req.session.user.id);
-    const db = getConnection();
+    const db = await getConnection();
     
     const [sections] = await db.execute('SELECT * FROM sections ORDER BY nom');
     
@@ -102,7 +102,7 @@ router.post('/edit', [
   try {
     const errors = validationResult(req);
     const user = await User.findById(req.session.user.id);
-    const db = getConnection();
+    const db = await getConnection();
     const [sections] = await db.execute('SELECT * FROM sections ORDER BY nom');
 
     if (!errors.isEmpty()) {
@@ -148,7 +148,7 @@ router.post('/edit', [
   } catch (error) {
     console.error('Erreur mise à jour profil:', error);
     const user = await User.findById(req.session.user.id);
-    const db = getConnection();
+    const db = await getConnection();
     const [sections] = await db.execute('SELECT * FROM sections ORDER BY nom');
     
     res.render('profile/edit', {
@@ -163,7 +163,7 @@ router.post('/edit', [
 // Gestion des emplois
 router.get('/employment', auth.requireAuth, async (req, res) => {
   try {
-    const db = getConnection();
+    const db = await getConnection();
     const [employment] = await db.execute(`
       SELECT ue.*, e.nom as employer_name, e.secteur, e.ville
       FROM user_employment ue
@@ -203,10 +203,10 @@ router.post('/employment/add', [
     // Créer ou récupérer l'employeur
     const employer = await Employer.findOrCreate(employer_name, { secteur, ville });
     
-    const db = getConnection();
+    const db = await getConnection();
     
     // Si c'est l'emploi actuel, désactiver les autres emplois actuels
-    if (is_current === 'on') {
+    if (is_current === true) {
       await db.execute(
         'UPDATE user_employment SET is_current = FALSE WHERE user_id = ?',
         [req.session.user.id]
@@ -223,7 +223,7 @@ router.post('/employment/add', [
       poste,
       date_debut,
       date_fin || null,
-      is_current === 'on'
+      is_current === true
     ]);
 
     res.redirect('/profile/employment');
@@ -231,6 +231,91 @@ router.post('/employment/add', [
   } catch (error) {
     console.error('Erreur ajout emploi:', error);
     res.status(500).json({ error: 'Erreur lors de l\'ajout de l\'emploi' });
+  }
+});
+
+// Mettre à jour un emploi
+router.post('/employment/:id', [
+  auth.requireAuth,
+  body('poste').trim().isLength({ min: 2 }).withMessage('Poste requis'),
+  body('date_debut').isISO8601().withMessage('Date de début invalide'),
+  body('date_fin').optional().isISO8601().withMessage('Date de fin invalide'),
+], async (req, res) => {
+  try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ error: 'Données invalides' });
+    }
+
+    const { id } = req.params;
+    const { poste, date_debut, date_fin, is_current } = req.body;
+
+    const db = await getConnection();
+
+    // Vérifier que l'emploi appartient bien à l'utilisateur connecté
+    const [employment] = await db.execute(
+      'SELECT user_id FROM user_employment WHERE id = ?',
+      [id]
+    );
+
+    if (employment.length === 0 || employment[0].user_id !== req.session.user.id) {
+      return res.status(403).json({ error: 'Accès non autorisé' });
+    }
+
+    // Si c'est l'emploi actuel, désactiver les autres emplois actuels
+    if (is_current === 'on') {
+      await db.execute(
+        'UPDATE user_employment SET is_current = FALSE WHERE user_id = ? AND id != ?',
+        [req.session.user.id, id]
+      );
+    }
+
+    await db.execute(`
+      UPDATE user_employment SET
+        poste = ?,
+        date_debut = ?,
+        date_fin = ?,
+        is_current = ?
+      WHERE id = ?
+    `, [
+      poste,
+      date_debut,
+      date_fin || null,
+      is_current === 'on',
+      id
+    ]);
+
+    res.redirect('/profile/employment');
+
+  } catch (error) {
+    console.error('Erreur mise à jour emploi:', error);
+    res.status(500).json({ error: 'Erreur lors de la mise à jour de l\'emploi' });
+  }
+});
+
+// Supprimer un emploi
+router.post('/employment/:id/delete', auth.requireAuth, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const db = await getConnection();
+
+    // Vérifier que l'emploi appartient bien à l'utilisateur connecté
+    const [employment] = await db.execute(
+      'SELECT user_id FROM user_employment WHERE id = ?',
+      [id]
+    );
+
+    if (employment.length === 0 || employment[0].user_id !== req.session.user.id) {
+      return res.status(403).json({ error: 'Accès non autorisé' });
+    }
+
+    await db.execute('DELETE FROM user_employment WHERE id = ?', [id]);
+
+    res.redirect('/profile/employment');
+
+  } catch (error) {
+    console.error('Erreur suppression emploi:', error);
+    res.status(500).json({ error: 'Erreur lors de la suppression de l\'emploi' });
   }
 });
 
