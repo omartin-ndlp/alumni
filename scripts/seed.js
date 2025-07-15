@@ -22,11 +22,11 @@ async function seed() {
 
     // Seed users
     const salt = await bcrypt.genSalt(12);
-    const adminPassword = await bcrypt.hash('adminpassword', salt);
+    const adminPassword = await bcrypt.hash('admin123', salt);
     const userPassword = await bcrypt.hash('password', salt);
     await connection.execute(`
       INSERT IGNORE INTO users (id, nom, prenom, email, password_hash, annee_diplome, section_id, is_approved, is_active, is_admin)
-      VALUES (1, 'Admin', 'User', 'admin@example.com', ?, 2023, 1, TRUE, TRUE, TRUE)
+      VALUES (1, 'Admin', 'User', 'admin@ljv.fr', ?, 2023, 1, TRUE, TRUE, TRUE)
     `, [adminPassword]);
     await connection.execute(`
       INSERT IGNORE INTO users (id, nom, prenom, email, password_hash, annee_diplome, section_id, is_approved, is_active, is_admin)
