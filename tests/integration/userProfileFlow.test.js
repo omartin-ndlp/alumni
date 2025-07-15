@@ -38,8 +38,10 @@ describe('End-to-End User Profile Management Flow', () => {
 
   afterEach(async () => {
     await connection.rollback();
+    if (connection === global.__TEST_DB_CONNECTION__) {
+      global.__TEST_DB_CONNECTION__ = null; // Clear global connection only if it's the one we set
+    }
     releaseConnection(connection);
-    global.__TEST_DB_CONNECTION__ = null;
   });
 
   test('should allow a logged-in user to view their own profile', async () => {

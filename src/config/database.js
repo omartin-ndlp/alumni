@@ -42,11 +42,11 @@ const createConnection = async () => {
     global.__TEST_DB_POOL__ = mysql.createPool({
       ...config,
       waitForConnections: true,
-      connectionLimit: 15,
+      connectionLimit: 10,
       queueLimit: 0
     });
 
-    console.log(`Connexion à la base de données ${config.database} @ ${config.host} établie`);
+    console.log(`Connexion à la base de données ${config.database} @ ${config.host} établie. Pool size: 1`);
     return global.__TEST_DB_POOL__;
   } catch (error) {
     console.error('Erreur de connexion à la base de données:', error);
@@ -59,25 +59,26 @@ const getConnection = async () => {
     return global.__TEST_DB_CONNECTION__;
   }
   if (!global.__TEST_DB_POOL__) {
+    console.error('[DB] getConnection(): global.__TEST_DB_POOL__ is undefined. Throwing error.');
     throw new Error('Base de données non initialisée. Appelez createConnection() d\'abord.');
   }
-  return global.__TEST_DB_POOL__.getConnection();
+  const connection = await global.__TEST_DB_POOL__.getConnection();
+  return connection;
 };
 
 const releaseConnection = (connection) => {
   if (process.env.NODE_ENV === 'test' && connection === global.__TEST_DB_CONNECTION__) {
-    // Do not release connection if it's the test's transaction-bound connection
     return;
-  }
-  if (connection) {
+  } 
+ if (connection) {
     connection.release();
-  }
+ }
 };
 
 const closeConnection = async () => {
   if (global.__TEST_DB_POOL__) {
     await global.__TEST_DB_POOL__.end();
-    console.log('Connexion à la base de données fermée.');
+    console.log('Connexion à la base de données fermée. Pool ended.');
     global.__TEST_DB_POOL__ = null; // Clear the pool reference
   }
 };

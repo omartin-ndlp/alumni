@@ -7,7 +7,6 @@ jest.setTimeout(30000);
 
 beforeAll(async () => {
   if (isIntegrationTest(expect.getState().testPath)) {
-    console.time('db_setup');
     // Ensure the test database is clean before running tests
     const connection = await getConnection();
     await connection.query('SET FOREIGN_KEY_CHECKS = 0');
@@ -23,7 +22,6 @@ beforeAll(async () => {
     const seedConnection = await getConnection();
     await seedConnection.query("INSERT INTO sections (id, nom) VALUES (1, 'SN IR'), (2, 'SN ER'), (3, 'CIEL IR'), (4, 'CIEL ER') ON DUPLICATE KEY UPDATE nom=VALUES(nom)");
     releaseConnection(seedConnection);
-    console.timeEnd('db_setup');
   }
 });
 

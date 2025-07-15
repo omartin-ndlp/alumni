@@ -15,8 +15,10 @@ describe('End-to-End Authentication Flow', () => {
 
   afterEach(async () => {
     await connection.rollback();
+    if (connection === global.__TEST_DB_CONNECTION__) {
+      global.__TEST_DB_CONNECTION__ = null; // Clear global connection only if it's the one we set
+    }
     releaseConnection(connection);
-    global.__TEST_DB_CONNECTION__ = null; // Clear global connection
   });
 
   test('should allow a user to register successfully', async () => {

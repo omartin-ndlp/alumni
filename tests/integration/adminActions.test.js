@@ -13,6 +13,9 @@ describe('Admin Actions Multi-Table Interactions', () => {
 
   afterEach(async () => {
     await connection.rollback();
+    if (connection === global.__TEST_DB_CONNECTION__) {
+      global.__TEST_DB_CONNECTION__ = null; // Clear global connection only if it's the one we set
+    }
     releaseConnection(connection);
   });
 
