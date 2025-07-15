@@ -13,7 +13,7 @@ router.use(auth.requireAdmin);
 // Dashboard admin
 router.get('/', async (req, res) => {
   try {
-    const db = getConnection();
+    const db = await getConnection();
     
     // Run cleanup for registration requests
     await User.cleanUpRegistrationRequests();
@@ -142,7 +142,7 @@ router.get('/users', async (req, res) => {
     query += ` ORDER BY u.${sort} ${order} LIMIT ? OFFSET ?`;
     params.push(limit, offset);
     
-    const db = getConnection();
+    const db = await getConnection();
     const [users] = await db.execute(query, params);
     
     // Compter le total pour la pagination
@@ -183,7 +183,7 @@ router.get('/users', async (req, res) => {
 // Désactiver/Activer un utilisateur
 router.post('/users/:id/toggle-status', async (req, res) => {
   try {
-    const db = getConnection();
+    const db = await getConnection();
     const [users] = await db.execute('SELECT is_active FROM users WHERE id = ?', [req.params.id]);
     
     if (users.length === 0) {
@@ -193,7 +193,7 @@ router.post('/users/:id/toggle-status', async (req, res) => {
     const newStatus = !users[0].is_active;
     await db.execute('UPDATE users SET is_active = ? WHERE id = ?', [newStatus, req.params.id]);
     
-    res.json({ success: true, new_status: newStatus });
+    res.redirect('/admin/users?success=status_updated');
     
   } catch (error) {
     console.error('Erreur changement statut:', error);
@@ -204,7 +204,7 @@ router.post('/users/:id/toggle-status', async (req, res) => {
 // Gestion des sections
 router.get('/sections', async (req, res) => {
   try {
-    const db = getConnection();
+    const db = await getConnection();
     const [sections] = await db.execute(`
       SELECT s.*, COUNT(u.id) as user_count
       FROM sections s
@@ -239,7 +239,7 @@ router.post('/sections/add', [
     }
     
     const { nom, description } = req.body;
-    const db = getConnection();
+    const db = await getConnection();
     
     await db.execute(
       'INSERT INTO sections (nom, description) VALUES (?, ?)',
@@ -270,7 +270,7 @@ router.post('/sections/:id/edit', [
     }
     
     const { nom, description } = req.body;
-    const db = getConnection();
+    const db = await getConnection();
     
     await db.execute(
       'UPDATE sections SET nom = ?, description = ? WHERE id = ?',
@@ -282,6 +282,32 @@ router.post('/sections/:id/edit', [
   } catch (error) {
     console.error('Erreur modification section:', error);
     res.redirect('/admin/sections?error=update_failed');
+  }
+});
+
+// Supprimer une section
+router.post('/sections/:id/delete', auth.requireAuth, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const db = await getConnection();
+
+    // Vérifier que la section n'est pas référencée par des utilisateurs
+    const [usersInSection] = await db.execute(
+      'SELECT id FROM users WHERE section_id = ?',
+      [id]
+    );
+
+    if (usersInSection.length > 0) {
+      return res.redirect('/admin/sections?error=section_in_use');
+    }
+
+    await db.execute('DELETE FROM sections WHERE id = ?', [id]);
+
+    res.redirect('/admin/sections?success=deleted');
+
+  } catch (error) {
+    console.error('Erreur suppression section:', error);
+    res.redirect('/admin/sections?error=delete_failed');
   }
 });
 

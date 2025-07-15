@@ -42,7 +42,7 @@ const createConnection = async () => {
     global.__TEST_DB_POOL__ = mysql.createPool({
       ...config,
       waitForConnections: true,
-      connectionLimit: 10,
+      connectionLimit: 15,
       queueLimit: 0
     });
 

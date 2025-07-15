@@ -11,24 +11,29 @@ describe('End-to-End User Profile Management Flow', () => {
   let userPassword;
   let userId;
 
-  beforeEach(async () => {
-    connection = await getConnection();
-    await connection.beginTransaction();
-    global.__TEST_DB_CONNECTION__ = connection; // For transactional isolation
-
-    // Create and log in a user for each test
+  beforeAll(async () => {
+    // Create and log in a user once for the entire suite
     userEmail = `profile_${Date.now()}@example.com`;
     userPassword = 'password123';
     const hashedPassword = await bcrypt.hash(userPassword, 10);
 
-    const [userResult] = await connection.query(
+    // Use a temporary connection for initial user creation outside of test transaction
+    const tempConnection = await getConnection();
+    const [userResult] = await tempConnection.query(
       'INSERT INTO users (email, password_hash, prenom, nom, annee_diplome, section_id, is_approved, is_active) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
       [userEmail, hashedPassword, 'Profile', 'User', 2020, 1, true, true]
     );
-    userId = userResult.insertId;
+    userId = userResult.insertId; // Capture the ID
+    releaseConnection(tempConnection); // Release the temporary connection
 
     agent = request.agent(app);
     await agent.post('/login').send({ email: userEmail, password: userPassword });
+  });
+
+  beforeEach(async () => {
+    connection = await getConnection();
+    await connection.beginTransaction();
+    global.__TEST_DB_CONNECTION__ = connection; // For transactional isolation
   });
 
   afterEach(async () => {
