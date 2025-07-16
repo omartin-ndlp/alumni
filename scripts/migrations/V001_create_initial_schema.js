@@ -48,8 +48,6 @@ module.exports = {
         facebook VARCHAR(255),
         site_web VARCHAR(255),
         statut_emploi ENUM('etudiant', 'employe', 'freelance', 'chomeur', 'entrepreneur', 'retraite', 'autre') DEFAULT 'autre',
-        opt_out_contact BOOLEAN DEFAULT FALSE,
-        opt_out_directory BOOLEAN DEFAULT FALSE,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
         last_login TIMESTAMP NULL,

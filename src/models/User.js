@@ -107,7 +107,6 @@ class User {
         sortBy,
         limit,
         offset,
-        show_opted_out = false,
         show_admins = false,
       } = filters;
 
@@ -130,9 +129,6 @@ class User {
         whereClauses.push('(u.nom LIKE ? OR u.prenom LIKE ? OR u.email LIKE ? OR e.nom LIKE ?)');
         const searchTerm = `%${search}%`;
         params.push(searchTerm, searchTerm, searchTerm, searchTerm);
-      }
-      if (!show_opted_out) {
-        whereClauses.push('u.opt_out_directory = FALSE');
       }
       if (!show_admins) {
         whereClauses.push('u.is_admin = FALSE');
@@ -200,8 +196,7 @@ class User {
 
       const allowedFields = [
         'prenom', 'nom', 'annee_diplome', 'profile_picture', 'adresse', 'ville', 'code_postal', 'pays',
-        'telephone', 'linkedin', 'twitter', 'facebook', 'site_web', 'statut_emploi',
-        'opt_out_contact', 'opt_out_directory'
+        'telephone', 'linkedin', 'twitter', 'facebook', 'site_web', 'statut_emploi'
       ];
 
       for (const [key, value] of Object.entries(profileData)) {

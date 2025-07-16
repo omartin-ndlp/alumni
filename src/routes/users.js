@@ -16,7 +16,6 @@ router.get('/', auth.requireAuth, async (req, res) => {
     const filters = {
       search,
       sort: sort || 'name',
-      show_opted_out: false,
       show_admins: show_admins === 'true', // Convert string to boolean
       limit,
       offset
@@ -26,7 +25,7 @@ router.get('/', auth.requireAuth, async (req, res) => {
     if (req.query.section_id) filters.section_id = req.query.section_id;
     if (req.query.employer_id) filters.employer_id = req.query.employer_id;
 
-    const users = await User.getAll(filters);
+    const { users, total } = await User.getAll(filters);
 
     const db = await getConnection();
 
@@ -40,12 +39,7 @@ router.get('/', auth.requireAuth, async (req, res) => {
       ORDER BY annee_diplome DESC
     `);
 
-    // Get total count for pagination
-    const [totalUsersResult] = await db.execute(`
-      SELECT COUNT(*) as total FROM users WHERE is_approved = TRUE AND is_active = TRUE
-    `);
-    const totalUsers = totalUsersResult[0].total;
-    const totalPages = Math.ceil(totalUsers / limit);
+    const totalPages = Math.ceil(total / limit);
 
     res.render('users/list', {
       title: 'Annuaire des anciens - Anciens BTS SN/CIEL LJV',
@@ -83,37 +77,24 @@ router.get('/:id', auth.requireAuth, async (req, res) => {
       });
     }
 
-    // Vérifier si l'utilisateur a opté pour ne pas être affiché
-    if (user.opt_out_directory && req.session.user.id !== user.id && !req.session.user.is_admin) {
-      return res.status(404).render('error', {
-        message: 'Profil non accessible',
-        error: {}
-      });
-    }
-
     const db = await getConnection();
 
-    // Récupérer l'historique des emplois (seulement si pas d'opt-out)
+    // Récupérer l'historique des emplois
     let employment = [];
-    if (!user.opt_out_directory || req.session.user.id === user.id || req.session.user.is_admin) {
-      const [employmentData] = await db.execute(`
-        SELECT ue.*, e.nom as employer_name, e.secteur, e.ville
-        FROM user_employment ue
-        JOIN employers e ON ue.employer_id = e.id
-        WHERE ue.user_id = ?
-        ORDER BY ue.is_current DESC, ue.date_debut DESC
-      `, [user.id]);
-      employment = employmentData;
-    }
-
-    // Masquer les informations de contact si opt-out et pas le propriétaire/admin
-    const canViewContact = !user.opt_out_contact || req.session.user.id === user.id || req.session.user.is_admin;
+    const [employmentData] = await db.execute(`
+      SELECT ue.*, e.nom as employer_name, e.secteur, e.ville
+      FROM user_employment ue
+      JOIN employers e ON ue.employer_id = e.id
+      WHERE ue.user_id = ?
+      ORDER BY ue.is_current DESC, ue.date_debut DESC
+    `, [user.id]);
+    employment = employmentData;
 
     res.render('users/profile', {
       title: `${user.prenom} ${user.nom} - Anciens BTS SN/CIEL LJV`,
       displayUser: user,
       employment,
-      canViewContact,
+      canViewContact: true,
       isOwnProfile: req.session.user.id === user.id
     });
 
@@ -184,7 +165,6 @@ router.get('/api/users', auth.requireAuth, async (req, res) => {
     const filters = {
       search,
       sort: sort || 'name',
-      show_opted_out: false,
       show_admins: show_admins === 'true', // Convert string to boolean
       limit,
       offset
@@ -194,14 +174,9 @@ router.get('/api/users', auth.requireAuth, async (req, res) => {
     if (req.query.section_id) filters.section_id = req.query.section_id;
     if (req.query.employer_id) filters.employer_id = req.query.employer_id;
 
-    const users = await User.getAll(filters);
+    const { users, total } = await User.getAll(filters);
 
-    const db = await getConnection();
-    const [totalUsersResult] = await db.execute(`
-      SELECT COUNT(*) as total FROM users WHERE is_approved = TRUE AND is_active = TRUE
-    `);
-    const totalUsers = totalUsersResult[0].total;
-    const totalPages = Math.ceil(totalUsers / limit);
+    const totalPages = Math.ceil(total / limit);
 
     res.json({
       users,
