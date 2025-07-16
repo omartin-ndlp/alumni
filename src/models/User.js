@@ -3,6 +3,12 @@ const bcrypt = require('bcryptjs');
 const crypto = require('crypto');
 
 class User {
+  static getGravatarUrl(email, size = 200) {
+    if (!email) return '';
+    const hash = crypto.createHash('md5').update(email.toLowerCase()).digest('hex');
+    return `https://www.gravatar.com/avatar/${hash}?s=${size}&d=monsterid`;
+  }
+
   static async findByEmail(email, dbConnection = null) {
     let connection = dbConnection;
     try {

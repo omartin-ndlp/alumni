@@ -53,7 +53,8 @@ router.get('/', auth.requireAuth, async (req, res) => {
         total: totalPages,
         hasNext: parseInt(page) < totalPages,
         hasPrev: parseInt(page) > 1
-      }
+      },
+      User // Pass the User model
     });
 
   } catch (error) {
@@ -95,7 +96,8 @@ router.get('/:id', auth.requireAuth, async (req, res) => {
       displayUser: user,
       employment,
       canViewContact: true,
-      isOwnProfile: req.session.user.id === user.id
+      isOwnProfile: req.session.user.id === user.id,
+      User // Pass the User model
     });
 
   } catch (error) {
@@ -143,7 +145,8 @@ router.get('/employers/:id', auth.requireAuth, async (req, res) => {
     res.render('users/employer-detail', {
       title: `${employer.nom} - Employeurs - Anciens BTS SN/CIEL LJV`,
       employer,
-      employees
+      employees,
+      User // Pass the User model
     });
 
   } catch (error) {

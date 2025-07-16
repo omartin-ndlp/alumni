@@ -1,6 +1,4 @@
 const express = require('express');
-const multer = require('multer');
-const path = require('path');
 const { body, validationResult } = require('express-validator');
 const User = require('../models/User');
 const Employer = require('../models/Employer');
@@ -8,29 +6,6 @@ const { getConnection } = require('../config/database');
 const auth = require('../middleware/auth');
 
 const router = express.Router();
-
-// Configuration de multer pour l'upload d'images
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, 'public/uploads/');
-  },
-  filename: (req, file, cb) => {
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-    cb(null, 'profile-' + uniqueSuffix + path.extname(file.originalname));
-  }
-});
-
-const upload = multer({
-  storage,
-  limits: { fileSize: 5 * 1024 * 1024 }, // 5MB
-  fileFilter: (req, file, cb) => {
-    if (file.mimetype.startsWith('image/')) {
-      cb(null, true);
-    } else {
-      cb(new Error('Seules les images sont autorisées'));
-    }
-  }
-});
 
 // Afficher le profil
 router.get('/', auth.requireAuth, async (req, res) => {
@@ -52,7 +27,8 @@ router.get('/', auth.requireAuth, async (req, res) => {
       displayUser: user,
       employment,
       isOwnProfile: true,
-      canViewContact: !user.opt_out_contact || true // Always true for own profile
+      canViewContact: true,
+      User: User // Pass the User model to the template
     });
   } catch (error) {
     console.error('Erreur profil:', error);
@@ -89,7 +65,6 @@ router.get('/edit', auth.requireAuth, async (req, res) => {
 // Traitement de la modification du profil
 router.post('/edit', [
   auth.requireAuth,
-  upload.single('profile_picture'),
   body('prenom').trim().isLength({ min: 2 }).withMessage('Prénom requis'),
   body('nom').trim().isLength({ min: 2 }).withMessage('Nom requis'),
   body('telephone').optional().isMobilePhone('fr-FR').withMessage('Numéro de téléphone invalide'),
@@ -128,14 +103,7 @@ router.post('/edit', [
       facebook: req.body.facebook || null,
       site_web: req.body.site_web || null,
       statut_emploi: req.body.statut_emploi,
-      opt_out_contact: req.body.opt_out_contact === 'on',
-      opt_out_directory: req.body.opt_out_directory === 'on'
     };
-
-    // Ajouter l'image si uploadée
-    if (req.file) {
-      updateData.profile_picture = '/uploads/' + req.file.filename;
-    }
 
     await User.updateProfile(req.session.user.id, updateData);
 

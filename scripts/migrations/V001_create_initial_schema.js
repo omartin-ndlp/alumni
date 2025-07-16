@@ -37,7 +37,6 @@ module.exports = {
         is_admin BOOLEAN DEFAULT FALSE,
         is_approved BOOLEAN DEFAULT FALSE,
         is_active BOOLEAN DEFAULT TRUE,
-        profile_picture VARCHAR(255),
         adresse TEXT,
         ville VARCHAR(100),
         code_postal VARCHAR(10),

@@ -289,7 +289,8 @@ router.get('/dashboard', auth.requireAuth, async (req, res) => {
     
     res.render('dashboard', {
       title: 'Tableau de bord - Anciens BTS SN/CIEL LJV',
-      recentUsers
+      recentUsers,
+      User // Pass the User model
     });
   } catch (error) {
     console.error('Erreur dashboard:', error);

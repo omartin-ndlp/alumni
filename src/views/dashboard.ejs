@@ -53,30 +53,14 @@
     <div class="col-12">
         <h3>Nouveaux membres</h3>
         <div class="row">
-            <% recentUsers.forEach(user => { %>
+            <% recentUsers.forEach(user => {
+            %>
             <div class="col-md-6 col-lg-4 mb-3">
                 <div class="card">
                     <div class="card-body">
                         <div class="d-flex align-items-center">
-                            <% if (user.profile_picture) { %>
-                            <img src="<%= user.profile_picture %>" class="rounded-circle me-3" 
-                                 style="width: 50px; height: 50px; object-fit: cover;" alt="Photo">
-                            <% } else { %>
-                            <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center me-3"
-                                 style="width: 50px; height: 50px;">
-                                <%= user.prenom.charAt(0) %><%= user.nom.charAt(0) %>
-                            </div>
-                            <% } %>
-                            <div>
-                                <h6 class="mb-0">
-                                    <a href="/users/<%= user.id %>" class="text-decoration-none">
-                                        <%= user.prenom %> <%= user.nom %>
-                                    </a>
-                                </h6>
-                                <small class="text-muted">
-                                    <%= user.section_nom %> - <%= user.annee_diplome %>
-                                </small>
-                            </div>
+                            <img src="<%= User.getGravatarUrl(user.email, 50) %>" class="rounded-circle me-3 gravatar-img" 
+                                 style="width: 50px; height: 50px; object-fit: cover;">
                         </div>
                     </div>
                 </div>
@@ -100,3 +84,14 @@
     </div>
 </div>
 <% } %>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Handle Gravatar image loading
+    document.querySelectorAll('.gravatar-img').forEach(img => {
+        img.addEventListener('error', function() {
+            this.classList.add('d-none'); // Hide the image on error
+        });
+    });
+});
+</script>

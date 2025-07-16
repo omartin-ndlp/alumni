@@ -66,11 +66,7 @@
             <div class="card mb-4">
                 <div class="card-header">Photo de profil</div>
                 <div class="card-body text-center">
-                    <% if (displayUser.profile_picture) { %>
-                        <img src="<%= displayUser.profile_picture %>" alt="Photo de profil" class="img-fluid rounded-circle mb-3" style="width: 150px; height: 150px; object-fit: cover;">
-                    <% } else { %>
-                        <i class="bi bi-person-circle" style="font-size: 100px;"></i>
-                    <% } %>
+                    <img src="<%= User.getGravatarUrl(displayUser.email, 150) %>" class="rounded-circle img-fluid gravatar-img" style="width: 150px; height: 150px; object-fit: cover;">
                 </div>
             </div>
         </div>
