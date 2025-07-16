@@ -16,7 +16,7 @@
             <h5 class="card-title">Employés (<%= employees.length %>)</h5>
             <div class="list-group list-group-flush">
                 <% employees.forEach(employee => { %>
-                <a href="/users/<%= employee.id %>" class="list-group-item list-group-item-action d-flex align-items-center">
+                <a href="/users/<%= employee.id %>" class="list-group-item bg-info-subtle d-flex align-items-center">
                     <% if (employee.profile_picture) { %>
                     <img src="<%= employee.profile_picture %>" class="rounded-circle me-3" 
                          style="width: 40px; height: 40px; object-fit: cover;" alt="Photo de profil">
@@ -27,7 +27,7 @@
                     </div>
                     <% } %>
                     <div>
-                        <h6 class="mb-0"><%= employee.prenom %> <%= employee.nom %></h6>
+                        <h6 class="mb-0 text-dark"><%= employee.prenom %> <%= employee.nom %></h6>
                         <small class="text-muted"><%= employee.poste %> (<%= new Date(employee.date_debut).getFullYear() %> - <%= employee.is_current ? 'Actuel' : (employee.date_fin ? new Date(employee.date_fin).getFullYear() : 'N/A') %>)</small>
                     </div>
                 </a>
