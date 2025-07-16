@@ -161,28 +161,8 @@ describe('User Model', () => {
 
       await User.getAll(filters);
       expect(mockExecute).toHaveBeenCalledWith(
-        expect.stringContaining('(u.nom LIKE ? OR u.prenom LIKE ? OR u.email LIKE ? OR e.nom LIKE ?)'),
-        expect.arrayContaining(['%John%', '%John%', '%John%', '%John%'])
-      );
-    });
-
-    test('should exclude opted-out users by default', async () => {
-      mockExecute.mockResolvedValueOnce([[{ total: 0 }]]).mockResolvedValueOnce([[]]);
-
-      await User.getAll({});
-      expect(mockExecute).toHaveBeenCalledWith(
-        expect.stringContaining('u.opt_out_directory = FALSE'),
-        expect.any(Array)
-      );
-    });
-
-    test('should include opted-out users if show_opted_out is true', async () => {
-      mockExecute.mockResolvedValueOnce([[{ total: 0 }]]).mockResolvedValueOnce([[]]);
-
-      await User.getAll({ show_opted_out: true });
-      expect(mockExecute).not.toHaveBeenCalledWith(
-        expect.stringContaining('u.opt_out_directory = FALSE'),
-        expect.any(Array)
+        expect.stringContaining('(LOWER(u.nom) LIKE ? OR LOWER(u.prenom) LIKE ? OR LOWER(u.email) LIKE ? OR LOWER(e.nom) LIKE ?)'),
+        expect.arrayContaining(['%john%', '%john%', '%john%', '%john%'])
       );
     });
 

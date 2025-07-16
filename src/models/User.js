@@ -126,8 +126,8 @@ class User {
         params.push(employer_id);
       }
       if (search) {
-        whereClauses.push('(u.nom LIKE ? OR u.prenom LIKE ? OR u.email LIKE ? OR e.nom LIKE ?)');
-        const searchTerm = `%${search}%`;
+        whereClauses.push('(LOWER(u.nom) LIKE ? OR LOWER(u.prenom) LIKE ? OR LOWER(u.email) LIKE ? OR LOWER(e.nom) LIKE ?)');
+        const searchTerm = `%${search.toLowerCase()}%`;
         params.push(searchTerm, searchTerm, searchTerm, searchTerm);
       }
       if (!show_admins) {
