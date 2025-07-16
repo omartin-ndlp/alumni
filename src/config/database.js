@@ -39,7 +39,7 @@ const createConnection = async () => {
       throw new Error('DB_PASSWORD is not set.');
     }
 
-    global.__TEST_DB_POOL__ = mysql.createPool({
+    global.__TEST_DB_POOL__ = await mysql.createPool({
       ...config,
       waitForConnections: true,
       connectionLimit: 10,
@@ -69,10 +69,10 @@ const getConnection = async () => {
 const releaseConnection = (connection) => {
   if (process.env.NODE_ENV === 'test' && connection === global.__TEST_DB_CONNECTION__) {
     return;
-  } 
- if (connection) {
+  }
+  if (connection) {
     connection.release();
- }
+  }
 };
 
 const closeConnection = async () => {

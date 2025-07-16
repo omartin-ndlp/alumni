@@ -49,7 +49,7 @@ class Employer {
         INSERT INTO employers (nom, secteur, ville)
         VALUES (?, ?, ?)
       `, [employerData.nom, employerData.secteur || null, employerData.ville || null]);
-      
+
       return { id: result.insertId, ...employerData };
     } finally {
       if (!dbConnection) {
@@ -60,7 +60,7 @@ class Employer {
 
   static async findOrCreate(name, additionalData = {}, dbConnection = null) {
     let employer = await this.findByName(name, dbConnection);
-    
+
     if (!employer) {
       const createdEmployer = await this.create({
         nom: name,
@@ -68,7 +68,7 @@ class Employer {
       }, dbConnection);
       employer = await this.findById(createdEmployer.id, dbConnection);
     }
-    
+
     return employer;
   }
 
@@ -110,7 +110,7 @@ class Employer {
         UPDATE employers SET ${fields.join(', ')}, updated_at = NOW()
         WHERE id = ?
       `, values);
-      
+
       return result.affectedRows > 0;
     } finally {
       if (!dbConnection) {

@@ -17,8 +17,8 @@ async function seed() {
 
   try {
     // Seed sections
-    await connection.execute("INSERT IGNORE INTO sections (id, nom, description) VALUES (1, 'SN', 'Systèmes Numériques')");
-    await connection.execute("INSERT IGNORE INTO sections (id, nom, description) VALUES (2, 'CIEL', 'Cybersécurité, Informatique et réseaux, Électronique')");
+    await connection.execute('INSERT IGNORE INTO sections (id, nom, description) VALUES (1, \'SN\', \'Systèmes Numériques\')');
+    await connection.execute('INSERT IGNORE INTO sections (id, nom, description) VALUES (2, \'CIEL\', \'Cybersécurité, Informatique et réseaux, Électronique\')');
 
     // Seed users
     const salt = await bcrypt.genSalt(12);

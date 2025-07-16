@@ -40,7 +40,7 @@ async function seedDatabase() {
     // Créer un compte administrateur par défaut
     const adminPassword = await bcrypt.hash('admin123', 12);
     const [sections] = await connection.execute('SELECT id FROM sections LIMIT 1');
-    
+
     if (sections.length > 0) {
       await connection.execute(`
         INSERT INTO users (

@@ -19,22 +19,24 @@ const PORT = process.env.PORT || 3000;
 app.use(helmet({
   contentSecurityPolicy: {
     directives: {
-      defaultSrc: ["'self'"],
-      styleSrc: ["'self'", "'unsafe-inline'", "https://cdn.jsdelivr.net"],
-      scriptSrc: ["'self'", "https://cdn.jsdelivr.net", "'unsafe-inline'"],
-      imgSrc: ["'self'", "data:", "https:"],
+      defaultSrc: ['\'self\''],
+      styleSrc: ['\'self\'', '\'unsafe-inline\'', 'https://cdn.jsdelivr.net'],
+      scriptSrc: ['\'self\'', 'https://cdn.jsdelivr.net', '\'unsafe-inline\''],
+      imgSrc: ['\'self\'', 'data:', 'https:'],
     },
   },
   hsts: process.env.NODE_ENV === 'production',
 }));
 
 // Rate limiting
-const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100, // limite chaque IP à 100 requêtes par windowMs
-  message: 'Trop de requêtes depuis cette IP, veuillez réessayer plus tard.'
-});
-app.use(limiter);
+if (process.env.NODE_ENV === 'production') {
+  const limiter = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: 100, // limite chaque IP à 100 requêtes par windowMs
+    message: 'Trop de requêtes depuis cette IP, veuillez réessayer plus tard.'
+  });
+  app.use(limiter);
+}
 
 // Middleware général
 app.use(compression());
@@ -74,9 +76,9 @@ app.use('/users', require('./src/routes/users'));
 app.use('/admin', require('./src/routes/admin'));
 
 // Middleware de gestion d'erreurs
-app.use((err, req, res, next) => {
+app.use((err, req, res, _next) => {
   console.error(err.stack);
-  res.status(500).render('error', { 
+  res.status(500).render('error', {
     message: 'Une erreur interne est survenue',
     error: process.env.NODE_ENV === 'development' ? err : {}
   });
@@ -84,7 +86,7 @@ app.use((err, req, res, next) => {
 
 // Route 404
 app.use((req, res) => {
-  res.status(404).render('error', { 
+  res.status(404).render('error', {
     message: 'Page non trouvée',
     error: {}
   });
@@ -98,7 +100,7 @@ async function startServer() {
   try {
     // Initialiser la connexion à la base de données
     await createConnection();
-    
+
     // Démarrer le serveur
     server = app.listen(PORT, () => {
       console.log(`Serveur démarré sur le port ${PORT}`);

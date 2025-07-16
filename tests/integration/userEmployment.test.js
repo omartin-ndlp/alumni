@@ -5,7 +5,7 @@ const bcrypt = require('bcryptjs');
 
 describe('User Employment Database Interactions', () => {
   let connection;
-  let testSectionId = 1;
+  const testSectionId = 1;
 
   beforeEach(async () => {
     connection = await getConnection();

@@ -1,4 +1,14 @@
+const dotenv = require('dotenv');
+const path = require('path');
+
+// Load .env.test if NODE_ENV is 'test'
+if (process.env.NODE_ENV === 'test') {
+  dotenv.config({ path: path.resolve(__dirname, '../.env.test'), override: true });
+} else {
+  dotenv.config();
+}
 const mysql = require('mysql2/promise');
+const fs = require('fs');
 
 const config = {
   host: process.env.DB_HOST || 'localhost',
@@ -8,13 +18,20 @@ const config = {
   charset: 'utf8mb4'
 };
 
+if (!config.password) {
+  console.error('Error: DB_PASSWORD is not set in your .env file.');
+  process.exit(1);
+}
+
+console.log(`DB_PASSWORD: ${process.env.DB_PASSWORD ? '*****' : 'NOT SET'}`);
+
 async function createDatabase() {
   const dbName = process.env.DB_NAME || 'ljv_alumni';
   console.log(`Attempting to create database: ${dbName}`);
   const connection = await mysql.createConnection(config);
-  
+
   await connection.execute(`CREATE DATABASE IF NOT EXISTS ${dbName} CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci`);
-  
+
   await connection.end();
   console.log(`Database ${dbName} created/ensured.`);
 }
@@ -23,9 +40,9 @@ async function dropDatabase() {
   const dbName = process.env.DB_NAME || 'ljv_alumni';
   console.log(`Attempting to drop database: ${dbName}`);
   const connection = await mysql.createConnection(config);
-  
+
   await connection.execute(`DROP DATABASE IF EXISTS ${dbName}`);
-  
+
   await connection.end();
   console.log(`Database ${dbName} dropped.`);
 }
@@ -39,118 +56,45 @@ async function runMigrations() {
   });
 
   try {
-    // Table des sections
+    // Create migrations table if it doesn't exist
     await connection.execute(`
-      CREATE TABLE IF NOT EXISTS sections (
+      CREATE TABLE IF NOT EXISTS migrations (
         id INT AUTO_INCREMENT PRIMARY KEY,
-        nom VARCHAR(50) NOT NULL UNIQUE,
-        description TEXT,
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+        name VARCHAR(255) NOT NULL UNIQUE,
+        applied_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       ) ENGINE=InnoDB
     `);
 
-    // Table des employeurs
-    await connection.execute(`
-      CREATE TABLE IF NOT EXISTS employers (
-        id INT AUTO_INCREMENT PRIMARY KEY,
-        nom VARCHAR(255) NOT NULL,
-        secteur VARCHAR(100),
-        ville VARCHAR(100),
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-        INDEX idx_nom (nom)
-      ) ENGINE=InnoDB
-    `);
+    const migrationsDir = path.join(__dirname, 'migrations');
+    const migrationFiles = fs.readdirSync(migrationsDir)
+      .filter(file => file.endsWith('.js'))
+      .sort(); // Ensure migrations are run in order
 
-    // Table des utilisateurs
-    await connection.execute(`
-      CREATE TABLE IF NOT EXISTS users (
-        id INT AUTO_INCREMENT PRIMARY KEY,
-        email VARCHAR(255) NOT NULL UNIQUE,
-        password_hash VARCHAR(255) NOT NULL,
-        prenom VARCHAR(100) NOT NULL,
-        nom VARCHAR(100) NOT NULL,
-        annee_diplome YEAR NOT NULL,
-        section_id INT NOT NULL,
-        is_admin BOOLEAN DEFAULT FALSE,
-        is_approved BOOLEAN DEFAULT FALSE,
-        is_active BOOLEAN DEFAULT TRUE,
-        profile_picture VARCHAR(255),
-        adresse TEXT,
-        ville VARCHAR(100),
-        code_postal VARCHAR(10),
-        pays VARCHAR(100) DEFAULT 'France',
-        telephone VARCHAR(20),
-        linkedin VARCHAR(255),
-        twitter VARCHAR(255),
-        facebook VARCHAR(255),
-        site_web VARCHAR(255),
-        statut_emploi ENUM('etudiant', 'employe', 'freelance', 'chomeur', 'entrepreneur', 'retraite', 'autre') DEFAULT 'autre',
-        opt_out_contact BOOLEAN DEFAULT FALSE,
-        opt_out_directory BOOLEAN DEFAULT FALSE,
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-        last_login TIMESTAMP NULL,
-        FOREIGN KEY (section_id) REFERENCES sections(id),
-        INDEX idx_email (email),
-        INDEX idx_annee_diplome (annee_diplome),
-        INDEX idx_section (section_id),
-        INDEX idx_nom (nom, prenom)
-      ) ENGINE=InnoDB
-    `);
+    for (const file of migrationFiles) {
+      const migrationName = file;
+      const [rows] = await connection.execute(
+        'SELECT id FROM migrations WHERE name = ?',
+        [migrationName]
+      );
 
-    // Table des emplois (historique)
-    await connection.execute(`
-      CREATE TABLE IF NOT EXISTS user_employment (
-        id INT AUTO_INCREMENT PRIMARY KEY,
-        user_id INT NOT NULL,
-        employer_id INT NOT NULL,
-        poste VARCHAR(255) NOT NULL,
-        date_debut DATE,
-        date_fin DATE NULL,
-        is_current BOOLEAN DEFAULT FALSE,
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-        FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
-        FOREIGN KEY (employer_id) REFERENCES employers(id),
-        INDEX idx_user (user_id),
-        INDEX idx_employer (employer_id),
-        INDEX idx_current (is_current)
-      ) ENGINE=InnoDB
-    `);
+      if (rows.length === 0) {
+        console.log(`Applying migration: ${migrationName}`);
+        const migration = require(path.join(migrationsDir, file));
+        await migration.up(connection);
+        await connection.execute(
+          'INSERT INTO migrations (name) VALUES (?)',
+          [migrationName]
+        );
+        console.log(`Migration ${migrationName} applied successfully.`);
+      } else {
+        console.log(`Migration ${migrationName} already applied. Skipping.`);
+      }
+    }
 
-    // Table des demandes d'inscription en attente
-    await connection.execute(`
-      CREATE TABLE IF NOT EXISTS registration_requests (
-        id INT AUTO_INCREMENT PRIMARY KEY,
-        email VARCHAR(255) NOT NULL UNIQUE,
-        prenom VARCHAR(100) NOT NULL,
-        nom VARCHAR(100) NOT NULL,
-        annee_diplome YEAR NOT NULL,
-        section_id INT NOT NULL,
-        message TEXT,
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        FOREIGN KEY (section_id) REFERENCES sections(id),
-        INDEX idx_email (email),
-        INDEX idx_created (created_at)
-      ) ENGINE=InnoDB
-    `);
-
-    // Table des sessions (optionnel, pour stocker en DB)
-    await connection.execute(`
-      CREATE TABLE IF NOT EXISTS sessions (
-        session_id VARCHAR(128) NOT NULL PRIMARY KEY,
-        expires INT UNSIGNED NOT NULL,
-        data MEDIUMTEXT,
-        INDEX idx_expires (expires)
-      ) ENGINE=InnoDB
-    `);
-
-    console.log('Toutes les tables ont été créées avec succès');
+    console.log('All migrations processed.');
 
   } catch (error) {
-    console.error('Erreur lors de la création des tables:', error);
+    console.error('Error during migration process:', error);
     throw error;
   } finally {
     await connection.end();
@@ -179,8 +123,8 @@ async function seedCommonData() {
   });
 
   try {
-    await connection.query("INSERT INTO sections (id, nom, description) VALUES (1, 'SN IR', 'Systèmes Numériques - Informatique et Réseaux'), (2, 'SN ER', 'Systèmes Numériques - Électronique et Réseaux'), (3, 'CIEL IR', 'Cybersécurité, Informatique et réseaux, ÉLectronique - Informatique et Réseaux') ON DUPLICATE KEY UPDATE nom=VALUES(nom), description=VALUES(description)");
-        await connection.query("INSERT INTO employers (id, nom) VALUES (1, 'Google'), (2, 'Microsoft'), (3, 'Apple') ON DUPLICATE KEY UPDATE nom=VALUES(nom)");
+    await connection.query('INSERT INTO sections (id, nom, description) VALUES (1, \'SN IR\', \'Systèmes Numériques - Informatique et Réseaux\'), (2, \'SN ER\', \'Systèmes Numériques - Électronique et Réseaux\'), (3, \'CIEL IR\', \'Cybersécurité, Informatique et réseaux, ÉLectronique - Informatique et Réseaux\') ON DUPLICATE KEY UPDATE nom=VALUES(nom), description=VALUES(description)');
+    await connection.query('INSERT INTO employers (id, nom) VALUES (1, \'Google\'), (2, \'Microsoft\'), (3, \'Apple\') ON DUPLICATE KEY UPDATE nom=VALUES(nom)');
     console.log('Common data seeded successfully.');
   } catch (error) {
     console.error('Error seeding common data:', error);

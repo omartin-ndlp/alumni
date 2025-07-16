@@ -37,7 +37,7 @@ router.get('/', auth.requireAuth, async (req, res) => {
   try {
     const user = await User.findById(req.session.user.id);
     const db = await getConnection();
-    
+
     // Récupérer l'historique des emplois
     const [employment] = await db.execute(`
       SELECT ue.*, e.nom as employer_name, e.secteur, e.ville
@@ -68,9 +68,9 @@ router.get('/edit', auth.requireAuth, async (req, res) => {
   try {
     const user = await User.findById(req.session.user.id);
     const db = await getConnection();
-    
+
     const [sections] = await db.execute('SELECT * FROM sections ORDER BY nom');
-    
+
     res.render('profile/edit', {
       title: 'Modifier mon profil - Anciens BTS SN/CIEL LJV',
       user,
@@ -150,7 +150,7 @@ router.post('/edit', [
     const user = await User.findById(req.session.user.id);
     const db = await getConnection();
     const [sections] = await db.execute('SELECT * FROM sections ORDER BY nom');
-    
+
     res.render('profile/edit', {
       title: 'Modifier mon profil - Anciens BTS SN/CIEL LJV',
       user,
@@ -199,12 +199,12 @@ router.post('/employment/add', [
     }
 
     const { employer_name, poste, date_debut, date_fin, is_current, secteur, ville } = req.body;
-    
+
     // Créer ou récupérer l'employeur
     const employer = await Employer.findOrCreate(employer_name, { secteur, ville });
-    
+
     const db = await getConnection();
-    
+
     // Si c'est l'emploi actuel, désactiver les autres emplois actuels
     if (is_current === true) {
       await db.execute(
@@ -212,7 +212,7 @@ router.post('/employment/add', [
         [req.session.user.id]
       );
     }
-    
+
     // Ajouter le nouvel emploi
     await db.execute(`
       INSERT INTO user_employment (user_id, employer_id, poste, date_debut, date_fin, is_current)

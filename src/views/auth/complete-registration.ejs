@@ -1,0 +1,83 @@
+<div class="min-vh-100 d-flex align-items-center bg-light">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-8 col-lg-6">
+                <div class="card shadow">
+                    <div class="card-body p-5">
+                        <div class="text-center mb-4">
+                            <i class="bi bi-person-check text-primary" style="font-size: 3rem;"></i>
+                            <h1 class="h3 mt-3">Finaliser votre inscription</h1>
+                            <p class="text-muted">Bienvenue <%= request.prenom %> ! Veuillez compléter les informations ci-dessous pour activer votre compte.</p>
+                        </div>
+
+                        <% if (error) { %>
+                        <div class="alert alert-danger" role="alert">
+                            <%= error %>
+                        </div>
+                        <% } %>
+
+                        <form method="POST" action="/register/complete/<%= request.registration_key %>">
+                            <input type="hidden" name="email" value="<%= request.email %>">
+                            <input type="hidden" name="prenom" value="<%= request.prenom %>">
+                            <input type="hidden" name="nom" value="<%= request.nom %>">
+                            <input type="hidden" name="annee_diplome" value="<%= request.annee_diplome %>">
+                            <input type="hidden" name="section_id" value="<%= request.section_id %>">
+
+                            <div class="mb-3">
+                                <label for="password" class="form-label">Mot de passe *</label>
+                                <input type="password" class="form-control" id="password" name="password" required>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="confirm_password" class="form-label">Confirmer le mot de passe *</label>
+                                <input type="password" class="form-control" id="confirm_password" name="confirm_password" required>
+                            </div>
+
+                            <hr class="my-4">
+
+                            <h5 class="mb-3">Informations complémentaires (optionnel)</h5>
+
+                            <div class="mb-3">
+                                <label for="telephone" class="form-label">Téléphone</label>
+                                <input type="tel" class="form-control" id="telephone" name="telephone" value="<%= formData.telephone || '' %>">
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="linkedin" class="form-label">LinkedIn</label>
+                                <input type="url" class="form-control" id="linkedin" name="linkedin" value="<%= formData.linkedin || '' %>">
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="statut_emploi" class="form-label">Statut d'emploi</label>
+                                <select class="form-select" id="statut_emploi" name="statut_emploi">
+                                    <option value="">Sélectionner...</option>
+                                    <option value="etudiant" <%= formData.statut_emploi === 'etudiant' ? 'selected' : '' %>>Étudiant</option>
+                                    <option value="employe" <%= formData.statut_emploi === 'employe' ? 'selected' : '' %>>Employé</option>
+                                    <option value="freelance" <%= formData.statut_emploi === 'freelance' ? 'selected' : '' %>>Freelance</option>
+                                    <option value="chomeur" <%= formData.statut_emploi === 'chomeur' ? 'selected' : '' %>>Chômeur</option>
+                                    <option value="entrepreneur" <%= formData.statut_emploi === 'entrepreneur' ? 'selected' : '' %>>Entrepreneur</option>
+                                    <option value="retraite" <%= formData.statut_emploi === 'retraite' ? 'selected' : '' %>>Retraité</option>
+                                    <option value="autre" <%= formData.statut_emploi === 'autre' ? 'selected' : '' %>>Autre</option>
+                                </select>
+                            </div>
+
+                            <div class="mb-3 form-check">
+                                <input type="checkbox" class="form-check-input" id="opt_out_contact" name="opt_out_contact" value="true" <%= formData.opt_out_contact ? 'checked' : '' %>>
+                                <label class="form-check-label" for="opt_out_contact">Ne pas afficher mes informations de contact dans l'annuaire</label>
+                            </div>
+
+                            <div class="mb-4 form-check">
+                                <input type="checkbox" class="form-check-input" id="opt_out_directory" name="opt_out_directory" value="true" <%= formData.opt_out_directory ? 'checked' : '' %>>
+                                <label class="form-check-label" for="opt_out_directory">Ne pas afficher mon profil dans l'annuaire</label>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary w-100">
+                                <i class="bi bi-check-circle"></i> Activer mon compte
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

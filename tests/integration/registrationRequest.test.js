@@ -40,33 +40,38 @@ describe('Registration Request Database Interactions', () => {
   });
 
   test('should approve a registration request and create a user', async () => {
-    const requestData = {
-      email: `approve.${Date.now()}@example.com`,
-      prenom: 'Approve',
-      nom: 'User',
-      annee_diplome: 2023,
-      section_id: 1,
-      message: 'Approve this one.'
-    };
-    const [insertResult] = await connection.query(
-      'INSERT INTO registration_requests (email, prenom, nom, annee_diplome, section_id, message) VALUES (?, ?, ?, ?, ?, ?)',
-      [requestData.email, requestData.prenom, requestData.nom, requestData.annee_diplome, requestData.section_id, requestData.message]
-    );
-    const requestId = insertResult.insertId;
+      const requestData = {
+        email: 'approve@example.com',
+        prenom: 'Approve',
+        nom: 'Test',
+        annee_diplome: 2023,
+        section_id: 1, // Assuming section 1 exists
+        message: 'Please approve me'
+      };
 
-    const isApproved = await User.approveRegistration(requestId, true, connection);
-    expect(isApproved).toBe(true);
+      const [insertResult] = await connection.execute(
+        'INSERT INTO registration_requests (email, prenom, nom, annee_diplome, section_id, message) VALUES (?, ?, ?, ?, ?, ?)',
+        [requestData.email, requestData.prenom, requestData.nom, requestData.annee_diplome, requestData.section_id, requestData.message]
+      );
+      const requestId = insertResult.insertId;
 
-    // Verify request is deleted
-    const [requests] = await connection.query('SELECT * FROM registration_requests WHERE id = ?', [requestId]);
-    expect(requests.length).toBe(0);
+      const key = await User.generateRegistrationKey(requestId, connection);
+      expect(key).toBeDefined();
 
-    // Verify user is created
-    const [users] = await connection.query('SELECT * FROM users WHERE email = ?', [requestData.email]);
-    expect(users.length).toBe(1);
-    expect(users[0].prenom).toBe(requestData.prenom);
-    expect(users[0].is_approved).toBe(1); // MySQL boolean is 1 for true
-  });
+      const userId = await User.completeRegistration(key, 'password123', {}, connection);
+      expect(userId).toBeDefined();
+
+      // Verify request is deleted
+      const [requestRows] = await connection.execute('SELECT * FROM registration_requests WHERE id = ?', [requestId]);
+      expect(requestRows.length).toBe(0);
+
+      // Verify user is created and approved
+      const [userRows] = await connection.execute('SELECT * FROM users WHERE id = ?', [userId]);
+      expect(userRows.length).toBe(1);
+      expect(userRows[0].email).toBe(requestData.email);
+      expect(userRows[0].is_approved).toBe(1);
+      expect(userRows[0].is_active).toBe(1);
+    });
 
   test('should reject a registration request and not create a user', async () => {
     const requestData = {
@@ -83,8 +88,8 @@ describe('Registration Request Database Interactions', () => {
     );
     const requestId = insertResult.insertId;
 
-    const isRejected = await User.approveRegistration(requestId, false, connection);
-    expect(isRejected).toBe(false);
+    const wasDeleted = await User.rejectRegistrationRequest(requestId, connection);
+    expect(wasDeleted).toBe(true);
 
     // Verify request is deleted
     const [requests] = await connection.query('SELECT * FROM registration_requests WHERE id = ?', [requestId]);

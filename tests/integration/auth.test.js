@@ -15,7 +15,7 @@ describe('Auth Integration', () => {
     }
     releaseConnection(connection);
   });
-  
+
 
   test('should have a placeholder test', () => {
     expect(true).toBe(true);

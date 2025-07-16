@@ -67,7 +67,7 @@ describe('User Profile Multi-Table Interactions', () => {
 
     // Simulate adding employment (assuming a route/service for this)
     // First, check if employer exists or create it
-    let [employerRows] = await connection.query('SELECT id FROM employers WHERE nom = ?', [employerName]);
+    const [employerRows] = await connection.query('SELECT id FROM employers WHERE nom = ?', [employerName]);
     let employerId;
     if (employerRows.length === 0) {
       const [employerInsertResult] = await connection.query('INSERT INTO employers (nom) VALUES (?)', [employerName]);
@@ -165,7 +165,7 @@ describe('User Profile Multi-Table Interactions', () => {
     const employmentId = employmentInsertResult.insertId;
 
     // Verify it exists before deletion
-    let [existingEmploymentRows] = await connection.query('SELECT * FROM user_employment WHERE id = ?', [employmentId]);
+    const [existingEmploymentRows] = await connection.query('SELECT * FROM user_employment WHERE id = ?', [employmentId]);
     expect(existingEmploymentRows.length).toBe(1);
 
     // Simulate deleting the employment record

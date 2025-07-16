@@ -1,4 +1,5 @@
 const bcrypt = require('bcryptjs');
+const crypto = require('crypto');
 
 // Mock the database connection
 const mockExecute = jest.fn();
@@ -11,10 +12,15 @@ jest.mock('../../src/config/database', () => ({
   releaseConnection: jest.fn(), // Mock releaseConnection
 }));
 
-// Mock bcrypt.hash and bcrypt.compare
+// Mock bcrypt
 jest.mock('bcryptjs', () => ({
   hash: jest.fn((password) => Promise.resolve(`hashed_${password}`)),
   compare: jest.fn((plain, hashed) => Promise.resolve(plain === hashed.replace('hashed_', ''))),
+}));
+
+// Mock crypto
+jest.mock('crypto', () => ({
+  randomBytes: jest.fn(() => ({ toString: () => 'mock_key' })),
 }));
 
 const User = require('../../src/models/User');
@@ -26,8 +32,10 @@ describe('User Model', () => {
     mockGetConnection.mockClear();
     bcrypt.hash.mockClear();
     bcrypt.compare.mockClear();
+    crypto.randomBytes.mockClear();
   });
 
+  // ... (keep existing tests for findByEmail, findById, create, etc.)
   describe('findByEmail', () => {
     test('should return a user if found', async () => {
       const mockUser = { id: 1, email: 'test@example.com', section_nom: 'Informatique' };
@@ -83,7 +91,7 @@ describe('User Model', () => {
       expect(bcrypt.hash).toHaveBeenCalledWith('password123', 10);
       expect(mockExecute).toHaveBeenCalledWith(expect.any(String), [
         userData.email,
-        `hashed_${userData.password}`, // Expect hashed password
+        `hashed_${userData.password}`,
         userData.prenom,
         userData.nom,
         userData.annee_diplome,
@@ -141,7 +149,7 @@ describe('User Model', () => {
         expect.stringContaining('u.section_id = ?'),
         expect.arrayContaining([2])
       );
-       expect(mockExecute).toHaveBeenCalledWith(
+      expect(mockExecute).toHaveBeenCalledWith(
         expect.stringContaining('ue.employer_id = ?'),
         expect.arrayContaining([5])
       );
@@ -289,48 +297,126 @@ describe('User Model', () => {
     });
   });
 
-  describe('approveRegistration', () => {
-    test('should approve a registration request and create a user', async () => {
-      const mockRequest = {
-        id: 1,
-        email: 'approve@example.com',
-        prenom: 'Approve',
-        nom: 'User',
-        annee_diplome: 2021,
-        section_id: 3,
-      };
-      mockExecute.mockResolvedValueOnce([[mockRequest]]); // Mock finding the request
-      mockExecute.mockResolvedValueOnce([{ insertId: 100 }]); // Mock user creation
-      mockExecute.mockResolvedValueOnce([{}]); // Mock request deletion
+  describe('generateRegistrationKey', () => {
+    test('should generate a key and update the database', async () => {
+      mockExecute.mockResolvedValueOnce([{}]); // Mock successful update
+      const key = await User.generateRegistrationKey(1);
 
-      const result = await User.approveRegistration(1, true);
-      expect(result).toBe(true);
-      expect(bcrypt.hash).toHaveBeenCalled(); // Password should be hashed
+      expect(key).toBe('mock_key');
+      expect(crypto.randomBytes).toHaveBeenCalledWith(32);
       expect(mockExecute).toHaveBeenCalledWith(
-        expect.stringContaining('INSERT INTO users'),
-        expect.arrayContaining([mockRequest.email, expect.any(String), mockRequest.prenom])
+        'UPDATE registration_requests SET registration_key = ?, key_generated_at = NOW() WHERE id = ?',
+        ['mock_key', 1]
       );
-      expect(mockExecute).toHaveBeenCalledWith('DELETE FROM registration_requests WHERE id = ?', [1]);
+    });
+  });
+
+  describe('findRegistrationRequestByKey', () => {
+    test('should return a request if found', async () => {
+      const mockRequest = { id: 1, email: 'test@example.com', registration_key: 'mock_key' };
+      mockExecute.mockResolvedValueOnce([[mockRequest]]);
+
+      const request = await User.findRegistrationRequestByKey('mock_key');
+      expect(request).toEqual(mockRequest);
+      expect(mockExecute).toHaveBeenCalledWith('SELECT * FROM registration_requests WHERE registration_key = ?', ['mock_key']);
     });
 
-    test('should delete the request without creating a user if approve is false', async () => {
-      const mockRequest = { id: 1, email: 'deny@example.com' };
-      mockExecute.mockResolvedValueOnce([[mockRequest]]); // Mock finding the request
-      mockExecute.mockResolvedValueOnce([{}]); // Mock request deletion
+    test('should return undefined if not found', async () => {
+      mockExecute.mockResolvedValueOnce([[]]);
+      const request = await User.findRegistrationRequestByKey('not_a_key');
+      expect(request).toBeUndefined();
+    });
+  });
 
-      const result = await User.approveRegistration(1, false);
-      expect(result).toBe(false);
-      expect(bcrypt.hash).not.toHaveBeenCalled();
+  describe('completeRegistration', () => {
+    const mockRequest = { id: 1, email: 'complete@example.com', prenom: 'Comp', nom: 'Lete', annee_diplome: 2022, section_id: 1 };
+
+    test('should create a new user if one does not exist', async () => {
+      // 1. Find request by key -> found
+      // 2. Find user by email -> not found
+      // 3. Insert new user -> success
+      // 4. Delete request -> success
+      mockExecute
+        .mockResolvedValueOnce([[mockRequest]])
+        .mockResolvedValueOnce([[]])
+        .mockResolvedValueOnce([{ insertId: 123 }])
+        .mockResolvedValueOnce([{}]);
+
+      const userId = await User.completeRegistration('mock_key', 'password123', {});
+
+      expect(userId).toBe(123);
+      expect(mockExecute).toHaveBeenCalledWith(expect.stringContaining('INSERT INTO users'), expect.any(Array));
+      expect(mockExecute).toHaveBeenCalledWith('DELETE FROM registration_requests WHERE id = ?', [mockRequest.id]);
+    });
+
+    test('should update an existing user', async () => {
+      const existingUser = { id: 456, email: mockRequest.email };
+      // 1. Find request by key -> found
+      // 2. Find user by email -> found
+      // 3. Update existing user -> success
+      // 4. Delete request -> success
+      mockExecute
+        .mockResolvedValueOnce([[mockRequest]])
+        .mockResolvedValueOnce([[existingUser]])
+        .mockResolvedValueOnce([{}])
+        .mockResolvedValueOnce([{}]);
+
+      const userId = await User.completeRegistration('mock_key', 'new_password', {});
+
+      expect(userId).toBe(456);
+      expect(mockExecute).toHaveBeenCalledWith(expect.stringContaining('UPDATE users'), expect.any(Array));
       expect(mockExecute).not.toHaveBeenCalledWith(expect.stringContaining('INSERT INTO users'), expect.any(Array));
-      expect(mockExecute).toHaveBeenCalledWith('DELETE FROM registration_requests WHERE id = ?', [1]);
     });
 
-    test('should throw error if registration request not found', async () => {
+    test('should update profile data if provided', async () => {
+      const profileData = { ville: 'Lyon', telephone: '12345' };
+      mockExecute
+        .mockResolvedValueOnce([[mockRequest]])
+        .mockResolvedValueOnce([[]])
+        .mockResolvedValueOnce([{ insertId: 123 }])
+        .mockResolvedValueOnce([{ affectedRows: 1 }]) // Mock updateProfile
+        .mockResolvedValueOnce([{}]);
+
+      await User.completeRegistration('mock_key', 'password123', profileData);
+
+      // Check that updateProfile was called correctly
+      const updateCall = mockExecute.mock.calls.find(call => call[0].includes('UPDATE users SET'));
+      expect(updateCall[0]).toContain('ville = ?');
+      expect(updateCall[0]).toContain('telephone = ?');
+      expect(updateCall[1]).toEqual(['Lyon', '12345', 123]);
+    });
+
+    test('should NOT update profile if data is empty', async () => {
+      mockExecute
+        .mockResolvedValueOnce([[mockRequest]])
+        .mockResolvedValueOnce([[]])
+        .mockResolvedValueOnce([{ insertId: 123 }])
+        .mockResolvedValueOnce([{}]);
+
+      await User.completeRegistration('mock_key', 'password123', {});
+
+      const updateCall = mockExecute.mock.calls.find(call => call[0].includes('UPDATE users SET'));
+      expect(updateCall).toBeUndefined();
+    });
+
+    test('should throw error for invalid key', async () => {
       mockExecute.mockResolvedValueOnce([[]]); // Mock request not found
+      await expect(User.completeRegistration('invalid_key', 'pw')).rejects.toThrow('Lien d\'inscription invalide ou expiré.');
+    });
+  });
 
-      await expect(User.approveRegistration(999, true)).rejects.toThrow(`Demande d'inscription non trouvée`);
-      expect(mockExecute).not.toHaveBeenCalledWith(expect.stringContaining('INSERT INTO users'), expect.any(Array));
-      expect(mockExecute).not.toHaveBeenCalledWith(expect.stringContaining('DELETE FROM registration_requests'), expect.any(Array));
+  describe('rejectRegistrationRequest', () => {
+    test('should delete a request and return true', async () => {
+      mockExecute.mockResolvedValueOnce([{ affectedRows: 1 }]);
+      const result = await User.rejectRegistrationRequest(1);
+      expect(result).toBe(true);
+      expect(mockExecute).toHaveBeenCalledWith('DELETE FROM registration_requests WHERE id = ?', [1]);
+    });
+
+    test('should return false if no request was deleted', async () => {
+      mockExecute.mockResolvedValueOnce([{ affectedRows: 0 }]);
+      const result = await User.rejectRegistrationRequest(999);
+      expect(result).toBe(false);
     });
   });
 

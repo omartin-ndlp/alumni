@@ -9,7 +9,7 @@ const router = express.Router();
 // Liste des anciens
 router.get('/', auth.requireAuth, async (req, res) => {
   try {
-    const { search, sort, annee_diplome, section_id, employer_id, page = 1, show_admins } = req.query;
+    const { search, sort, page = 1, show_admins } = req.query;
     const limit = 10; // Number of users per page
     const offset = (parseInt(page) - 1) * limit;
 
@@ -21,6 +21,10 @@ router.get('/', auth.requireAuth, async (req, res) => {
       limit,
       offset
     };
+
+    if (req.query.annee_diplome) filters.annee_diplome = req.query.annee_diplome;
+    if (req.query.section_id) filters.section_id = req.query.section_id;
+    if (req.query.employer_id) filters.employer_id = req.query.employer_id;
 
     const users = await User.getAll(filters);
 
@@ -57,7 +61,7 @@ router.get('/', auth.requireAuth, async (req, res) => {
         hasPrev: parseInt(page) > 1
       }
     });
-    
+
   } catch (error) {
     console.error('Erreur liste utilisateurs:', error);
     res.render('error', {
@@ -71,14 +75,14 @@ router.get('/', auth.requireAuth, async (req, res) => {
 router.get('/:id', auth.requireAuth, async (req, res) => {
   try {
     const user = await User.findById(req.params.id);
-    
+
     if (!user || !user.is_approved || !user.is_active) {
       return res.status(404).render('error', {
         message: 'Utilisateur non trouvé',
         error: {}
       });
     }
-    
+
     // Vérifier si l'utilisateur a opté pour ne pas être affiché
     if (user.opt_out_directory && req.session.user.id !== user.id && !req.session.user.is_admin) {
       return res.status(404).render('error', {
@@ -86,9 +90,9 @@ router.get('/:id', auth.requireAuth, async (req, res) => {
         error: {}
       });
     }
-    
+
     const db = await getConnection();
-    
+
     // Récupérer l'historique des emplois (seulement si pas d'opt-out)
     let employment = [];
     if (!user.opt_out_directory || req.session.user.id === user.id || req.session.user.is_admin) {
@@ -101,10 +105,10 @@ router.get('/:id', auth.requireAuth, async (req, res) => {
       `, [user.id]);
       employment = employmentData;
     }
-    
+
     // Masquer les informations de contact si opt-out et pas le propriétaire/admin
     const canViewContact = !user.opt_out_contact || req.session.user.id === user.id || req.session.user.is_admin;
-    
+
     res.render('users/profile', {
       title: `${user.prenom} ${user.nom} - Anciens BTS SN/CIEL LJV`,
       displayUser: user,
@@ -112,7 +116,7 @@ router.get('/:id', auth.requireAuth, async (req, res) => {
       canViewContact,
       isOwnProfile: req.session.user.id === user.id
     });
-    
+
   } catch (error) {
     console.error('Erreur profil utilisateur:', error);
     res.render('error', {
@@ -126,12 +130,12 @@ router.get('/:id', auth.requireAuth, async (req, res) => {
 router.get('/employers/list', auth.requireAuth, async (req, res) => {
   try {
     const employers = await Employer.getWithEmployeeCount();
-    
+
     res.render('users/employers', {
       title: 'Employeurs - Anciens BTS SN/CIEL LJV',
       employers
     });
-    
+
   } catch (error) {
     console.error('Erreur liste employeurs:', error);
     res.render('error', {
@@ -145,22 +149,22 @@ router.get('/employers/list', auth.requireAuth, async (req, res) => {
 router.get('/employers/:id', auth.requireAuth, async (req, res) => {
   try {
     const employer = await Employer.findById(req.params.id);
-    
+
     if (!employer) {
       return res.status(404).render('error', {
         message: 'Employeur non trouvé',
         error: {}
       });
     }
-    
+
     const employees = await Employer.getEmployees(req.params.id);
-    
+
     res.render('users/employer-detail', {
       title: `${employer.nom} - Employeurs - Anciens BTS SN/CIEL LJV`,
       employer,
       employees
     });
-    
+
   } catch (error) {
     console.error('Erreur détail employeur:', error);
     res.render('error', {
@@ -173,7 +177,7 @@ router.get('/employers/:id', auth.requireAuth, async (req, res) => {
 // API endpoint for fetching users (for AJAX)
 router.get('/api/users', auth.requireAuth, async (req, res) => {
   try {
-    const { search, sort, annee_diplome, section_id, employer_id, page = 1, show_admins } = req.query;
+    const { search, sort, page = 1, show_admins } = req.query;
     const limit = 10; // Number of users per page
     const offset = (parseInt(page) - 1) * limit;
 
@@ -186,9 +190,9 @@ router.get('/api/users', auth.requireAuth, async (req, res) => {
       offset
     };
 
-    if (annee_diplome) filters.annee_diplome = annee_diplome;
-    if (section_id) filters.section_id = section_id;
-    if (employer_id) filters.employer_id = employer_id;
+    if (req.query.annee_diplome) filters.annee_diplome = req.query.annee_diplome;
+    if (req.query.section_id) filters.section_id = req.query.section_id;
+    if (req.query.employer_id) filters.employer_id = req.query.employer_id;
 
     const users = await User.getAll(filters);
 

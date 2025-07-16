@@ -1,7 +1,7 @@
-const User = require('../models/User');
+// const User = require('../models/User');
 
 // Middleware pour ajouter les informations utilisateur à toutes les vues
-const addUserToLocals = async (req, res, next) => {
+const addUserToLocals = (req, res, next) => {
   res.locals.user = req.session.user || null;
   res.locals.isLoggedIn = !!req.session.user;
   res.locals.isAdmin = req.session.user?.is_admin || false;
@@ -14,13 +14,13 @@ const requireAuth = (req, res, next) => {
   if (!req.session.user) {
     return res.redirect('/login?redirect=' + encodeURIComponent(req.originalUrl));
   }
-  
+
   if (!req.session.user.is_approved) {
     return res.render('pending-approval', {
       title: 'Compte en attente d\'approbation'
     });
   }
-  
+
   next();
 };
 

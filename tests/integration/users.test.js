@@ -18,18 +18,18 @@ describe('User and Employer Routes', () => {
     const userPassword = await bcrypt.hash('password', 10);
 
     await connection.query(
-        `INSERT INTO users (id, email, password_hash, prenom, nom, annee_diplome, section_id, is_admin, is_approved, is_active) VALUES
+      `INSERT INTO users (id, email, password_hash, prenom, nom, annee_diplome, section_id, is_admin, is_approved, is_active) VALUES
          (1, 'admin@test.com', ?, 'Admin', 'User', 2020, 1, TRUE, TRUE, TRUE),
          (2, 'user@test.com', ?, 'Regular', 'User', 2021, 2, FALSE, TRUE, TRUE)`,
-        [adminPassword, userPassword]
+      [adminPassword, userPassword]
     );
 
     // Seed with a test employer and employment record
     await connection.query(
-      `INSERT INTO employers (id, nom, secteur, ville) VALUES (1, 'Test Employer', 'IT', 'Testville')`
+      'INSERT INTO employers (id, nom, secteur, ville) VALUES (1, \'Test Employer\', \'IT\', \'Testville\')'
     );
     await connection.query(
-      `INSERT INTO user_employment (user_id, employer_id, poste, date_debut, is_current) VALUES (2, 1, 'Developer', '2022-01-01', TRUE)`
+      'INSERT INTO user_employment (user_id, employer_id, poste, date_debut, is_current) VALUES (2, 1, \'Developer\', \'2022-01-01\', TRUE)'
     );
 
     // Log in as the admin user for the test session

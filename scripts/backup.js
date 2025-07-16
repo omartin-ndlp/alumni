@@ -23,7 +23,7 @@ const dbConfig = {
 // Commande mysqldump
 const mysqldumpCmd = `mysqldump -h ${dbConfig.host} -P ${dbConfig.port} -u ${dbConfig.user} -p${dbConfig.password} ${dbConfig.database}`;
 
-console.log(`🗄️  Début de la sauvegarde de la base de données...`);
+console.log('🗄️  Début de la sauvegarde de la base de données...');
 console.log(`📁 Fichier de sauvegarde: ${backupFile}`);
 
 exec(`${mysqldumpCmd} > ${backupFile}`, (error, stdout, stderr) => {
@@ -31,17 +31,17 @@ exec(`${mysqldumpCmd} > ${backupFile}`, (error, stdout, stderr) => {
     console.error(`❌ Erreur lors de la sauvegarde: ${error}`);
     process.exit(1);
   }
-  
+
   if (stderr) {
     console.warn(`⚠️  Avertissement: ${stderr}`);
   }
-  
+
   // Vérifier que le fichier de sauvegarde existe et n'est pas vide
   if (fs.existsSync(backupFile)) {
     const stats = fs.statSync(backupFile);
     if (stats.size > 0) {
       console.log(`✅ Sauvegarde créée avec succès (${Math.round(stats.size / 1024)} KB)`);
-      
+
       // Nettoyer les anciennes sauvegardes (garder les 10 plus récentes)
       cleanupOldBackups();
     } else {
@@ -68,12 +68,12 @@ function cleanupOldBackups() {
 
     // Garder seulement les 10 plus récents
     const filesToDelete = files.slice(10);
-    
+
     filesToDelete.forEach(file => {
       fs.unlinkSync(file.path);
       console.log(`🗑️  Suppression de l'ancienne sauvegarde: ${file.name}`);
     });
-    
+
     if (filesToDelete.length > 0) {
       console.log(`🧹 ${filesToDelete.length} ancienne(s) sauvegarde(s) supprimée(s)`);
     }

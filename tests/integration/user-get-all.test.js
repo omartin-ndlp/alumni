@@ -12,7 +12,7 @@ describe('User.getAll()', () => {
     // Seed the database with test data
     // Sections are now seeded globally in globalSetup.js
     // Employers are now seeded locally to ensure availability
-    await connection.query("INSERT INTO employers (id, nom) VALUES (1, 'Google'), (2, 'Microsoft'), (3, 'Apple') ON DUPLICATE KEY UPDATE nom=VALUES(nom)");
+    await connection.query('INSERT INTO employers (id, nom) VALUES (1, \'Google\'), (2, \'Microsoft\'), (3, \'Apple\') ON DUPLICATE KEY UPDATE nom=VALUES(nom)');
 
     const usersData = [
       { email: 'alice@example.com', prenom: 'Alice', nom: 'Smith', annee_diplome: 2020, section_id: 1, created_at: '2023-01-01 10:00:00' },
@@ -27,25 +27,25 @@ describe('User.getAll()', () => {
 
     for (const user of usersData) {
       const [result] = await connection.query(
-        "INSERT INTO users (email, password_hash, prenom, nom, annee_diplome, section_id, is_approved, is_active, created_at) VALUES (?, ?, ?, ?, ?, ?, true, true, ?)",
+        'INSERT INTO users (email, password_hash, prenom, nom, annee_diplome, section_id, is_approved, is_active, created_at) VALUES (?, ?, ?, ?, ?, ?, true, true, ?)',
         [user.email, password_hash, user.prenom, user.nom, user.annee_diplome, user.section_id, user.created_at]
       );
       insertedUserIds.push(result.insertId);
     }
 
     const employmentsData = [
-        { user_index: 0, employer_id: 1, poste: 'Software Engineer' }, // Alice
-        { user_index: 1, employer_id: 2, poste: 'Product Manager' }, // Bob
-        { user_index: 2, employer_id: 3, poste: 'UI/UX Designer' }, // Charlie
-        { user_index: 3, employer_id: 1, poste: 'Data Scientist' }, // David
-        { user_index: 4, employer_id: 2, poste: 'Software Engineer' }, // Eve
+      { user_index: 0, employer_id: 1, poste: 'Software Engineer' }, // Alice
+      { user_index: 1, employer_id: 2, poste: 'Product Manager' }, // Bob
+      { user_index: 2, employer_id: 3, poste: 'UI/UX Designer' }, // Charlie
+      { user_index: 3, employer_id: 1, poste: 'Data Scientist' }, // David
+      { user_index: 4, employer_id: 2, poste: 'Software Engineer' }, // Eve
     ];
 
     for (const employment of employmentsData) {
-        await connection.query(
-            "INSERT INTO user_employment (user_id, employer_id, poste, is_current) VALUES (?, ?, ?, true)",
-            [insertedUserIds[employment.user_index], employment.employer_id, employment.poste]
-        );
+      await connection.query(
+        'INSERT INTO user_employment (user_id, employer_id, poste, is_current) VALUES (?, ?, ?, true)',
+        [insertedUserIds[employment.user_index], employment.employer_id, employment.poste]
+      );
     }
   });
 
@@ -82,7 +82,7 @@ describe('User.getAll()', () => {
     expect(users[0].prenom).toBe('Alice');
   });
 
-    test('should filter by a search term (nom)', async () => {
+  test('should filter by a search term (nom)', async () => {
     const { users, total } = await User.getAll({ search: 'Smith' }, connection);
     expect(total).toBe(1);
     expect(users[0].nom).toBe('Smith');
@@ -95,15 +95,15 @@ describe('User.getAll()', () => {
   });
 
   test('should handle combined filters (year and section)', async () => {
-      const { users, total } = await User.getAll({ annee_diplome: 2021, section_id: 2 }, connection);
-      expect(total).toBe(2);
-      expect(users.map(u => u.id)).toEqual(expect.arrayContaining([insertedUserIds[1], insertedUserIds[4]]));
+    const { users, total } = await User.getAll({ annee_diplome: 2021, section_id: 2 }, connection);
+    expect(total).toBe(2);
+    expect(users.map(u => u.id)).toEqual(expect.arrayContaining([insertedUserIds[1], insertedUserIds[4]]));
   });
 
-    test('should handle combined filters (year and employer)', async () => {
-      const { users, total } = await User.getAll({ annee_diplome: 2020, employer_id: 1 }, connection);
-      expect(total).toBe(1);
-      expect(users[0].id).toBe(insertedUserIds[0]);
+  test('should handle combined filters (year and employer)', async () => {
+    const { users, total } = await User.getAll({ annee_diplome: 2020, employer_id: 1 }, connection);
+    expect(total).toBe(1);
+    expect(users[0].id).toBe(insertedUserIds[0]);
   });
 
   // Test all sorting options
@@ -154,7 +154,7 @@ describe('User.getAll()', () => {
     expect(users.map(u => u.nom)).toEqual(['Jones', 'Smith']);
   });
 
-    test('should return correct total when filtering with pagination', async () => {
+  test('should return correct total when filtering with pagination', async () => {
     const { users, total } = await User.getAll({ annee_diplome: 2020, limit: 1, offset: 0, sortBy: 'name' }, connection);
     expect(total).toBe(2);
     expect(users.length).toBe(1);

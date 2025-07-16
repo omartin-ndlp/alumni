@@ -29,7 +29,7 @@ describe('Admin Actions Multi-Table Interactions', () => {
     const requestId = requestInsertResult.insertId;
 
     // Verify the request exists initially
-    let [initialRequestRows] = await connection.query('SELECT * FROM registration_requests WHERE id = ?', [requestId]);
+    const [initialRequestRows] = await connection.query('SELECT * FROM registration_requests WHERE id = ?', [requestId]);
     expect(initialRequestRows.length).toBe(1);
 
     // Simulate admin approval (e.g., calling a service function or route handler)
@@ -68,7 +68,7 @@ describe('Admin Actions Multi-Table Interactions', () => {
     const requestId = requestInsertResult.insertId;
 
     // Verify the request exists initially
-    let [initialRequestRows] = await connection.query('SELECT * FROM registration_requests WHERE id = ?', [requestId]);
+    const [initialRequestRows] = await connection.query('SELECT * FROM registration_requests WHERE id = ?', [requestId]);
     expect(initialRequestRows.length).toBe(1);
 
     // Simulate admin rejection (e.g., calling a service function or route handler)

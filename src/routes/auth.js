@@ -131,7 +131,7 @@ router.post('/register', [
       return res.render('auth/register', {
         title: 'Inscription - Anciens BTS SN/CIEL LJV',
         sections,
-        error: 'Veuillez corriger les erreurs dans le formulaire',
+        error: errors.array()[0].msg,
         formData: req.body
       });
     }
@@ -149,7 +149,7 @@ router.post('/register', [
       });
     }
 
-    // Vérifier les demandes en attente
+    // Vérifier les demandes en attente (pour éviter les doublons)
     const [pendingRequests] = await db.execute(
       'SELECT id FROM registration_requests WHERE email = ?',
       [email]
@@ -164,7 +164,7 @@ router.post('/register', [
       });
     }
 
-    // Créer la demande d\'inscription
+    // Créer la demande d'inscription
     await db.execute(`
       INSERT INTO registration_requests (email, prenom, nom, annee_diplome, section_id, message)
       VALUES (?, ?, ?, ?, ?, ?)
@@ -181,6 +181,92 @@ router.post('/register', [
       title: 'Inscription - Anciens BTS SN/CIEL LJV',
       sections,
       error: 'Erreur interne, veuillez réessayer',
+      formData: req.body
+    });
+  }
+});
+
+// Route pour la page de succès d'inscription
+router.get('/register-success', (req, res) => {
+  res.render('auth/register-success', {
+    title: 'Inscription réussie - Anciens BTS SN/CIEL LJV'
+  });
+});
+
+// Route pour la complétion d'inscription via lien magique (GET)
+router.get('/register/complete/:key', async (req, res) => {
+  try {
+    const { key } = req.params;
+    const request = await User.findRegistrationRequestByKey(key);
+
+    if (!request) {
+      return res.status(404).render('error', {
+        message: 'Lien d\'inscription invalide ou expiré.',
+        error: {}
+      });
+    }
+
+    // Render the completion form
+    res.render('auth/complete-registration', {
+      title: 'Finaliser votre inscription',
+      request, // Pass request data to the view
+      error: null,
+      formData: {
+        email: request.email,
+        prenom: request.prenom,
+        nom: request.nom,
+        annee_diplome: request.annee_diplome,
+        section_id: request.section_id
+      }
+    });
+
+  } catch (error) {
+    console.error('Erreur lors du chargement de la page de complétion:', error);
+    res.render('error', {
+      message: 'Erreur lors du chargement de la page de complétion.',
+      error: {}
+    });
+  }
+});
+
+// Route pour la complétion d'inscription via lien magique (POST)
+router.post('/register/complete/:key', [
+  body('password').isLength({ min: 6 }).withMessage('Le mot de passe doit contenir au moins 6 caractères'),
+  body('confirm_password').custom((value, { req }) => {
+    if (value !== req.body.password) {
+      throw new Error('Les mots de passe ne correspondent pas');
+    }
+    return true;
+  }),
+  // Add validation for other profile fields as needed
+], async (req, res) => {
+  try {
+    const { key } = req.params;
+    const errors = validationResult(req);
+
+    if (!errors.isEmpty()) {
+      const request = await User.findRegistrationRequestByKey(key); // Re-fetch request to re-render form
+      return res.render('auth/complete-registration', {
+        title: 'Finaliser votre inscription',
+        request,
+        error: errors.array()[0].msg,
+        formData: req.body
+      });
+    }
+
+    const { password, ...profileData } = req.body; // Extract password, rest is profile data
+
+    await User.completeRegistration(key, password, profileData);
+
+    res.redirect('/login?success=registration_complete');
+
+  } catch (error) {
+    console.error('Erreur lors de la complétion de l\'inscription:', error);
+    const request = await User.findRegistrationRequestByKey(req.params.key); // Re-fetch request to re-render form
+    res.render('auth/complete-registration', {
+      title: 'Finaliser votre inscription',
+      request,
+      error: 'Erreur interne lors de la complétion de l\'inscription.',
       formData: req.body
     });
   }
@@ -215,10 +301,3 @@ router.get('/dashboard', auth.requireAuth, async (req, res) => {
 });
 
 module.exports = router;
-
-// New route for register success page
-router.get('/register-success', (req, res) => {
-  res.render('auth/register-success', {
-    title: 'Demande envoyée - Anciens BTS SN/CIEL LJV'
-  });
-});

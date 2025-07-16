@@ -14,10 +14,10 @@ router.use(auth.requireAdmin);
 router.get('/', async (req, res) => {
   try {
     const db = await getConnection();
-    
+
     // Run cleanup for registration requests
     await User.cleanUpRegistrationRequests();
-    
+
     // Statistiques générales
     const [stats] = await db.execute(`
       SELECT 
@@ -26,7 +26,7 @@ router.get('/', async (req, res) => {
         (SELECT COUNT(*) FROM employers) as total_employers,
         (SELECT COUNT(*) FROM user_employment WHERE is_current = TRUE) as current_employments
     `);
-    
+
     // Nouvelles inscriptions récentes
     const [recentUsers] = await db.execute(`
       SELECT u.*, s.nom as section_nom
@@ -36,7 +36,7 @@ router.get('/', async (req, res) => {
       ORDER BY u.created_at DESC
       LIMIT 5
     `);
-    
+
     // Statistiques par année
     const [yearStats] = await db.execute(`
       SELECT annee_diplome, COUNT(*) as count
@@ -45,7 +45,7 @@ router.get('/', async (req, res) => {
       GROUP BY annee_diplome
       ORDER BY annee_diplome DESC
     `);
-    
+
     // Statistiques par section
     const [sectionStats] = await db.execute(`
       SELECT s.nom, COUNT(u.id) as count
@@ -54,7 +54,7 @@ router.get('/', async (req, res) => {
       GROUP BY s.id, s.nom
       ORDER BY count DESC
     `);
-    
+
     res.render('admin/dashboard', {
       title: 'Administration - Anciens BTS SN/CIEL LJV',
       stats: stats[0],
@@ -62,7 +62,7 @@ router.get('/', async (req, res) => {
       yearStats,
       sectionStats
     });
-    
+
   } catch (error) {
     console.error('Erreur dashboard admin:', error);
     res.render('error', {
@@ -76,12 +76,15 @@ router.get('/', async (req, res) => {
 router.get('/requests', async (req, res) => {
   try {
     const requests = await User.getPendingApprovals();
-    
+
     res.render('admin/requests', {
-      title: "Demandes d'inscription - Administration",
-      requests
+      title: 'Demandes d\'inscription - Administration',
+      requests,
+      query: req.query,
+      protocol: req.protocol,
+      host: req.get('host')
     });
-    
+
   } catch (error) {
     console.error('Erreur demandes:', error);
     res.render('error', {
@@ -94,18 +97,19 @@ router.get('/requests', async (req, res) => {
 // Approuver une demande
 router.post('/requests/:id/approve', async (req, res) => {
   try {
-    await User.approveRegistration(req.params.id, true);
-    res.redirect('/admin/requests?success=approved');
+    const key = await User.generateRegistrationKey(req.params.id);
+    res.json({ success: true, key: key, requestId: req.params.id });
   } catch (error) {
-    console.error('Erreur approbation:', error);
-    res.redirect('/admin/requests?error=approve_failed');
+    console.error('Erreur génération clé:', error);
+    res.status(500).json({ success: false, error: 'key_generation_failed' });
   }
 });
+
 
 // Rejeter une demande
 router.post('/requests/:id/reject', async (req, res) => {
   try {
-    await User.approveRegistration(req.params.id, false);
+    await User.rejectRegistrationRequest(req.params.id);
     res.redirect('/admin/requests?success=rejected');
   } catch (error) {
     console.error('Erreur rejet:', error);
@@ -119,7 +123,7 @@ router.get('/users', async (req, res) => {
     const { search, sort = 'created_at', order = 'DESC', page = 1 } = req.query;
     const limit = 20;
     const offset = (page - 1) * limit;
-    
+
     let query = `
       SELECT u.*, s.nom as section_nom,
              ue.poste as current_position,
@@ -130,35 +134,35 @@ router.get('/users', async (req, res) => {
       LEFT JOIN employers e ON ue.employer_id = e.id
       WHERE 1=1
     `;
-    
+
     const params = [];
-    
+
     if (search) {
       query += ' AND (u.nom LIKE ? OR u.prenom LIKE ? OR u.email LIKE ?)';
       const searchTerm = `%${search}%`;
       params.push(searchTerm, searchTerm, searchTerm);
     }
-    
+
     query += ` ORDER BY u.${sort} ${order} LIMIT ? OFFSET ?`;
     params.push(limit, offset);
-    
+
     const db = await getConnection();
     const [users] = await db.execute(query, params);
-    
+
     // Compter le total pour la pagination
     let countQuery = 'SELECT COUNT(*) as total FROM users u WHERE 1=1';
     const countParams = [];
-    
+
     if (search) {
       countQuery += ' AND (u.nom LIKE ? OR u.prenom LIKE ? OR u.email LIKE ?)';
       const searchTerm = `%${search}%`;
       countParams.push(searchTerm, searchTerm, searchTerm);
     }
-    
+
     const [countResult] = await db.execute(countQuery, countParams);
     const total = countResult[0].total;
     const totalPages = Math.ceil(total / limit);
-    
+
     res.render('admin/users', {
       title: 'Gestion des utilisateurs - Administration',
       users,
@@ -170,7 +174,7 @@ router.get('/users', async (req, res) => {
       },
       filters: req.query
     });
-    
+
   } catch (error) {
     console.error('Erreur gestion utilisateurs:', error);
     res.render('error', {
@@ -185,16 +189,16 @@ router.post('/users/:id/toggle-status', async (req, res) => {
   try {
     const db = await getConnection();
     const [users] = await db.execute('SELECT is_active FROM users WHERE id = ?', [req.params.id]);
-    
+
     if (users.length === 0) {
       return res.status(404).json({ error: 'Utilisateur non trouvé' });
     }
-    
+
     const newStatus = !users[0].is_active;
     await db.execute('UPDATE users SET is_active = ? WHERE id = ?', [newStatus, req.params.id]);
-    
+
     res.redirect('/admin/users?success=status_updated');
-    
+
   } catch (error) {
     console.error('Erreur changement statut:', error);
     res.status(500).json({ error: 'Erreur lors du changement de statut' });
@@ -212,12 +216,12 @@ router.get('/sections', async (req, res) => {
       GROUP BY s.id
       ORDER BY s.nom
     `);
-    
+
     res.render('admin/sections', {
       title: 'Gestion des sections - Administration',
       sections
     });
-    
+
   } catch (error) {
     console.error('Erreur sections:', error);
     res.render('error', {
@@ -237,17 +241,17 @@ router.post('/sections/add', [
     if (!errors.isEmpty()) {
       return res.status(400).json({ error: 'Données invalides' });
     }
-    
+
     const { nom, description } = req.body;
     const db = await getConnection();
-    
+
     await db.execute(
       'INSERT INTO sections (nom, description) VALUES (?, ?)',
       [nom, description || null]
     );
-    
+
     res.redirect('/admin/sections?success=added');
-    
+
   } catch (error) {
     console.error('Erreur ajout section:', error);
     if (error.code === 'ER_DUP_ENTRY') {
@@ -268,17 +272,17 @@ router.post('/sections/:id/edit', [
     if (!errors.isEmpty()) {
       return res.status(400).json({ error: 'Données invalides' });
     }
-    
+
     const { nom, description } = req.body;
     const db = await getConnection();
-    
+
     await db.execute(
       'UPDATE sections SET nom = ?, description = ? WHERE id = ?',
       [nom, description || null, req.params.id]
     );
-    
+
     res.redirect('/admin/sections?success=updated');
-    
+
   } catch (error) {
     console.error('Erreur modification section:', error);
     res.redirect('/admin/sections?error=update_failed');

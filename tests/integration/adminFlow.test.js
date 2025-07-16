@@ -61,21 +61,22 @@ describe('End-to-End Admin Functionality Flow', () => {
     );
     const requestId = requestResult.insertId;
 
-    // Action: Admin approves the request
+    // Action: Admin approves the request by generating a key
     const res = await adminAgent.post(`/admin/requests/${requestId}/approve`);
 
-    expect(res.statusCode).toEqual(302); // Expect redirect
-    expect(res.headers.location).toContain('/admin/requests');
+    expect(res.statusCode).toEqual(200); // Expect OK
+    expect(res.body.success).toBe(true);
+    expect(res.body.key).toBeDefined();
 
-    // Verify the request is deleted from registration_requests
-    const [deletedRequest] = await connection.query('SELECT * FROM registration_requests WHERE id = ?', [requestId]);
-    expect(deletedRequest.length).toBe(0);
+    // Verify the request is still in registration_requests but now has a key
+    const [updatedRequest] = await connection.query('SELECT * FROM registration_requests WHERE id = ?', [requestId]);
+    expect(updatedRequest.length).toBe(1);
+    expect(updatedRequest[0].registration_key).toBe(res.body.key);
+    expect(updatedRequest[0].key_generated_at).toBeDefined();
 
-    // Verify a new user is created and approved in the users table
+    // Verify that NO user has been created yet
     const [approvedUser] = await connection.query('SELECT * FROM users WHERE email = ?', [userEmail]);
-    expect(approvedUser.length).toBe(1);
-    expect(approvedUser[0].is_approved).toBe(1);
-    expect(approvedUser[0].is_active).toBe(1);
+    expect(approvedUser.length).toBe(0);
   });
 
   test('should allow an admin to reject a registration request', async () => {
@@ -119,7 +120,7 @@ describe('End-to-End Admin Functionality Flow', () => {
     expect(deactivateRes.headers.location).toContain('/admin/users');
 
     // Verify user is deactivated in the database
-    let [deactivatedUser] = await connection.query('SELECT * FROM users WHERE id = ?', [userId]);
+    const [deactivatedUser] = await connection.query('SELECT * FROM users WHERE id = ?', [userId]);
     expect(deactivatedUser[0].is_active).toBe(0);
 
     // Action: Admin activates the user
@@ -129,7 +130,7 @@ describe('End-to-End Admin Functionality Flow', () => {
     expect(activateRes.headers.location).toContain('/admin/users');
 
     // Verify user is activated in the database
-    let [activatedUser] = await connection.query('SELECT * FROM users WHERE id = ?', [userId]);
+    const [activatedUser] = await connection.query('SELECT * FROM users WHERE id = ?', [userId]);
     expect(activatedUser[0].is_active).toBe(1);
   });
 
@@ -146,7 +147,7 @@ describe('End-to-End Admin Functionality Flow', () => {
     expect(addRes.headers.location).toContain('/admin/sections');
 
     // Verify section is added in the database
-    let [addedSection] = await connection.query('SELECT * FROM sections WHERE nom = ?', [newSectionName]);
+    const [addedSection] = await connection.query('SELECT * FROM sections WHERE nom = ?', [newSectionName]);
     expect(addedSection.length).toBe(1);
     const sectionId = addedSection[0].id;
 
@@ -162,7 +163,7 @@ describe('End-to-End Admin Functionality Flow', () => {
     expect(updateRes.headers.location).toContain('/admin/sections');
 
     // Verify section is updated in the database
-    let [updatedSection] = await connection.query('SELECT * FROM sections WHERE id = ?', [sectionId]);
+    const [updatedSection] = await connection.query('SELECT * FROM sections WHERE id = ?', [sectionId]);
     expect(updatedSection.length).toBe(1);
     expect(updatedSection[0].nom).toBe(updatedSectionName);
 
@@ -173,7 +174,7 @@ describe('End-to-End Admin Functionality Flow', () => {
     expect(deleteRes.headers.location).toContain('/admin/sections');
 
     // Verify section is deleted from the database
-    let [deletedSection] = await connection.query('SELECT * FROM sections WHERE id = ?', [sectionId]);
+    const [deletedSection] = await connection.query('SELECT * FROM sections WHERE id = ?', [sectionId]);
     expect(deletedSection.length).toBe(0);
   });
 });

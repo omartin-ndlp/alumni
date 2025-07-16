@@ -1,5 +1,6 @@
 const { getConnection, releaseConnection } = require('../config/database');
 const bcrypt = require('bcryptjs');
+const crypto = require('crypto');
 
 class User {
   static async findByEmail(email, dbConnection = null) {
@@ -73,8 +74,8 @@ class User {
     }
   }
 
-  static async verifyPassword(plainPassword, hashedPassword) {
-    return await bcrypt.compare(plainPassword, hashedPassword);
+  static verifyPassword(plainPassword, hashedPassword) {
+    return bcrypt.compare(plainPassword, hashedPassword);
   }
 
   static async updateLastLogin(userId, dbConnection = null) {
@@ -111,7 +112,7 @@ class User {
       } = filters;
 
       const params = [];
-      let whereClauses = ['u.is_approved = TRUE', 'u.is_active = TRUE'];
+      const whereClauses = ['u.is_approved = TRUE', 'u.is_active = TRUE'];
 
       if (annee_diplome) {
         whereClauses.push('u.annee_diplome = ?');
@@ -193,34 +194,34 @@ class User {
       if (!connection) {
         connection = await getConnection();
       }
-      
+
       const fields = [];
       const values = [];
-      
+
       const allowedFields = [
         'prenom', 'nom', 'annee_diplome', 'profile_picture', 'adresse', 'ville', 'code_postal', 'pays',
         'telephone', 'linkedin', 'twitter', 'facebook', 'site_web', 'statut_emploi',
         'opt_out_contact', 'opt_out_directory'
       ];
-      
+
       for (const [key, value] of Object.entries(profileData)) {
         if (allowedFields.includes(key) && value !== undefined) {
           fields.push(`${key} = ?`);
           values.push(value);
         }
       }
-      
+
       if (fields.length === 0) {
         throw new Error('Aucune donnée valide à mettre à jour');
       }
-      
+
       values.push(userId);
-      
+
       const [result] = await connection.execute(`
         UPDATE users SET ${fields.join(', ')}, updated_at = NOW() 
         WHERE id = ?
       `, values);
-      
+
       return result.affectedRows > 0;
     } finally {
       if (!dbConnection) {
@@ -249,31 +250,72 @@ class User {
     }
   }
 
-  static async approveRegistration(requestId, approve = true, dbConnection = null) {
+  static async generateRegistrationKey(requestId, dbConnection = null) {
     let connection = dbConnection;
     try {
       if (!connection) {
         connection = await getConnection();
       }
-      
-      // Récupérer la demande
-      const [requests] = await connection.execute(
-        'SELECT * FROM registration_requests WHERE id = ?', 
-        [requestId]
+      const key = crypto.randomBytes(32).toString('hex');
+      await connection.execute(
+        'UPDATE registration_requests SET registration_key = ?, key_generated_at = NOW() WHERE id = ?',
+        [key, requestId]
       );
-      
-      if (requests.length === 0) {
-        throw new Error('Demande d\'inscription non trouvée');
+      return key;
+    } finally {
+      if (!dbConnection) {
+        releaseConnection(connection);
       }
-      
-      const request = requests[0];
-      
-      if (approve) {
-        // Créer le compte utilisateur
-        const tempPassword = Math.random().toString(36).slice(-12);
-        const hashedPassword = await bcrypt.hash(tempPassword, 10);
-        
+    }
+  }
+
+  static async findRegistrationRequestByKey(key, dbConnection = null) {
+    let connection = dbConnection;
+    try {
+      if (!connection) {
+        connection = await getConnection();
+      }
+      const [rows] = await connection.execute(
+        'SELECT * FROM registration_requests WHERE registration_key = ?',
+        [key]
+      );
+      return rows[0];
+    } finally {
+      if (!dbConnection) {
+        releaseConnection(connection);
+      }
+    }
+  }
+
+  static async completeRegistration(key, password, profileData, dbConnection = null) {
+    let connection = dbConnection;
+    try {
+      if (!connection) {
+        connection = await getConnection();
+      }
+
+      const request = await User.findRegistrationRequestByKey(key, connection);
+      if (!request) {
+        throw new Error('Lien d\'inscription invalide ou expiré.');
+      }
+
+      const hashedPassword = await bcrypt.hash(password, 10);
+
+      // Check if user already exists
+      const existingUser = await User.findByEmail(request.email, connection);
+      let userId;
+
+      if (existingUser) {
+        // User exists, update them
+        userId = existingUser.id;
         await connection.execute(`
+          UPDATE users 
+          SET password_hash = ?, is_approved = TRUE, is_active = TRUE, updated_at = NOW()
+          WHERE id = ?
+        `, [hashedPassword, userId]);
+      } else {
+        // User doesn't exist, create them
+        const [result] = await connection.execute(`
           INSERT INTO users (
             email, password_hash, prenom, nom, annee_diplome, section_id,
             is_approved, is_active
@@ -282,14 +324,34 @@ class User {
           request.email, hashedPassword, request.prenom, request.nom,
           request.annee_diplome, request.section_id
         ]);
-        
-        // TODO: Envoyer email avec mot de passe temporaire
+        userId = result.insertId;
       }
-      
-      // Supprimer la demande
-      await connection.execute('DELETE FROM registration_requests WHERE id = ?', [requestId]);
-      
-      return approve;
+
+      // Update profile data if provided
+      if (profileData && Object.keys(profileData).length > 0) {
+        await User.updateProfile(userId, profileData, connection);
+      }
+
+      // Delete the registration request
+      await connection.execute('DELETE FROM registration_requests WHERE id = ?', [request.id]);
+
+      return userId;
+    } finally {
+      if (!dbConnection) {
+        releaseConnection(connection);
+      }
+    }
+  }
+
+  static async rejectRegistrationRequest(requestId, dbConnection = null) {
+    let connection = dbConnection;
+    try {
+      if (!connection) {
+        connection = await getConnection();
+      }
+      // Simply delete the request
+      const [result] = await connection.execute('DELETE FROM registration_requests WHERE id = ?', [requestId]);
+      return result.affectedRows > 0;
     } finally {
       if (!dbConnection) {
         releaseConnection(connection);
