@@ -2,16 +2,17 @@ const express = require('express');
 const { body, validationResult } = require('express-validator');
 const User = require('../models/User');
 const Employer = require('../models/Employer');
-const { getConnection } = require('../config/database');
+const { getConnection, releaseConnection } = require('../config/database');
 const auth = require('../middleware/auth');
 
 const router = express.Router();
 
 // Afficher le profil
 router.get('/', auth.requireAuth, async (req, res) => {
+  let db;
   try {
     const user = await User.findById(req.session.user.id);
-    const db = await getConnection();
+    db = await getConnection();
 
     // Récupérer l'historique des emplois
     const [employment] = await db.execute(`
@@ -36,14 +37,19 @@ router.get('/', auth.requireAuth, async (req, res) => {
       message: 'Erreur lors du chargement du profil',
       error: {}
     });
+  } finally {
+    if (db) {
+      releaseConnection(db);
+    }
   }
 });
 
 // Afficher le formulaire d'édition
 router.get('/edit', auth.requireAuth, async (req, res) => {
+  let db;
   try {
     const user = await User.findById(req.session.user.id);
-    const db = await getConnection();
+    db = await getConnection();
 
     const [sections] = await db.execute('SELECT * FROM sections ORDER BY nom');
 
@@ -59,6 +65,10 @@ router.get('/edit', auth.requireAuth, async (req, res) => {
       message: 'Erreur lors du chargement du profil',
       error: {}
     });
+  } finally {
+    if (db) {
+      releaseConnection(db);
+    }
   }
 });
 
@@ -74,10 +84,11 @@ router.post('/edit', [
   body('facebook').optional().isURL().withMessage('URL Facebook invalide'),
   body('site_web').optional().isURL().withMessage('URL site web invalide')
 ], async (req, res) => {
+  let db;
   try {
     const errors = validationResult(req);
     const user = await User.findById(req.session.user.id);
-    const db = await getConnection();
+    db = await getConnection();
     const [sections] = await db.execute('SELECT * FROM sections ORDER BY nom');
 
     if (!errors.isEmpty()) {
@@ -125,13 +136,18 @@ router.post('/edit', [
       sections,
       error: 'Erreur lors de la mise à jour du profil'
     });
+  } finally {
+    if (db) {
+      releaseConnection(db);
+    }
   }
 });
 
 // Gestion des emplois
 router.get('/employment', auth.requireAuth, async (req, res) => {
+  let db;
   try {
-    const db = await getConnection();
+    db = await getConnection();
     const [employment] = await db.execute(`
       SELECT ue.*, e.nom as employer_name, e.secteur, e.ville
       FROM user_employment ue
@@ -150,6 +166,10 @@ router.get('/employment', auth.requireAuth, async (req, res) => {
       message: 'Erreur lors du chargement des emplois',
       error: {}
     });
+  } finally {
+    if (db) {
+      releaseConnection(db);
+    }
   }
 });
 
@@ -160,6 +180,7 @@ router.post('/employment/add', [
   body('poste').trim().isLength({ min: 2 }).withMessage('Poste requis'),
   body('date_debut').isISO8601().withMessage('Date de début invalide')
 ], async (req, res) => {
+  let db;
   try {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -171,7 +192,7 @@ router.post('/employment/add', [
     // Créer ou récupérer l'employeur
     const employer = await Employer.findOrCreate(employer_name, { secteur, ville });
 
-    const db = await getConnection();
+    db = await getConnection();
 
     // Si c'est l'emploi actuel, désactiver les autres emplois actuels
     if (is_current === true) {
@@ -199,6 +220,10 @@ router.post('/employment/add', [
   } catch (error) {
     console.error('Erreur ajout emploi:', error);
     res.status(500).json({ error: 'Erreur lors de l\'ajout de l\'emploi' });
+  } finally {
+    if (db) {
+      releaseConnection(db);
+    }
   }
 });
 
@@ -209,6 +234,7 @@ router.post('/employment/:id', [
   body('date_debut').isISO8601().withMessage('Date de début invalide'),
   body('date_fin').optional().isISO8601().withMessage('Date de fin invalide'),
 ], async (req, res) => {
+  let db;
   try {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -218,7 +244,7 @@ router.post('/employment/:id', [
     const { id } = req.params;
     const { poste, date_debut, date_fin, is_current } = req.body;
 
-    const db = await getConnection();
+    db = await getConnection();
 
     // Vérifier que l'emploi appartient bien à l'utilisateur connecté
     const [employment] = await db.execute(
@@ -258,14 +284,19 @@ router.post('/employment/:id', [
   } catch (error) {
     console.error('Erreur mise à jour emploi:', error);
     res.status(500).json({ error: 'Erreur lors de la mise à jour de l\'emploi' });
+  } finally {
+    if (db) {
+      releaseConnection(db);
+    }
   }
 });
 
 // Supprimer un emploi
 router.post('/employment/:id/delete', auth.requireAuth, async (req, res) => {
+  let db;
   try {
     const { id } = req.params;
-    const db = await getConnection();
+    db = await getConnection();
 
     // Vérifier que l'emploi appartient bien à l'utilisateur connecté
     const [employment] = await db.execute(
@@ -284,6 +315,10 @@ router.post('/employment/:id/delete', auth.requireAuth, async (req, res) => {
   } catch (error) {
     console.error('Erreur suppression emploi:', error);
     res.status(500).json({ error: 'Erreur lors de la suppression de l\'emploi' });
+  } finally {
+    if (db) {
+      releaseConnection(db);
+    }
   }
 });
 

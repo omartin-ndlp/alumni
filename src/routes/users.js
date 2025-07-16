@@ -1,13 +1,14 @@
 const express = require('express');
 const User = require('../models/User');
 const Employer = require('../models/Employer');
-const { getConnection } = require('../config/database');
+const { getConnection, releaseConnection } = require('../config/database');
 const auth = require('../middleware/auth');
 
 const router = express.Router();
 
 // Liste des anciens
 router.get('/', auth.requireAuth, async (req, res) => {
+  let db;
   try {
     const { search, sort, page = 1, show_admins } = req.query;
     const limit = 10; // Number of users per page
@@ -27,7 +28,7 @@ router.get('/', auth.requireAuth, async (req, res) => {
 
     const { users, total } = await User.getAll(filters);
 
-    const db = await getConnection();
+    db = await getConnection();
 
     const [sections] = await db.execute('SELECT * FROM sections ORDER BY nom');
     const employers = await Employer.getWithEmployeeCount();
@@ -63,11 +64,16 @@ router.get('/', auth.requireAuth, async (req, res) => {
       message: 'Erreur lors du chargement de l\'annuaire',
       error: {}
     });
+  } finally {
+    if (db) {
+      releaseConnection(db);
+    }
   }
 });
 
 // Profil public d'un utilisateur
 router.get('/:id', auth.requireAuth, async (req, res) => {
+  let db;
   try {
     const user = await User.findById(req.params.id);
 
@@ -78,7 +84,7 @@ router.get('/:id', auth.requireAuth, async (req, res) => {
       });
     }
 
-    const db = await getConnection();
+    db = await getConnection();
 
     // Récupérer l'historique des emplois
     let employment = [];
@@ -99,6 +105,7 @@ router.get('/:id', auth.requireAuth, async (req, res) => {
       isOwnProfile: req.session.user.id === user.id,
       User // Pass the User model
     });
+    
 
   } catch (error) {
     console.error('Erreur profil utilisateur:', error);
@@ -106,11 +113,16 @@ router.get('/:id', auth.requireAuth, async (req, res) => {
       message: 'Erreur lors du chargement du profil',
       error: {}
     });
+  } finally {
+    if (db) {
+      releaseConnection(db);
+    }
   }
 });
 
 // Liste des employeurs
 router.get('/employers/list', auth.requireAuth, async (req, res) => {
+  let db;
   try {
     const employers = await Employer.getWithEmployeeCount();
 
@@ -125,11 +137,16 @@ router.get('/employers/list', auth.requireAuth, async (req, res) => {
       message: 'Erreur lors du chargement des employeurs',
       error: {}
     });
+  } finally {
+    if (db) {
+      releaseConnection(db);
+    }
   }
 });
 
 // Employés d'un employeur
 router.get('/employers/:id', auth.requireAuth, async (req, res) => {
+  let db;
   try {
     const employer = await Employer.findById(req.params.id);
 
@@ -155,11 +172,16 @@ router.get('/employers/:id', auth.requireAuth, async (req, res) => {
       message: 'Erreur lors du chargement de l\'employeur',
       error: {}
     });
+  } finally {
+    if (db) {
+      releaseConnection(db);
+    }
   }
 });
 
 // API endpoint for fetching users (for AJAX)
 router.get('/api/users', auth.requireAuth, async (req, res) => {
+  let db;
   try {
     const { search, sort, page = 1, show_admins } = req.query;
     const limit = 10; // Number of users per page
@@ -194,6 +216,10 @@ router.get('/api/users', auth.requireAuth, async (req, res) => {
   } catch (error) {
     console.error('Erreur API utilisateurs:', error);
     res.status(500).json({ error: 'Erreur lors du chargement des utilisateurs' });
+  } finally {
+    if (db) {
+      releaseConnection(db);
+    }
   }
 });
 
