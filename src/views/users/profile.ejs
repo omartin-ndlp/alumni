@@ -11,9 +11,13 @@
                 <% if (displayUser.current_position && displayUser.current_employer) { %>
                 <p class="text-muted mb-4"><%= displayUser.current_position %> chez <%= displayUser.current_employer %></p>
                 <% } %>
-                <% if (isOwnProfile) { %>
+                <% if (isOwnProfile || isAdmin) { %>
                 <div class="d-flex justify-content-center mb-2">
+                    <% if (isOwnProfile) { %>
                     <a href="/profile/edit" class="btn btn-primary">Modifier le profil</a>
+                    <% } else if (isAdmin) { %>
+                    <a href="/admin/users/edit/<%= displayUser.id %>" class="btn btn-primary">Modifier le profil</a>
+                    <% } %>
                 </div>
                 <% } %>
             </div>

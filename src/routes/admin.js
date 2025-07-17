@@ -1,7 +1,7 @@
 const express = require('express');
 const { body, validationResult } = require('express-validator');
 const User = require('../models/User');
-const { getConnection } = require('../config/database');
+const { getConnection, releaseConnection } = require('../config/database');
 const auth = require('../middleware/auth');
 
 const router = express.Router();
@@ -312,6 +312,113 @@ router.post('/sections/:id/delete', auth.requireAuth, async (req, res) => {
   } catch (error) {
     console.error('Erreur suppression section:', error);
     res.redirect('/admin/sections?error=delete_failed');
+  }
+});
+
+// Admin: Edit User Profile (GET)
+router.get('/users/edit/:id', async (req, res) => {
+  let db;
+  try {
+    const userId = req.params.id;
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(404).render('error', { message: 'Utilisateur non trouvé', error: {} });
+    }
+
+    db = await getConnection();
+    const [sections] = await db.execute('SELECT * FROM sections ORDER BY nom');
+
+    res.render('admin/user-edit', {
+      title: `Modifier ${user.prenom} ${user.nom} - Administration`,
+      editUser: user,
+      sections,
+      errors: {},
+      oldInput: {}
+    });
+
+  } catch (error) {
+    console.error('Erreur chargement page modification utilisateur (Admin):', error);
+    res.render('error', { message: 'Erreur lors du chargement du profil utilisateur', error: {} });
+  } finally {
+    if (db) releaseConnection(db);
+  }
+});
+
+// Admin: Edit User Profile (POST)
+router.post('/users/edit/:id', [
+  body('prenom').trim().isLength({ min: 1 }).withMessage('Le prénom est requis.'),
+  body('nom').trim().isLength({ min: 1 }).withMessage('Le nom est requis.'),
+  body('email').isEmail().withMessage('Adresse email invalide.').normalizeEmail(),
+  body('annee_diplome').isInt({ min: 1900, max: new Date().getFullYear() + 5 }).withMessage('Année de diplôme invalide.'),
+  body('section_id').isInt().withMessage('Section invalide.'),
+  body('is_admin').optional().toBoolean(),
+  body('is_approved').optional().toBoolean(),
+  body('is_active').optional().toBoolean(),
+  body('opt_out_contact').optional().toBoolean(),
+  body('opt_out_directory').optional().toBoolean(),
+  body('telephone').optional().trim(),
+  body('linkedin').optional().trim().isURL().withMessage('Lien LinkedIn invalide.'),
+  body('twitter').optional().trim().isURL().withMessage('Lien Twitter invalide.'),
+  body('facebook').optional().trim().isURL().withMessage('Lien Facebook invalide.'),
+  body('site_web').optional().trim().isURL().withMessage('Lien Site Web invalide.'),
+  body('adresse').optional().trim(),
+  body('code_postal').optional().trim(),
+  body('ville').optional().trim(),
+  body('pays').optional().trim(),
+  body('description').optional().trim()
+], async (req, res) => {
+  let db;
+  try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      const user = await User.findById(req.params.id);
+      db = await getConnection();
+      const [sections] = await db.execute('SELECT * FROM sections ORDER BY nom');
+      return res.render('admin/user-edit', {
+        title: `Modifier ${user.prenom} ${user.nom} - Administration`,
+        editUser: user,
+        sections,
+        errors: errors.mapped(),
+        oldInput: req.body
+      });
+    }
+
+    const userId = req.params.id;
+    const { 
+      prenom, nom, email, annee_diplome, section_id, is_admin, is_approved, is_active,
+      opt_out_contact, opt_out_directory, telephone, linkedin, twitter, facebook, site_web,
+      adresse, code_postal, ville, pays, description
+    } = req.body;
+
+    const userData = {
+      prenom, nom, email, annee_diplome, section_id,
+      is_admin: is_admin || false,
+      is_approved: is_approved || false,
+      is_active: is_active || false,
+      opt_out_contact: opt_out_contact || false,
+      opt_out_directory: opt_out_directory || false,
+      telephone: telephone || null,
+      linkedin: linkedin || null,
+      twitter: twitter || null,
+      facebook: facebook || null,
+      site_web: site_web || null,
+      adresse: adresse || null,
+      code_postal: code_postal || null,
+      ville: ville || null,
+      pays: pays || null,
+      description: description || null
+    };
+
+    await User.update(userId, userData);
+
+    res.redirect('/admin/users?success=user_updated');
+
+  } catch (error) {
+    console.error('Erreur modification utilisateur (Admin):', error);
+    res.render('error', { message: 'Erreur lors de la modification du profil utilisateur', error: {} });
+  } finally {
+    if (db) releaseConnection(db);
   }
 });
 

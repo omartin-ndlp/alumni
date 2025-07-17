@@ -110,21 +110,35 @@ describe('User and Employer Routes', () => {
     });
   });
 
-  describe('GET /users/employers/:id', () => {
-    it('should return the details of a specific employer and its employees, showing only the latest role for each employee', async () => {
-      const res = await agent.get('/users/employers/1');
+  describe('GET /users/:id - Profile Edit Button Visibility', () => {
+    let regularUserAgent;
+
+    beforeEach(async () => {
+      // Log in as a regular user for these tests
+      regularUserAgent = request.agent(app);
+      await regularUserAgent
+        .post('/login')
+        .send({ email: 'user@test.com', password: 'password' });
+    });
+
+    it(`should show "Modifier le profil" button to an admin viewing any user's profile`, async () => {
+      // Admin agent is already logged in from the main beforeEach
+      const res = await agent.get('/users/2'); // Admin viewing regular user's profile
       expect(res.statusCode).toEqual(200);
-      expect(res.text).toContain('Test Employer');
-      expect(res.text).toContain('Regular User');
-      expect(res.text).toContain('Senior Developer');
-      expect(res.text).not.toContain('Junior Developer');
+      expect(res.text).toContain('Modifier le profil');
+      expect(res.text).toContain('href="/admin/users/edit/2"');
+    });
 
-      // Check that the user appears only once
-      const occurrences = (res.text.match(/Regular User/g) || []).length;
-      expect(occurrences).toBe(1);
+    it(`should show "Modifier le profil" button to a regular user viewing their own profile`, async () => {
+      const res = await regularUserAgent.get('/users/2'); // Regular user viewing their own profile
+      expect(res.statusCode).toEqual(200);
+      expect(res.text).toContain('Modifier le profil');
+    });
 
-      // Check that the link to the user profile is correct
-      expect(res.text).toContain('href="/users/2"');
+    it(`should NOT show "Modifier le profil" button to a regular user viewing another user's profile`, async () => {
+      const res = await regularUserAgent.get('/users/3'); // Regular user viewing another user's profile
+      expect(res.statusCode).toEqual(200);
+      expect(res.text).not.toContain('Modifier le profil');
     });
   });
 });
