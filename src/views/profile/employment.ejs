@@ -6,9 +6,11 @@
             <h5 class="card-title mb-3">Ajouter un nouvel emploi</h5>
             <form action="/profile/employment/add" method="POST">
                 <div class="row mb-3">
-                    <div class="col-md-6">
+                    <div class="col-md-6 employer-suggest">
                         <label for="employer_name" class="form-label">Nom de l'employeur</label>
-                        <input type="text" class="form-control" id="employer_name" name="employer_name" required>
+                        <input type="text" class="form-control" id="employer_name" name="employer_name" required autocomplete="off">
+                        <div id="employer-suggestions" class="list-group position-absolute employer-suggestions" style="z-index: 1000;"></div>
+                        <input type="hidden" id="employer_id" name="employer_id">
                     </div>
                     <div class="col-md-6">
                         <label for="poste" class="form-label">Poste</label>

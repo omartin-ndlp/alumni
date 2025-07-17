@@ -12,6 +12,9 @@ const addUserToLocals = (req, res, next) => {
 // Middleware pour vérifier l'authentification
 const requireAuth = (req, res, next) => {
   if (!req.session.user) {
+    if (req.originalUrl.startsWith('/api/')) {
+      return res.status(401).json({ error: 'Authentification requise' });
+    }
     return res.redirect('/login?redirect=' + encodeURIComponent(req.originalUrl));
   }
 
@@ -20,6 +23,7 @@ const requireAuth = (req, res, next) => {
       title: 'Compte en attente d\'approbation'
     });
   }
+
 
   next();
 };

@@ -74,6 +74,7 @@ app.use('/', require('./src/routes/auth'));
 app.use('/profile', require('./src/routes/profile'));
 app.use('/users', require('./src/routes/users'));
 app.use('/admin', require('./src/routes/admin'));
+app.use('/api', require('./src/routes/api'));
 
 // Middleware de gestion d'erreurs
 app.use((err, req, res, _next) => {

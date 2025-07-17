@@ -50,7 +50,7 @@ function initEmployerSuggestions() {
 
 async function fetchEmployerSuggestions(query, suggestionsDiv, input) {
   try {
-    const response = await fetch(`/profile/api/employers/suggest?q=${encodeURIComponent(query)}`);
+    const response = await fetch(`/api/employers/search?q=${encodeURIComponent(query)}`);
     const employers = await response.json();
 
     if (employers.length > 0) {
@@ -68,26 +68,22 @@ function showSuggestions(employers, suggestionsDiv, input) {
   suggestionsDiv.innerHTML = '';
 
   employers.forEach(employer => {
-    const item = document.createElement('div');
-    item.className = 'suggestion-item';
+    const item = document.createElement('a');
+    item.href = '#';
+    item.className = 'list-group-item list-group-item-action';
     item.innerHTML = `
             <strong>${employer.nom}</strong>
             ${employer.ville ? `<br><small class="text-muted">${employer.ville}</small>` : ''}
         `;
 
-    item.addEventListener('click', function() {
+    item.addEventListener('click', function(e) {
+      e.preventDefault();
       input.value = employer.nom;
 
-      // Remplir aussi les champs secteur et ville si disponibles
-      const secteurInput = input.form.querySelector('input[name="secteur"]');
-      const villeInput = input.form.querySelector('input[name="ville"]');
-
-      if (secteurInput && employer.secteur) {
-        secteurInput.value = employer.secteur;
-      }
-      if (villeInput && employer.ville) {
-        villeInput.value = employer.ville;
-      }
+      const form = input.form;
+      form.querySelector('#employer_id').value = employer.id;
+      form.querySelector('#secteur').value = employer.secteur || '';
+      form.querySelector('#ville').value = employer.ville || '';
 
       hideSuggestions(suggestionsDiv);
     });
