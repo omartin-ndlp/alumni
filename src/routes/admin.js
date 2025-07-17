@@ -58,11 +58,12 @@ router.get('/', async (req, res) => {
     `);
 
     res.render('admin/dashboard', {
-      title: 'Administration - Anciens BTS SN/CIEL LJV',
+      title: 'Tableau de bord Administrateur',
       stats: stats[0],
       recentUsers,
       yearStats,
-      sectionStats
+      sectionStats,
+      User: User // Pass the User model to the template
     });
 
   } catch (error) {

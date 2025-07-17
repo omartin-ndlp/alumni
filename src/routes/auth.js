@@ -285,12 +285,8 @@ router.post('/logout', (req, res) => {
 // Dashboard principal
 router.get('/dashboard', auth.requireAuth, async (req, res) => {
   try {
-    const recentUsers = await User.getAll({ limit: 5 });
-    
     res.render('dashboard', {
-      title: 'Tableau de bord - Anciens BTS SN/CIEL LJV',
-      recentUsers,
-      User // Pass the User model
+      title: 'Accueil - Anciens BTS SN/CIEL LJV',
     });
   } catch (error) {
     console.error('Erreur dashboard:', error);
