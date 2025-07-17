@@ -108,6 +108,11 @@
                     </select>
                 </div>
 
+                <div class="mb-3">
+                    <label for="description" class="form-label">Description (optionnel)</label>
+                    <textarea class="form-control" id="description" name="description" rows="5"><%= user.description || '' %></textarea>
+                </div>
+
                 <button type="submit" class="btn btn-primary">Enregistrer les modifications</button>
             </form>
         </div>

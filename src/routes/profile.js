@@ -4,6 +4,8 @@ const User = require('../models/User');
 const Employer = require('../models/Employer');
 const { getConnection, releaseConnection } = require('../config/database');
 const auth = require('../middleware/auth');
+const multer = require('multer');
+const upload = multer();
 
 const router = express.Router();
 
@@ -73,16 +75,17 @@ router.get('/edit', auth.requireAuth, async (req, res) => {
 });
 
 // Traitement de la modification du profil
-router.post('/edit', [
+router.post('/edit', upload.none(), [
   auth.requireAuth,
   body('prenom').trim().isLength({ min: 2 }).withMessage('Prénom requis'),
   body('nom').trim().isLength({ min: 2 }).withMessage('Nom requis'),
-  body('telephone').optional().isMobilePhone('fr-FR').withMessage('Numéro de téléphone invalide'),
-  body('email').optional().isEmail().withMessage('Email invalide'),
-  body('linkedin').optional().isURL().withMessage('URL LinkedIn invalide'),
-  body('twitter').optional().isURL().withMessage('URL Twitter invalide'),
-  body('facebook').optional().isURL().withMessage('URL Facebook invalide'),
-  body('site_web').optional().isURL().withMessage('URL site web invalide')
+  body('telephone').optional({ checkFalsy: true }).isMobilePhone('fr-FR').withMessage('Numéro de téléphone invalide'),
+  body('email').optional({ checkFalsy: true }).isEmail().withMessage('Email invalide'),
+  body('linkedin').optional({ checkFalsy: true }).isURL().withMessage('URL LinkedIn invalide'),
+  body('twitter').optional({ checkFalsy: true }).isURL().withMessage('URL Twitter invalide'),
+  body('facebook').optional({ checkFalsy: true }).isURL().withMessage('URL Facebook invalide'),
+  body('site_web').optional({ checkFalsy: true }).isURL().withMessage('URL site web invalide'),
+  body('description').optional().trim()
 ], async (req, res) => {
   let db;
   try {
@@ -92,6 +95,7 @@ router.post('/edit', [
     const [sections] = await db.execute('SELECT * FROM sections ORDER BY nom');
 
     if (!errors.isEmpty()) {
+      console.log(errors.array()); // Log validation errors
       return res.render('profile/edit', {
         title: 'Modifier mon profil - Anciens BTS SN/CIEL LJV',
         user,
@@ -113,6 +117,7 @@ router.post('/edit', [
       facebook: req.body.facebook || null,
       site_web: req.body.site_web || null,
       statut_emploi: req.body.statut_emploi === '' ? null : req.body.statut_emploi,
+      description: req.body.description || null,
     };
 
     await User.updateProfile(req.session.user.id, updateData, 'user');
