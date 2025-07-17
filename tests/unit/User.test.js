@@ -27,9 +27,11 @@ const User = require('../../src/models/User');
 
 describe('User Model', () => {
   beforeEach(() => {
-    // Clear all mocks before each test
-    mockExecute.mockClear();
-    mockGetConnection.mockClear();
+    // Clear and reset all mocks before each test
+    mockExecute.mockReset();
+    mockGetConnection.mockReset().mockImplementation(() => ({
+      execute: mockExecute,
+    }));
     bcrypt.hash.mockClear();
     bcrypt.compare.mockClear();
     crypto.randomBytes.mockClear();
@@ -243,7 +245,7 @@ describe('User Model', () => {
       const profileData = { prenom: 'Jane', ville: 'Paris' };
       mockExecute.mockResolvedValueOnce([{ affectedRows: 1 }]);
 
-      const result = await User.updateProfile(1, profileData);
+      const result = await User.updateProfile(1, profileData, 'user');
       expect(result).toBe(true);
       expect(mockExecute).toHaveBeenCalledWith(
         expect.any(String),
@@ -253,7 +255,7 @@ describe('User Model', () => {
 
     test('should throw error if no valid data to update', async () => {
       const profileData = { invalidField: 'value' };
-      await expect(User.updateProfile(1, profileData)).rejects.toThrow('Aucune donnée valide à mettre à jour');
+      await expect(User.updateProfile(1, profileData, 'user')).rejects.toThrow('Aucune donnée valide à mettre à jour');
       expect(mockExecute).not.toHaveBeenCalled();
     });
 
@@ -261,7 +263,7 @@ describe('User Model', () => {
       const profileData = { prenom: 'Jane' };
       mockExecute.mockResolvedValueOnce([{ affectedRows: 0 }]);
 
-      const result = await User.updateProfile(1, profileData);
+      const result = await User.updateProfile(1, profileData, 'user');
       expect(result).toBe(false);
     });
   });

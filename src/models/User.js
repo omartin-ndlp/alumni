@@ -190,7 +190,7 @@ class User {
     }
   }
 
-  static async updateProfile(userId, profileData, dbConnection = null) {
+  static async updateProfile(userId, profileData, updaterRole, dbConnection = null) {
     let connection = dbConnection;
     try {
       if (!connection) {
@@ -200,10 +200,23 @@ class User {
       const fields = [];
       const values = [];
 
-      const allowedFields = [
-        'prenom', 'nom', 'annee_diplome', 'profile_picture', 'adresse', 'ville', 'code_postal', 'pays',
-        'telephone', 'linkedin', 'twitter', 'facebook', 'site_web', 'statut_emploi'
-      ];
+      // Define allowed fields based on the updater's role
+      let allowedFields = [];
+      if (updaterRole === 'admin') {
+        allowedFields = [
+          'prenom', 'nom', 'email', 'annee_diplome', 'section_id', 'is_admin', 'is_approved', 'is_active',
+          'profile_picture', 'adresse', 'ville', 'code_postal', 'pays', 'telephone', 'linkedin', 'twitter',
+          'facebook', 'site_web', 'statut_emploi', 'opt_out_contact', 'opt_out_directory', 'description'
+        ];
+      } else if (updaterRole === 'user') {
+        allowedFields = [
+          'prenom', 'nom', 'profile_picture', 'adresse', 'ville', 'code_postal', 'pays',
+          'telephone', 'linkedin', 'twitter', 'facebook', 'site_web', 'statut_emploi',
+          'opt_out_contact', 'opt_out_directory', 'description'
+        ];
+      } else {
+        throw new Error('Rôle de mise à jour non valide.');
+      }
 
       for (const [key, value] of Object.entries(profileData)) {
         if (allowedFields.includes(key) && value !== undefined) {
@@ -213,7 +226,13 @@ class User {
       }
 
       if (fields.length === 0) {
-        throw new Error('Aucune donnée valide à mettre à jour');
+        // If no valid fields are provided, and it's not an admin update, throw an error.
+        // Admins might submit empty forms to trigger validation errors, which is handled by express-validator.
+        if (updaterRole !== 'admin') {
+          throw new Error('Aucune donnée valide à mettre à jour');
+        } else {
+          return false; // For admin, return false if no fields to update, validation handles errors
+        }
       }
 
       values.push(userId);
@@ -330,7 +349,7 @@ class User {
 
       // Update profile data if provided
       if (profileData && Object.keys(profileData).length > 0) {
-        await User.updateProfile(userId, profileData, connection);
+        await User.updateProfile(userId, profileData, 'user', connection);
       }
 
       // Delete the registration request

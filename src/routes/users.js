@@ -104,7 +104,8 @@ router.get('/:id', auth.requireAuth, async (req, res) => {
       canViewContact: true,
       isOwnProfile: req.session.user.id === user.id,
       isAdmin: req.session.user.is_admin,
-      User // Pass the User model
+      User, // Pass the User model
+      query: req.query // Pass the query object
     });
     
 

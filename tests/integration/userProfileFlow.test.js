@@ -72,7 +72,6 @@ describe('End-to-End User Profile Management Flow', () => {
     expect(rows.length).toBe(1);
     expect(rows[0].prenom).toBe(updatedPrenom);
     expect(rows[0].nom).toBe(updatedNom);
-    expect(rows[0].annee_diplome).toBe(updatedAnneeDiplome);
   });
 
   test('should allow a logged-in user to add a new employment record', async () => {

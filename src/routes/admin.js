@@ -3,6 +3,8 @@ const { body, validationResult } = require('express-validator');
 const User = require('../models/User');
 const { getConnection, releaseConnection } = require('../config/database');
 const auth = require('../middleware/auth');
+const multer = require('multer');
+const upload = multer();
 
 const router = express.Router();
 
@@ -163,7 +165,7 @@ router.get('/users', async (req, res) => {
     const total = countResult[0].total;
     const totalPages = Math.ceil(total / limit);
 
-    res.render('admin/users', {
+    res.render('users/list', {
       title: 'Gestion des utilisateurs - Administration',
       users,
       pagination: {
@@ -346,22 +348,22 @@ router.get('/users/edit/:id', async (req, res) => {
 });
 
 // Admin: Edit User Profile (POST)
-router.post('/users/edit/:id', [
+router.post('/users/edit/:id', upload.none(), [
   body('prenom').trim().isLength({ min: 1 }).withMessage('Le prénom est requis.'),
   body('nom').trim().isLength({ min: 1 }).withMessage('Le nom est requis.'),
   body('email').isEmail().withMessage('Adresse email invalide.').normalizeEmail(),
   body('annee_diplome').isInt({ min: 1900, max: new Date().getFullYear() + 5 }).withMessage('Année de diplôme invalide.'),
   body('section_id').isInt().withMessage('Section invalide.'),
-  body('is_admin').optional().toBoolean(),
-  body('is_approved').optional().toBoolean(),
-  body('is_active').optional().toBoolean(),
-  body('opt_out_contact').optional().toBoolean(),
-  body('opt_out_directory').optional().toBoolean(),
+  body('is_admin').optional().toBoolean().default(false),
+  body('is_approved').optional().toBoolean().default(false),
+  body('is_active').optional().toBoolean().default(false),
+  body('opt_out_contact').optional().toBoolean().default(false),
+  body('opt_out_directory').optional().toBoolean().default(false),
   body('telephone').optional().trim(),
-  body('linkedin').optional().trim().isURL().withMessage('Lien LinkedIn invalide.'),
-  body('twitter').optional().trim().isURL().withMessage('Lien Twitter invalide.'),
-  body('facebook').optional().trim().isURL().withMessage('Lien Facebook invalide.'),
-  body('site_web').optional().trim().isURL().withMessage('Lien Site Web invalide.'),
+  body('linkedin').optional({ checkFalsy: true }).trim().isURL().withMessage('Lien LinkedIn invalide.'),
+  body('twitter').optional({ checkFalsy: true }).trim().isURL().withMessage('Lien Twitter invalide.'),
+  body('facebook').optional({ checkFalsy: true }).trim().isURL().withMessage('Lien Facebook invalide.'),
+  body('site_web').optional({ checkFalsy: true }).trim().isURL().withMessage('Lien Site Web invalide.'),
   body('adresse').optional().trim(),
   body('code_postal').optional().trim(),
   body('ville').optional().trim(),
@@ -388,7 +390,7 @@ router.post('/users/edit/:id', [
     const { 
       prenom, nom, email, annee_diplome, section_id, is_admin, is_approved, is_active,
       opt_out_contact, opt_out_directory, telephone, linkedin, twitter, facebook, site_web,
-      adresse, code_postal, ville, pays, description
+      adresse, code_postal, ville, pays, description, statut_emploi
     } = req.body;
 
     const userData = {
@@ -403,6 +405,7 @@ router.post('/users/edit/:id', [
       twitter: twitter || null,
       facebook: facebook || null,
       site_web: site_web || null,
+      statut_emploi: statut_emploi === '' ? null : statut_emploi,
       adresse: adresse || null,
       code_postal: code_postal || null,
       ville: ville || null,
@@ -410,9 +413,9 @@ router.post('/users/edit/:id', [
       description: description || null
     };
 
-    await User.update(userId, userData);
+    await User.updateProfile(userId, userData, 'admin');
 
-    res.redirect('/admin/users?success=user_updated');
+    res.redirect(`/users/${userId}?success=user_updated`);
 
   } catch (error) {
     console.error('Erreur modification utilisateur (Admin):', error);

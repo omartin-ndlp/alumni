@@ -98,10 +98,13 @@
                     <label for="statut_emploi" class="form-label">Statut d'emploi</label>
                     <select class="form-select" id="statut_emploi" name="statut_emploi">
                         <option value="" <%= !user.statut_emploi ? 'selected' : '' %>>Non spécifié</option>
-                        <option value="employed" <%= user.statut_emploi == 'employed' ? 'selected' : '' %>>Employé</option>
-                        <option value="unemployed" <%= user.statut_emploi == 'unemployed' ? 'selected' : '' %>>Sans emploi</option>
-                        <option value="student" <%= user.statut_emploi == 'student' ? 'selected' : '' %>>Étudiant</option>
-                        <option value="retired" <%= user.statut_emploi == 'retired' ? 'selected' : '' %>>Retraité</option>
+                        <option value="etudiant" <%= user.statut_emploi == 'etudiant' ? 'selected' : '' %>>Étudiant</option>
+                        <option value="employe" <%= user.statut_emploi == 'employe' ? 'selected' : '' %>>Employé</option>
+                        <option value="freelance" <%= user.statut_emploi == 'freelance' ? 'selected' : '' %>>Freelance</option>
+                        <option value="chomeur" <%= user.statut_emploi == 'chomeur' ? 'selected' : '' %>>Sans emploi</option>
+                        <option value="entrepreneur" <%= user.statut_emploi == 'entrepreneur' ? 'selected' : '' %>>Entrepreneur</option>
+                        <option value="retraite" <%= user.statut_emploi == 'retraite' ? 'selected' : '' %>>Retraité</option>
+                        <option value="autre" <%= user.statut_emploi == 'autre' ? 'selected' : '' %>>Autre</option>
                     </select>
                 </div>
 

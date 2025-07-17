@@ -97,10 +97,13 @@
                     <label for="statut_emploi" class="form-label">Statut d'emploi</label>
                     <select class="form-select" id="statut_emploi" name="statut_emploi">
                         <option value="" <%= (oldInput.statut_emploi || editUser.statut_emploi) == null ? 'selected' : '' %>>Non spécifié</option>
-                        <option value="employed" <%= (oldInput.statut_emploi || editUser.statut_emploi) == 'employed' ? 'selected' : '' %>>Employé</option>
-                        <option value="unemployed" <%= (oldInput.statut_emploi || editUser.statut_emploi) == 'unemployed' ? 'selected' : '' %>>Sans emploi</option>
-                        <option value="student" <%= (oldInput.statut_emploi || editUser.statut_emploi) == 'student' ? 'selected' : '' %>>Étudiant</option>
-                        <option value="retired" <%= (oldInput.statut_emploi || editUser.statut_emploi) == 'retired' ? 'selected' : '' %>>Retraité</option>
+                        <option value="etudiant" <%= (oldInput.statut_emploi || editUser.statut_emploi) == 'etudiant' ? 'selected' : '' %>>Étudiant</option>
+                        <option value="employe" <%= (oldInput.statut_emploi || editUser.statut_emploi) == 'employe' ? 'selected' : '' %>>Employé</option>
+                        <option value="freelance" <%= (oldInput.statut_emploi || editUser.statut_emploi) == 'freelance' ? 'selected' : '' %>>Freelance</option>
+                        <option value="chomeur" <%= (oldInput.statut_emploi || editUser.statut_emploi) == 'chomeur' ? 'selected' : '' %>>Sans emploi</option>
+                        <option value="entrepreneur" <%= (oldInput.statut_emploi || editUser.statut_emploi) == 'entrepreneur' ? 'selected' : '' %>>Entrepreneur</option>
+                        <option value="retraite" <%= (oldInput.statut_emploi || editUser.statut_emploi) == 'retraite' ? 'selected' : '' %>>Retraité</option>
+                        <option value="autre" <%= (oldInput.statut_emploi || editUser.statut_emploi) == 'autre' ? 'selected' : '' %>>Autre</option>
                     </select>
                 </div>
 

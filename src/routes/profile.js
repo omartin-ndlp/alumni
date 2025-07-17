@@ -103,7 +103,6 @@ router.post('/edit', [
     const updateData = {
       prenom: req.body.prenom,
       nom: req.body.nom,
-      annee_diplome: req.body.annee_diplome, // Add this line
       adresse: req.body.adresse || null,
       ville: req.body.ville || null,
       code_postal: req.body.code_postal || null,
@@ -113,10 +112,10 @@ router.post('/edit', [
       twitter: req.body.twitter || null,
       facebook: req.body.facebook || null,
       site_web: req.body.site_web || null,
-      statut_emploi: req.body.statut_emploi,
+      statut_emploi: req.body.statut_emploi === '' ? null : req.body.statut_emploi,
     };
 
-    await User.updateProfile(req.session.user.id, updateData);
+    await User.updateProfile(req.session.user.id, updateData, 'user');
 
     // Mettre à jour la session
     req.session.user.prenom = updateData.prenom;
