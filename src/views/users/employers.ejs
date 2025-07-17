@@ -7,7 +7,7 @@
         <div class="col-md-6 col-lg-4 mb-4">
             <div class="card h-100">
                 <div class="card-body">
-                    <h5 class="card-title"><%= employer.nom %></h5>
+                    <h5 class="card-title"><%= employer.nom %> (<%= employer.employee_count %>)</h5>
                     <p class="card-text text-muted">
                         <% if (employer.ville) { %>
                             <%= employer.ville %>
@@ -16,7 +16,6 @@
                             <%= employer.secteur %>
                         <% } %>
                     </p>
-                    <p class="card-text">Nombre d'employés: <%= employer.employee_count %></p>
                     <a href="/users/employers/<%= employer.id %>" class="btn btn-primary btn-sm">
                         Voir les employés
                     </a>

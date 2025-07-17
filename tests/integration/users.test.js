@@ -20,8 +20,9 @@ describe('User and Employer Routes', () => {
     await connection.query(
       `INSERT INTO users (id, email, password_hash, prenom, nom, annee_diplome, section_id, is_admin, is_approved, is_active) VALUES
          (1, 'admin@test.com', ?, 'Admin', 'User', 2020, 1, TRUE, TRUE, TRUE),
-         (2, 'user@test.com', ?, 'Regular', 'User', 2021, 2, FALSE, TRUE, TRUE)`,
-      [adminPassword, userPassword]
+         (2, 'user@test.com', ?, 'Regular', 'User', 2021, 2, FALSE, TRUE, TRUE),
+         (3, 'anotheruser@test.com', ?, 'Another', 'User', 2022, 1, FALSE, TRUE, TRUE)`,
+      [adminPassword, userPassword, userPassword]
     );
 
     // Seed with a test employer and employment record
@@ -31,7 +32,8 @@ describe('User and Employer Routes', () => {
     await connection.query(
       `INSERT INTO user_employment (user_id, employer_id, poste, date_debut, is_current) VALUES
         (2, 1, 'Junior Developer', '2021-01-01', FALSE),
-        (2, 1, 'Senior Developer', '2022-01-01', TRUE)`
+        (2, 1, 'Senior Developer', '2022-01-01', TRUE),
+        (3, 1, 'QA Engineer', '2023-01-01', TRUE)`
     );
 
     // Log in as the admin user for the test session
@@ -99,10 +101,12 @@ describe('User and Employer Routes', () => {
   });
 
   describe('GET /users/employers/list', () => {
-    it('should return the list of employers', async () => {
+    it('should return the list of employers with correct unique employee count', async () => {
       const res = await agent.get('/users/employers/list');
       expect(res.statusCode).toEqual(200);
       expect(res.text).toContain('Employeurs');
+      // Expect 2 unique employees for 'Test Employer' (user 2 and user 3)
+      expect(res.text).toContain('Test Employer (2)');
     });
   });
 

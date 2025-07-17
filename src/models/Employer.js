@@ -141,7 +141,7 @@ class Employer {
         connection = await getConnection();
       }
       const [rows] = await connection.execute(`
-        SELECT e.*, COUNT(ue.id) as employee_count,
+        SELECT e.*, COUNT(DISTINCT ue.user_id) as employee_count,
                COUNT(CASE WHEN ue.is_current = TRUE THEN 1 END) as current_employee_count
         FROM employers e
         LEFT JOIN user_employment ue ON e.id = ue.employer_id
