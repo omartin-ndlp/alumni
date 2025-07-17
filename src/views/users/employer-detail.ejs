@@ -16,7 +16,7 @@
             <h5 class="card-title">Employés (<%= employees.length %>)</h5>
             <div class="list-group list-group-flush">
                 <% employees.forEach(employee => { %>
-                <a href="/users/<%= employee.id %>" class="list-group-item bg-info-subtle d-flex align-items-center">
+                <a href="/users/<%= employee.user_id %>" class="list-group-item bg-info-subtle d-flex align-items-center">
                     <img src="<%= User.getGravatarUrl(employee.email, 40) %>" class="rounded-circle me-3 gravatar-img" 
                          style="width: 40px; height: 40px; object-fit: cover;">
                     <div>

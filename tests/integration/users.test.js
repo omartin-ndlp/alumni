@@ -26,10 +26,12 @@ describe('User and Employer Routes', () => {
 
     // Seed with a test employer and employment record
     await connection.query(
-      'INSERT INTO employers (id, nom, secteur, ville) VALUES (1, \'Test Employer\', \'IT\', \'Testville\')'
+      `INSERT INTO employers (id, nom, secteur, ville) VALUES (1, 'Test Employer', 'IT', 'Testville')`
     );
     await connection.query(
-      'INSERT INTO user_employment (user_id, employer_id, poste, date_debut, is_current) VALUES (2, 1, \'Developer\', \'2022-01-01\', TRUE)'
+      `INSERT INTO user_employment (user_id, employer_id, poste, date_debut, is_current) VALUES
+        (2, 1, 'Junior Developer', '2021-01-01', FALSE),
+        (2, 1, 'Senior Developer', '2022-01-01', TRUE)`
     );
 
     // Log in as the admin user for the test session
@@ -105,11 +107,20 @@ describe('User and Employer Routes', () => {
   });
 
   describe('GET /users/employers/:id', () => {
-    it('should return the details of a specific employer and its employees', async () => {
+    it('should return the details of a specific employer and its employees, showing only the latest role for each employee', async () => {
       const res = await agent.get('/users/employers/1');
       expect(res.statusCode).toEqual(200);
       expect(res.text).toContain('Test Employer');
-      expect(res.text).toContain('Regular User'); // The employee
+      expect(res.text).toContain('Regular User');
+      expect(res.text).toContain('Senior Developer');
+      expect(res.text).not.toContain('Junior Developer');
+
+      // Check that the user appears only once
+      const occurrences = (res.text.match(/Regular User/g) || []).length;
+      expect(occurrences).toBe(1);
+
+      // Check that the link to the user profile is correct
+      expect(res.text).toContain('href="/users/2"');
     });
   });
 });

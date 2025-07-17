@@ -81,7 +81,7 @@ describe('User Employment Database Interactions', () => {
 
     // Retrieve employees for the employer
     const employees = await Employer.getEmployees(employerId, connection);
-    const foundEmployee = employees.find(e => e.id === userId);
+    const foundEmployee = employees.find(e => e.user_id === userId);
 
     expect(foundEmployee).toBeDefined();
     expect(foundEmployee.email).toBe(userEmail);
