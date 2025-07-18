@@ -143,7 +143,17 @@
                         <p class="mb-0">Description</p>
                     </div>
                     <div class="col-sm-9">
-                        <p class="text-muted mb-0"><%= displayUser.description %></p>
+                        <% if (displayUser.description && displayUser.description.length > 200) { %>
+                            <p class="text-muted mb-0 description-truncated" id="description-<%= displayUser.id %>">
+                                <%= displayUser.description.substring(0, 200) %>...
+                            </p>
+                            <p class="text-muted mb-0 description-full d-none" id="description-full-<%= displayUser.id %>">
+                                <%= displayUser.description %>
+                            </p>
+                            <a href="#" class="read-more-toggle" data-target="#description-<%= displayUser.id %>" data-full-target="#description-full-<%= displayUser.id %>">Afficher plus</a>
+                        <% } else { %>
+                            <p class="text-muted mb-0"><%= displayUser.description %></p>
+                        <% } %>
                     </div>
                 </div>
                 <% } %>

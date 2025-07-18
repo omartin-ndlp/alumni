@@ -15,7 +15,36 @@ document.addEventListener('DOMContentLoaded', function() {
 
   // Show/Hide Admins Switch
   initShowAdminsSwitch();
+
+  // Description Read More/Less Toggle
+  initDescriptionToggle();
 });
+
+// Description Read More/Less Toggle
+function initDescriptionToggle() {
+  document.querySelectorAll('.read-more-toggle').forEach(toggle => {
+    toggle.addEventListener('click', function(e) {
+      e.preventDefault();
+      const targetId = this.dataset.target;
+      const fullTargetId = this.dataset.fullTarget;
+
+      const truncated = document.querySelector(targetId);
+      const full = document.querySelector(fullTargetId);
+
+      if (truncated.classList.contains('d-none')) {
+        // Currently showing full, switch to truncated
+        truncated.classList.remove('d-none');
+        full.classList.add('d-none');
+        this.textContent = 'Afficher plus';
+      } else {
+        // Currently showing truncated, switch to full
+        truncated.classList.add('d-none');
+        full.classList.remove('d-none');
+        this.textContent = 'Afficher moins';
+      }
+    });
+  });
+}
 
 // Auto-suggestion d'employeurs
 function initEmployerSuggestions() {
