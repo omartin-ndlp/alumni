@@ -22,9 +22,8 @@
                 <a href="/profile" class="list-group-item list-group-item-action bg-dark text-white p-3"><i class="bi bi-person-circle me-2"></i> Mon profil</a>
                 <% if (isAdmin) { %>
                 <a href="/admin" class="list-group-item list-group-item-action bg-dark text-white p-3"><i class="bi bi-gear me-2"></i> Admin Dashboard</a>
-                <a href="/admin/requests" class="list-group-item list-group-item-action bg-dark text-white p-3"><i class="bi bi-person-plus me-2"></i> Demandes</a>
-                <a href="/admin/users" class="list-group-item list-group-item-action bg-dark text-white p-3"><i class="bi bi-person-lines-fill me-2"></i> Utilisateurs</a>
-                <a href="/admin/sections" class="list-group-item list-group-item-action bg-dark text-white p-3"><i class="bi bi-grid me-2"></i> Sections</a>
+                
+                
                 <% } %>
                 <form method="POST" action="/logout" class="list-group-item list-group-item-action bg-dark text-white p-3">
                     <button type="submit" class="btn btn-link text-white p-0" style="text-decoration: none;">
