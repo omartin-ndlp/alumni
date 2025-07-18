@@ -331,6 +331,13 @@ router.post('/sections/:id/delete', auth.requireAuth, async (req, res) => {
   }
 });
 
+// Placeholder for employer export
+router.get('/export/employers', (req, res) => {
+  res.render('admin/export-employers', {
+    title: 'Exportation des Employeurs - Administration'
+  });
+});
+
 // Admin: Edit User Profile (GET)
 router.get('/users/edit/:id', async (req, res) => {
   let db;
