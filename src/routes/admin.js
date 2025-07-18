@@ -210,8 +210,9 @@ router.post('/users/:id/toggle-status', async (req, res) => {
 
 // Gestion des sections
 router.get('/sections', async (req, res) => {
+  let db;
   try {
-    const db = await getConnection();
+    db = await getConnection();
     const [sections] = await db.execute(`
       SELECT s.*, COUNT(u.id) as user_count
       FROM sections s
@@ -232,6 +233,8 @@ router.get('/sections', async (req, res) => {
       message: 'Erreur lors du chargement des sections',
       error: {}
     });
+  } finally {
+    if (db) releaseConnection(db);
   }
 });
 
@@ -240,6 +243,7 @@ router.post('/sections/add', [
   body('nom').trim().isLength({ min: 2 }).withMessage('Nom de section requis'),
   body('description').optional().trim()
 ], async (req, res) => {
+  let db;
   try {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -247,7 +251,7 @@ router.post('/sections/add', [
     }
 
     const { nom, description } = req.body;
-    const db = await getConnection();
+    db = await getConnection();
 
     await db.execute(
       'INSERT INTO sections (nom, description) VALUES (?, ?)',
@@ -263,6 +267,8 @@ router.post('/sections/add', [
     } else {
       res.redirect('/admin/sections?error=add_failed');
     }
+  } finally {
+    if (db) releaseConnection(db);
   }
 });
 
@@ -271,6 +277,7 @@ router.post('/sections/:id/edit', [
   body('nom').trim().isLength({ min: 2 }).withMessage('Nom de section requis'),
   body('description').optional().trim()
 ], async (req, res) => {
+  let db;
   try {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -278,7 +285,7 @@ router.post('/sections/:id/edit', [
     }
 
     const { nom, description } = req.body;
-    const db = await getConnection();
+    db = await getConnection();
 
     await db.execute(
       'UPDATE sections SET nom = ?, description = ? WHERE id = ?',
@@ -290,14 +297,17 @@ router.post('/sections/:id/edit', [
   } catch (error) {
     console.error('Erreur modification section:', error);
     res.redirect('/admin/sections?error=update_failed');
+  } finally {
+    if (db) releaseConnection(db);
   }
 });
 
 // Supprimer une section
 router.post('/sections/:id/delete', auth.requireAuth, async (req, res) => {
+  let db;
   try {
     const { id } = req.params;
-    const db = await getConnection();
+    db = await getConnection();
 
     // Vérifier que la section n'est pas référencée par des utilisateurs
     const [usersInSection] = await db.execute(
@@ -316,6 +326,8 @@ router.post('/sections/:id/delete', auth.requireAuth, async (req, res) => {
   } catch (error) {
     console.error('Erreur suppression section:', error);
     res.redirect('/admin/sections?error=delete_failed');
+  } finally {
+    if (db) releaseConnection(db);
   }
 });
 
