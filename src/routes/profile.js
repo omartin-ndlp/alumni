@@ -1,11 +1,13 @@
 const express = require('express');
 const { body, validationResult } = require('express-validator');
 const User = require('../models/User');
+const { formatDateToFrench } = require('../utils/dateFormatter');
 const Employer = require('../models/Employer');
 const { getConnection, releaseConnection } = require('../config/database');
 const auth = require('../middleware/auth');
 const multer = require('multer');
 const upload = multer();
+const { formatDate } = require('../utils/dateFormatter');
 
 const router = express.Router();
 
@@ -31,7 +33,8 @@ router.get('/', auth.requireAuth, async (req, res) => {
       employment,
       isOwnProfile: true,
       canViewContact: true,
-      User: User // Pass the User model to the template
+      User: User, // Pass the User model to the template
+      formatDate: formatDate // Pass the date formatting utility
     });
   } catch (error) {
     console.error('Erreur profil:', error);

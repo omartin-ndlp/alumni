@@ -79,16 +79,27 @@
                 <div class="card-header">Historique des emplois</div>
                 <div class="card-body">
                     <% if (employment && employment.length > 0) { %>
-                        <ul class="list-group list-group-flush">
-                            <% employment.forEach(job => { %>
-                                <li class="list-group-item">
-                                    <strong><%= job.poste %></strong> chez <%= job.employer_name %>
-                                    (<%= job.date_debut %> - <%= job.is_current ? 'Actuel' : job.date_fin %>)
-                                    <% if (job.secteur) { %><br><small>Secteur: <%= job.secteur %></small><% } %>
-                                    <% if (job.ville) { %><br><small>Lieu: <%= job.ville %></small><% } %>
-                                </li>
-                            <% }); %>
-                        </ul>
+                        <% employment.forEach(job => {
+                            const startDate = formatDate(job.date_debut);
+                            let endDate = '';
+                            if (job.is_current) {
+                                endDate = 'Actuel';
+                            } else if (job.date_fin) {
+                                endDate = formatDate(job.date_fin);
+                            } else {
+                                endDate = 'Date de fin non spécifiée';
+                            }
+                        %>
+                        <div class="mb-3">
+                            <h6><strong><%= job.poste %></strong> chez <strong><%= job.employer_name %></strong></h6>
+                            <p class="text-muted mb-1">
+                                <%= startDate %> - <%= endDate %>
+                            </p>
+                            <% if (job.secteur) { %><p class="text-muted mb-1"><small>Secteur: <%= job.secteur %></small></p><% } %>
+                            <% if (job.ville) { %><p class="text-muted mb-0"><small>Lieu: <%= job.ville %></small></p><% } %>
+                        </div>
+                        <% if (employment.indexOf(job) < employment.length - 1) { %><hr><% } %>
+                        <% }); %>
                     <% } else { %>
                         <p>Aucun emploi enregistré.</p>
                     <% } %>
