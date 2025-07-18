@@ -7,15 +7,16 @@
     </div>
 </div>
 
+<% if (isAdmin) { %>
 <div class="row">
     <div class="col-md-4 mb-4">
         <div class="card h-100">
             <div class="card-body text-center">
-                <i class="bi bi-people text-primary" style="font-size: 3rem;"></i>
-                <h5 class="card-title mt-3">Annuaire</h5>
-                <p class="card-text">Parcourez la liste des anciens étudiants</p>
-                <a href="/users" class="btn btn-primary">
-                    <i class="bi bi-search"></i> Consulter
+                <i class="bi bi-person-plus text-warning" style="font-size: 3rem;"></i>
+                <h5 class="card-title mt-3">Demandes en attente</h5>
+                <p class="card-text">Gérer les nouvelles demandes d'inscription</p>
+                <a href="/admin/requests" class="btn btn-warning">
+                    <i class="bi bi-hourglass-split"></i> Consulter
                 </a>
             </div>
         </div>
@@ -24,40 +25,13 @@
     <div class="col-md-4 mb-4">
         <div class="card h-100">
             <div class="card-body text-center">
-                <i class="bi bi-building text-success" style="font-size: 3rem;"></i>
-                <h5 class="card-title mt-3">Employeurs</h5>
-                <p class="card-text">Découvrez où travaillent les anciens</p>
-                <a href="/users/employers/list" class="btn btn-success">
-                    <i class="bi bi-building"></i> Voir la liste
+                <i class="bi bi-collection text-info" style="font-size: 3rem;"></i>
+                <h5 class="card-title mt-3">Gestion des sections</h5>
+                <p class="card-text">Ajouter, modifier ou supprimer des sections</p>
+                <a href="/admin/sections" class="btn btn-info">
+                    <i class="bi bi-gear"></i> Gérer
                 </a>
             </div>
-        </div>
-    </div>
-
-    <div class="col-md-4 mb-4">
-        <div class="card h-100">
-            <div class="card-body text-center">
-                <i class="bi bi-person-circle text-warning" style="font-size: 3rem;"></i>
-                <h5 class="card-title mt-3">Mon profil</h5>
-                <p class="card-text">Gérez vos informations personnelles</p>
-                <a href="/profile" class="btn btn-warning">
-                    <i class="bi bi-person"></i> Voir mon profil
-                </a>
-            </div>
-        </div>
-    </div>
-</div>
-
-<% if (isAdmin) { %>
-<div class="row mt-5">
-    <div class="col-12">
-        <div class="alert alert-primary">
-            <h5><i class="bi bi-gear"></i> Administration</h5>
-            <p class="mb-2">Accès aux fonctions d'administration :</p>
-            
-            <a href="/admin/requests" class="btn btn-warning btn-sm me-2">Demandes en attente</a>
-            
-            <a href="/admin/sections" class="btn btn-secondary btn-sm">Gestion des sections</a>
         </div>
     </div>
 </div>
