@@ -331,12 +331,106 @@ router.post('/sections/:id/delete', auth.requireAuth, async (req, res) => {
   }
 });
 
-// Placeholder for employer export
-router.get('/export/employers', (req, res) => {
-  res.render('admin/export-employers', {
-    title: 'Exportation des Employeurs - Administration'
-  });
+// Employer Export Page
+router.get('/export/employers', async (req, res) => {
+  let db;
+  try {
+    db = await getConnection();
+    const [cities] = await db.execute('SELECT DISTINCT ville FROM employers WHERE ville IS NOT NULL ORDER BY ville');
+    const [sections] = await db.execute('SELECT * FROM sections ORDER BY nom');
+    
+    res.render('admin/export-employers', {
+      title: 'Exportation des Employeurs - Administration',
+      cities: cities.map(c => c.ville),
+      sections: sections,
+      errors: {},
+      oldInput: {}
+    });
+  } catch (error) {
+    console.error('Erreur chargement page exportation:', error);
+    res.render('error', { message: 'Erreur lors du chargement de la page d\'exportation', error: {} });
+  } finally {
+    if (db) releaseConnection(db);
+  }
 });
+
+// Handle Employer Export Submission
+router.post('/export/employers', async (req, res) => {
+  let db;
+  try {
+    const {
+      nom,
+      villes,
+      sections,
+      fields,
+      sort = 'nom',
+      format = 'csv'
+    } = req.body;
+
+    db = await getConnection();
+
+    let query = `
+      SELECT DISTINCT e.id, ${fields.map(f => `e.${f}`).join(', ')}
+      FROM employers e
+    `;
+    const params = [];
+
+    if (sections && sections.length > 0) {
+      query += `
+        JOIN user_employment ue ON e.id = ue.employer_id
+        JOIN users u ON ue.user_id = u.id
+      `;
+    }
+
+    query += ' WHERE 1=1';
+
+    if (nom) {
+      query += ' AND e.nom LIKE ?';
+      params.push(`%${nom}%`);
+    }
+
+    if (villes && villes.length > 0) {
+      query += ` AND e.ville IN (${villes.map(() => '?').join(',')})`;
+      params.push(...villes);
+    }
+
+    if (sections && sections.length > 0) {
+      query += ` AND u.section_id IN (${sections.map(() => '?').join(',')})`;
+      params.push(...sections);
+    }
+
+    query += ` ORDER BY e.${sort}`;
+
+    const [employers] = await db.execute(query, params);
+
+    let output;
+    let contentType;
+    let fileExtension;
+
+    if (format === 'csv') {
+      contentType = 'text/csv';
+      fileExtension = 'csv';
+      const header = fields.join(',') + '\n';
+      const rows = employers.map(emp => fields.map(field => `"${emp[field] || ''}"`).join(',')).join('\n');
+      output = header + rows;
+    } else { // txt
+      contentType = 'text/plain';
+      fileExtension = 'txt';
+      output = employers.map(emp => {
+        return fields.map(field => `${field}: ${emp[field] || 'N/A'}`).join(' | ');
+      }).join('\n--------------------\n');
+    }
+
+    res.setHeader('Content-Type', contentType);
+    res.setHeader('Content-Disposition', `attachment; filename=export-employers-${Date.now()}.${fileExtension}`);
+    res.send(output);
+
+  } catch (error) {
+    console.error('Erreur exportation employeurs:', error);
+    res.render('error', { message: 'Erreur lors de l\'exportation des données.', error: {} });
+  }
+});
+
 
 // Admin: Edit User Profile (GET)
 router.get('/users/edit/:id', async (req, res) => {

@@ -2,12 +2,94 @@
     <h1 class="mb-4">Exportation des Employeurs</h1>
 
     <div class="card">
-        <div class="card-header">Outil d'Exportation</div>
+        <div class="card-header">Filtres et Options d'Exportation</div>
         <div class="card-body">
-            <p>Cette fonctionnalité est en cours de développement.</p>
-            <p>À terme, vous pourrez ici exporter la liste complète des employeurs au format CSV, avec des options de filtrage.</p>
-            
-            <a href="/admin" class="btn btn-primary mt-3">Retour au tableau de bord</a>
+            <form action="/admin/export/employers" method="POST">
+                
+                <!-- Filtres -->
+                <fieldset class="mb-4">
+                    <legend class="h5">Filtres</legend>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="nom" class="form-label">Nom de l'employeur</label>
+                            <input type="text" class="form-control" id="nom" name="nom" value="<%= oldInput.nom || '' %>">
+                            <div class="form-text">Recherche partielle et insensible à la casse (ex: "renault").</div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="villes" class="form-label">Villes</label>
+                            <select multiple class="form-control" id="villes" name="villes">
+                                <% cities.forEach(city => { %>
+                                    <option value="<%= city %>" <%= (oldInput.villes || []).includes(city) ? 'selected' : '' %>><%= city %></option>
+                                <% }); %>
+                            </select>
+                            <div class="form-text">Sélectionnez une ou plusieurs villes.</div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="sections" class="form-label">Sections des anciens élèves</label>
+                            <select multiple class="form-control" id="sections" name="sections">
+                                <% sections.forEach(section => { %>
+                                    <option value="<%= section.id %>" <%= (oldInput.sections || []).includes(String(section.id)) ? 'selected' : '' %>><%= section.nom %></option>
+                                <% }); %>
+                            </select>
+                            <div class="form-text">Employeurs ayant recruté des élèves de ces sections.</div>
+                        </div>
+                    </div>
+                </fieldset>
+
+                <!-- Champs à Exporter -->
+                <fieldset class="mb-4">
+                    <legend class="h5">Champs à Exporter</legend>
+                    <% const fields = ['nom', 'secteur', 'ville']; %>
+                    <div class="row">
+                        <% fields.forEach(field => { %>
+                            <div class="col-md-4">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="fields" value="<%= field %>" id="field_<%= field %>" checked>
+                                    <label class="form-check-label" for="field_<%= field %>">
+                                        <%= field.charAt(0).toUpperCase() + field.slice(1).replace('_', ' ') %>
+                                    </label>
+                                </div>
+                            </div>
+                        <% }); %>
+                    </div>
+                </fieldset>
+
+                <!-- Tri et Format -->
+                <fieldset class="mb-4">
+                    <legend class="h5">Tri et Format</legend>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="sort" class="form-label">Trier par</label>
+                            <select class="form-control" id="sort" name="sort">
+                                <option value="nom" <%= oldInput.sort === 'nom' ? 'selected' : '' %>>Nom (A-Z)</option>
+                                <option value="ville" <%= oldInput.sort === 'ville' ? 'selected' : '' %>>Ville (A-Z)</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Format d'Exportation</label>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="format" id="format_csv" value="csv" checked>
+                                <label class="form-check-label" for="format_csv">CSV</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="format" id="format_txt" value="txt" <%= oldInput.format === 'txt' ? 'checked' : '' %>>
+                                <label class="form-check-label" for="format_txt">Texte brut</label>
+                            </div>
+                        </div>
+                    </div>
+                </fieldset>
+
+                <button type="submit" class="btn btn-primary"><i class="bi bi-download"></i> Exporter les données</button>
+            </form>
         </div>
     </div>
 </div>
+
+<style>
+    /* Améliorer la lisibilité des selects multiples */
+    select[multiple] {
+        min-height: 150px;
+    }
+</style>
