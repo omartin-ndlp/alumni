@@ -131,7 +131,7 @@ function hideSuggestions(suggestionsDiv) {
 
 // Confirmation des actions destructives
 function initConfirmationDialogs() {
-  const dangerButtons = document.querySelectorAll('.btn-danger, .btn-outline-danger');
+  const dangerButtons = document.querySelectorAll('.btn-danger:not([data-bs-toggle="modal"]):not(.js-no-confirm), .btn-outline-danger:not([data-bs-toggle="modal"]):not(.js-no-confirm)');
 
   dangerButtons.forEach(button => {
     button.addEventListener('click', function(e) {
