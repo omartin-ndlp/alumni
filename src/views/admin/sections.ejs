@@ -1,0 +1,159 @@
+<div class="container-fluid">
+    <h1 class="mb-4">Gestion des sections</h1>
+
+    <% if (query.success === 'added') { %>
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        Section ajoutée avec succès !
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    <% } %>
+    <% if (query.success === 'updated') { %>
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        Section mise à jour avec succès !
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    <% } %>
+    <% if (query.success === 'deleted') { %>
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        Section supprimée avec succès !
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    <% } %>
+    <% if (query.error === 'duplicate') { %>
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        Erreur : Une section avec ce nom existe déjà.
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    <% } %>
+    <% if (query.error === 'add_failed') { %>
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        Erreur lors de l'ajout de la section.
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    <% } %>
+    <% if (query.error === 'update_failed') { %>
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        Erreur lors de la mise à jour de la section.
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    <% } %>
+    <% if (query.error === 'delete_failed') { %>
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        Erreur lors de la suppression de la section.
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    <% } %>
+    <% if (query.error === 'section_in_use') { %>
+    <div class="alert alert-warning alert-dismissible fade show" role="alert">
+        Impossible de supprimer la section : des utilisateurs y sont associés.
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    <% } %>
+
+    <div class="card mb-4">
+        <div class="card-header">Ajouter une nouvelle section</div>
+        <div class="card-body">
+            <form action="/admin/sections/add" method="POST">
+                <div class="mb-3">
+                    <label for="nom" class="form-label">Nom de la section</label>
+                    <input type="text" class="form-control" id="nom" name="nom" required>
+                </div>
+                <div class="mb-3">
+                    <label for="description" class="form-label">Description (optionnel)</label>
+                    <textarea class="form-control" id="description" name="description" rows="3"></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">Ajouter la section</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header">Sections existantes</div>
+        <div class="card-body">
+            <% if (sections && sections.length > 0) { %>
+            <div class="table-responsive">
+                <table class="table table-striped table-hover">
+                    <thead>
+                        <tr>
+                            <th>Nom</th>
+                            <th>Description</th>
+                            <th>Utilisateurs</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% sections.forEach(section => { %>
+                        <tr>
+                            <td><%= section.nom %></td>
+                            <td><%= section.description || 'N/A' %></td>
+                            <td><%= section.user_count %></td>
+                            <td>
+                                <button type="button" class="btn btn-sm btn-info me-2" data-bs-toggle="modal" data-bs-target="#editSectionModal<%= section.id %>">
+                                    Modifier
+                                </button>
+                                <button type="button" class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#deleteSectionModal<%= section.id %>">
+                                    Supprimer
+                                </button>
+
+                                <!-- Edit Section Modal -->
+                                <div class="modal fade" id="editSectionModal<%= section.id %>" tabindex="-1" aria-labelledby="editSectionModalLabel<%= section.id %>" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <form action="/admin/sections/<%= section.id %>/edit" method="POST">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="editSectionModalLabel<%= section.id %>">Modifier la section</h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <div class="mb-3">
+                                                        <label for="editNom<%= section.id %>" class="form-label">Nom de la section</label>
+                                                        <input type="text" class="form-control" id="editNom<%= section.id %>" name="nom" value="<%= section.nom %>" required>
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label for="editDescription<%= section.id %>" class="form-label">Description (optionnel)</label>
+                                                        <textarea class="form-control" id="editDescription<%= section.id %>" name="description" rows="3"><%= section.description || '' %></textarea>
+                                                    </div>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                                                    <button type="submit" class="btn btn-primary">Enregistrer les modifications</button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Delete Section Modal -->
+                                <div class="modal fade" id="deleteSectionModal<%= section.id %>" tabindex="-1" aria-labelledby="deleteSectionModalLabel<%= section.id %>" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <form action="/admin/sections/<%= section.id %>/delete" method="POST">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="deleteSectionModalLabel<%= section.id %>">Confirmer la suppression</h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    Êtes-vous sûr de vouloir supprimer la section "<%= section.nom %>" ? Cette action est irréversible.
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                                                    <button type="submit" class="btn btn-danger">Supprimer</button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        <% }); %>
+                    </tbody>
+                </table>
+            </div>
+            <% } else { %>
+            <div class="alert alert-info" role="alert">
+                Aucune section trouvée.
+            </div>
+            <% } %>
+        </div>
+    </div>
+</div>

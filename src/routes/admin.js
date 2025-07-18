@@ -222,7 +222,8 @@ router.get('/sections', async (req, res) => {
 
     res.render('admin/sections', {
       title: 'Gestion des sections - Administration',
-      sections
+      sections,
+      query: req.query
     });
 
   } catch (error) {
