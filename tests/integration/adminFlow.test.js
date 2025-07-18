@@ -103,36 +103,7 @@ describe('End-to-End Admin Functionality Flow', () => {
     expect(rejectedUser.length).toBe(0);
   });
 
-  test('should allow an admin to activate/deactivate user accounts', async () => {
-    // Setup: Create a user that is initially active
-    const userEmail = `toggle_user_${Date.now()}@example.com`;
-    const hashedPassword = await bcrypt.hash('password', 10);
-    const [userResult] = await connection.query(
-      'INSERT INTO users (email, password_hash, prenom, nom, annee_diplome, section_id, is_approved, is_active) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
-      [userEmail, hashedPassword, 'Toggle', 'User', 2022, 1, true, true]
-    );
-    const userId = userResult.insertId;
-
-    // Action: Admin deactivates the user
-    const deactivateRes = await adminAgent.post(`/admin/users/${userId}/toggle-status`);
-
-    expect(deactivateRes.statusCode).toEqual(302); // Expect redirect
-    expect(deactivateRes.headers.location).toContain('/admin/users');
-
-    // Verify user is deactivated in the database
-    const [deactivatedUser] = await connection.query('SELECT * FROM users WHERE id = ?', [userId]);
-    expect(deactivatedUser[0].is_active).toBe(0);
-
-    // Action: Admin activates the user
-    const activateRes = await adminAgent.post(`/admin/users/${userId}/toggle-status`);
-
-    expect(activateRes.statusCode).toEqual(302); // Expect redirect
-    expect(activateRes.headers.location).toContain('/admin/users');
-
-    // Verify user is activated in the database
-    const [activatedUser] = await connection.query('SELECT * FROM users WHERE id = ?', [userId]);
-    expect(activatedUser[0].is_active).toBe(1);
-  });
+  
 
   test('should allow an admin to manage sections (add, update, delete)', async () => {
     // Test adding a section

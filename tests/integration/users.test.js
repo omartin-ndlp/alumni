@@ -57,7 +57,7 @@ describe('User and Employer Routes', () => {
   });
 
   describe('GET /users', () => {
-    it('should return the list of users for an authenticated admin', async () => {
+    it('should return the list of users for an authenticated user', async () => {
       const res = await agent.get('/users');
       expect(res.statusCode).toEqual(200);
       expect(res.text).toContain('Annuaire des anciens');
