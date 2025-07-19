@@ -8,6 +8,7 @@ Site web du réseau des anciens étudiants BTS Systèmes Numériques et CIEL du 
 - **Profils détaillés** des anciens étudiants
 - **Annuaire searchable** avec filtres par année, section, employeur
 - **Historique des emplois** avec suggestions automatiques d'employeurs
+- **Exportation des données employeurs** avec filtres avancés
 - **Paramètres de confidentialité** (opt-out contact/annuaire)
 - **Panel d'administration** complet
 - **Interface responsive** et moderne
@@ -151,11 +152,10 @@ ljv-alumni/
 │   └── uploads/           # Fichiers uploadés
 ├── src/                   # Code source
 │   ├── config/           # Configuration (base de données)
-│   ├── controllers/      # Contrôleurs (non utilisé dans cette version)
 │   ├── middleware/       # Middleware Express
 │   ├── models/           # Modèles de données
 │   ├── routes/           # Routes Express
-│   ├── utils/            # Utilitaires
+│   ├── utils/            # Utilitaires (ex: dateFormatter.js)
 │   └── views/            # Templates EJS
 ├── scripts/              # Scripts utilitaires
 ├── tests/                # Tests automatisés
@@ -170,6 +170,7 @@ ljv-alumni/
 npm start              # Démarrer en production
 npm run dev            # Démarrer en développement avec nodemon
 npm test               # Lancer les tests
+npm test -- <file>     # Lancer un seul fichier de test (ex: npm test -- tests/unit/User.test.js)
 npm run test:coverage  # Tests avec couverture de code
 npm run lint           # Vérifier le code avec ESLint
 npm run lint:fix       # Corriger automatiquement les erreurs ESLint

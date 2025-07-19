@@ -32,6 +32,7 @@ Le dashboard admin (`/admin`) affiche :
 - **Nouveaux inscrits** récents
 - **Répartition par année** de diplôme
 - **Répartition par section**
+- **Exportation des données employeurs** (accès à l'outil d'exportation)
 
 ## 👥 Gestion des demandes d'inscription
 
@@ -148,6 +149,16 @@ WHERE employer_id = Y;
 DELETE FROM employers WHERE id = Y;
 ```
 
+### Exportation des données employeurs
+
+Un outil d'exportation est disponible via le dashboard administrateur (`/admin`). Il permet de :
+- Filtrer les employeurs par nom, ville et sections des anciens élèves.
+- Sélectionner les champs à exporter (nom, secteur, ville).
+- Choisir le format d'exportation (CSV ou texte brut).
+- Trier les résultats.
+
+Cet outil offre un moyen simple de générer des rapports détaillés sur les employeurs sans avoir à écrire des requêtes SQL.
+
 ## 🔒 Paramètres de confidentialité
 
 ### Options utilisateur
@@ -210,6 +221,8 @@ npm start > logs/app.log 2>&1
 ```
 
 ## 📈 Statistiques et rapports
+
+En plus des requêtes SQL ci-dessous, l'outil d'exportation des employeurs (accessible via le dashboard admin) permet de générer des rapports personnalisés avec des filtres et des formats variés.
 
 ### Requêtes SQL utiles
 
