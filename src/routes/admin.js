@@ -61,8 +61,6 @@ router.get('/', async (req, res) => {
       title: 'Tableau de bord Administrateur',
       stats: stats[0],
       recentUsers,
-      yearStats,
-      sectionStats,
       User: User // Pass the User model to the template
     });
 
@@ -72,6 +70,57 @@ router.get('/', async (req, res) => {
       message: 'Erreur lors du chargement du dashboard',
       error: {}
     });
+  }
+});
+
+// Statistics Page
+router.get('/statistics', async (req, res) => {
+  let db;
+  try {
+    db = await getConnection();
+
+    // Statistiques générales
+    const [stats] = await db.execute(`
+      SELECT 
+        (SELECT COUNT(*) FROM users WHERE is_approved = TRUE AND is_active = TRUE) as total_users,
+        (SELECT COUNT(*) FROM registration_requests) as pending_requests,
+        (SELECT COUNT(*) FROM employers) as total_employers,
+        (SELECT COUNT(*) FROM user_employment WHERE is_current = TRUE) as current_employments
+    `);
+
+    // Statistiques par année
+    const [yearStats] = await db.execute(`
+      SELECT annee_diplome, COUNT(*) as count
+      FROM users
+      WHERE is_approved = TRUE AND is_active = TRUE
+      GROUP BY annee_diplome
+      ORDER BY annee_diplome DESC
+    `);
+
+    // Statistiques par section
+    const [sectionStats] = await db.execute(`
+      SELECT s.nom, COUNT(u.id) as count
+      FROM sections s
+      LEFT JOIN users u ON s.id = u.section_id AND u.is_approved = TRUE AND u.is_active = TRUE
+      GROUP BY s.id, s.nom
+      ORDER BY count DESC
+    `);
+
+    res.render('admin/statistics', {
+      title: 'Statistiques - Administration',
+      stats: stats[0],
+      yearStats,
+      sectionStats
+    });
+
+  } catch (error) {
+    console.error('Erreur statistiques admin:', error);
+    res.render('error', {
+      message: 'Erreur lors du chargement des statistiques',
+      error: {}
+    });
+  } finally {
+    if (db) releaseConnection(db);
   }
 });
 

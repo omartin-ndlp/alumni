@@ -1,0 +1,52 @@
+<div class="container-fluid">
+    <h1 class="mb-4">Statistiques Administrateur</h1>
+
+    <div class="row">
+        <div class="col-md-6 mb-4">
+            <div class="card h-100">
+                <div class="card-header">Statistiques Générales</div>
+                <div class="card-body">
+                    <p><strong>Total Utilisateurs:</strong> <%= stats.total_users %></p>
+                    <p><strong>Demandes en attente:</strong> <%= stats.pending_requests %></p>
+                    <p><strong>Total Employeurs:</strong> <%= stats.total_employers %></p>
+                    <p><strong>Emplois Actuels:</strong> <%= stats.current_employments %></p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 mb-4">
+            <div class="card h-100">
+                <div class="card-header">Utilisateurs par Année de Diplôme</div>
+                <div class="card-body">
+                    <ul class="list-group list-group-flush">
+                        <% yearStats.forEach(stat => { %>
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                Année <%= stat.annee_diplome %>
+                                <span class="badge bg-primary rounded-pill"><%= stat.count %></span>
+                            </li>
+                        <% }); %>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12 mb-4">
+            <div class="card h-100">
+                <div class="card-header">Utilisateurs par Section</div>
+                <div class="card-body">
+                    <ul class="list-group list-group-flush">
+                        <% sectionStats.forEach(stat => { %>
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <%= stat.nom %>
+                                <span class="badge bg-primary rounded-pill"><%= stat.count %></span>
+                            </li>
+                        <% }); %>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <a href="/admin" class="btn btn-secondary mt-3">Retour au tableau de bord</a>
+</div>
