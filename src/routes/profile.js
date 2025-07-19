@@ -62,7 +62,8 @@ router.get('/edit', auth.requireAuth, async (req, res) => {
       title: 'Modifier mon profil - Anciens BTS SN/CIEL LJV',
       user,
       sections,
-      error: null
+      error: null,
+      isAdmin: req.session.user.is_admin
     });
   } catch (error) {
     console.error('Erreur édition profil:', error);
@@ -88,7 +89,10 @@ router.post('/edit', upload.none(), [
   body('twitter').optional({ checkFalsy: true }).isURL().withMessage('URL Twitter invalide'),
   body('facebook').optional({ checkFalsy: true }).isURL().withMessage('URL Facebook invalide'),
   body('site_web').optional({ checkFalsy: true }).isURL().withMessage('URL site web invalide'),
-  body('description').optional().trim()
+  body('description').optional().trim(),
+  body('email').optional().isEmail().withMessage('Email invalide'),
+  body('annee_diplome').optional().isInt({ min: 1900, max: new Date().getFullYear() + 5 }).withMessage('Année de diplôme invalide.'),
+  body('section_id').optional().isInt().withMessage('Section invalide.')
 ], async (req, res) => {
   let db;
   try {
@@ -103,7 +107,8 @@ router.post('/edit', upload.none(), [
         title: 'Modifier mon profil - Anciens BTS SN/CIEL LJV',
         user,
         sections,
-        error: 'Veuillez corriger les erreurs dans le formulaire'
+        error: 'Veuillez corriger les erreurs dans le formulaire',
+        isAdmin: req.session.user.is_admin
       });
     }
 
@@ -123,11 +128,23 @@ router.post('/edit', upload.none(), [
       description: req.body.description || null,
     };
 
+    // Only allow admins to update these fields
+    if (req.session.user.is_admin) {
+      updateData.email = req.body.email;
+      updateData.annee_diplome = req.body.annee_diplome;
+      updateData.section_id = req.body.section_id;
+    }
+
     await User.updateProfile(req.session.user.id, updateData, 'user');
 
     // Mettre à jour la session
     req.session.user.prenom = updateData.prenom;
     req.session.user.nom = updateData.nom;
+    if (req.session.user.is_admin) {
+      req.session.user.email = updateData.email;
+      req.session.user.annee_diplome = updateData.annee_diplome;
+      req.session.user.section_id = updateData.section_id;
+    }
 
     res.redirect('/profile?success=1');
 

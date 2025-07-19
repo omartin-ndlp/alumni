@@ -24,26 +24,41 @@
                 <div class="row mb-3">
                     <div class="col-md-6">
                         <label for="email" class="form-label">Email</label>
+                        <% if (isAdmin) { %>
+                        <input type="email" class="form-control" id="email" name="email" value="<%= user.email %>" required>
+                        <% } else { %>
                         <input type="email" class="form-control" id="email" name="email" value="<%= user.email %>" disabled>
                         <small class="form-text text-muted">L'email ne peut pas être modifié ici.</small>
+                        <% } %>
                     </div>
                     <div class="col-md-6">
                         <label for="annee_diplome" class="form-label">Année de diplôme</label>
+                        <% if (isAdmin) { %>
+                        <input type="number" class="form-control" id="annee_diplome" name="annee_diplome" value="<%= user.annee_diplome %>" required>
+                        <% } else { %>
                         <input type="number" class="form-control" id="annee_diplome" name="annee_diplome" value="<%= user.annee_diplome %>" disabled>
                         <small class="form-text text-muted">L'année de diplôme ne peut pas être modifiée ici.</small>
+                        <% } %>
                     </div>
                 </div>
 
                 <div class="row mb-3">
                     <div class="col-md-6">
                         <label for="section_id" class="form-label">Section</label>
+                        <% if (isAdmin) { %>
+                        <select class="form-select" id="section_id" name="section_id" required>
+                            <% sections.forEach(section => { %>
+                                <option value="<%= section.id %>" <%= user.section_id == section.id ? 'selected' : '' %>><%= section.nom %></option>
+                            <% }); %>
+                        </select>
+                        <% } else { %>
                         <select class="form-select" id="section_id" name="section_id" disabled>
                             <% sections.forEach(section => { %>
                                 <option value="<%= section.id %>" <%= user.section_id == section.id ? 'selected' : '' %>><%= section.nom %></option>
                             <% }); %>
                         </select>
                         <small class="form-text text-muted">La section ne peut pas être modifiée ici.</small>
-                    </div>
+                        <% } %>
                     <div class="col-md-6">
                         <label for="telephone" class="form-label">Téléphone</label>
                         <input type="tel" class="form-control" id="telephone" name="telephone" value="<%= user.telephone || '' %>">
