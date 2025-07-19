@@ -358,14 +358,15 @@ router.get('/export/employers', async (req, res) => {
 router.post('/export/employers', async (req, res) => {
   let db;
   try {
-    const {
-      nom,
-      villes,
-      sections,
-      fields,
-      sort = 'nom',
-      format = 'csv'
-    } = req.body;
+    let { nom, villes, sections, fields, sort = 'nom', format = 'csv' } = req.body;
+
+    // Ensure villes and sections are arrays, even if only one item is selected
+    if (villes && !Array.isArray(villes)) {
+      villes = [villes];
+    }
+    if (sections && !Array.isArray(sections)) {
+      sections = [sections];
+    }
 
     db = await getConnection();
 
