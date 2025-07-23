@@ -124,6 +124,24 @@
 			"isActive": "Est actif",
 			"optOutContact": "Masquer les infos de contact",
 			"optOutDirectory": "Masquer le profil dans l'annuaire"
+		},
+		"employment": {
+			"title": "Mes emplois",
+			"addEmploymentTitle": "Ajouter un nouvel emploi",
+			"employerName": "Nom de l'employeur",
+			"position": "Poste",
+			"startDate": "Date de début",
+			"endDateOptional": "Date de fin (optionnel)",
+			"sectorOptional": "Secteur (optionnel)",
+			"cityOptional": "Ville (optionnel)",
+			"currentEmployment": "Emploi actuel",
+			"addEmploymentButton": "Ajouter l'emploi",
+			"historyTitle": "Historique d'emplois",
+			"current": "Actuel",
+			"endDateNotSpecified": "Date de fin non spécifiée",
+			"sector": "Secteur",
+			"city": "Ville",
+			"noEmploymentRecorded": "Aucun emploi enregistré."
 		}
 	},
 	"Photo de profil": "Photo de profil",

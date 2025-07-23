@@ -1,47 +1,47 @@
 <div class="container-fluid">
-    <h1 class="mb-4"><%= __('Mes emplois') %></h1>
+    <h1 class="mb-4"><%= __('profile.employment.title') %></h1>
 
     <div class="card mb-4">
         <div class="card-body">
-            <h5 class="card-title mb-3"><%= __('Ajouter un nouvel emploi') %></h5>
+            <h5 class="card-title mb-3"><%= __('profile.employment.addEmploymentTitle') %></h5>
             <form action="/profile/employment/add" method="POST">
                 <div class="row mb-3">
                     <div class="col-md-6 employer-suggest">
-                        <label for="employer_name" class="form-label"><%= __("Nom de l'employeur") %></label>
+                        <label for="employer_name" class="form-label"><%= __('profile.employment.employerName') %></label>
                         <input type="text" class="form-control" id="employer_name" name="employer_name" required autocomplete="off">
                         <div id="employer-suggestions" class="list-group position-absolute employer-suggestions" style="z-index: 1000;"></div>
                         <input type="hidden" id="employer_id" name="employer_id">
                     </div>
                     <div class="col-md-6">
-                        <label for="poste" class="form-label"><%= __('Poste') %></label>
+                        <label for="poste" class="form-label"><%= __('profile.employment.position') %></label>
                         <input type="text" class="form-control" id="poste" name="poste" required>
                     </div>
                 </div>
                 <div class="row mb-3">
                     <div class="col-md-6">
-                        <label for="date_debut" class="form-label"><%= __('Date de début') %></label>
+                        <label for="date_debut" class="form-label"><%= __('profile.employment.startDate') %></label>
                         <input type="date" class="form-control" id="date_debut" name="date_debut" required>
                     </div>
                     <div class="col-md-6">
-                        <label for="date_fin" class="form-label"><%= __('Date de fin (optionnel)') %></label>
+                        <label for="date_fin" class="form-label"><%= __('profile.employment.endDateOptional') %></label>
                         <input type="date" class="form-control" id="date_fin" name="date_fin">
                     </div>
                 </div>
                 <div class="row mb-3">
                     <div class="col-md-6">
-                        <label for="secteur" class="form-label"><%= __('Secteur (optionnel)') %></label>
+                        <label for="secteur" class="form-label"><%= __('profile.employment.sectorOptional') %></label>
                         <input type="text" class="form-control" id="secteur" name="secteur">
                     </div>
                     <div class="col-md-6">
-                        <label for="ville" class="form-label"><%= __('Ville (optionnel)') %></label>
+                        <label for="ville" class="form-label"><%= __('profile.employment.cityOptional') %></label>
                         <input type="text" class="form-control" id="ville" name="ville">
                     </div>
                 </div>
                 <div class="mb-3 form-check">
                     <input type="checkbox" class="form-check-input" id="is_current" name="is_current">
-                    <label class="form-check-label" for="is_current"><%= __('Emploi actuel') %></label>
+                    <label class="form-check-label" for="is_current"><%= __('profile.employment.currentEmployment') %></label>
                 </div>
-                <button type="submit" class="btn btn-primary"><%= __("Ajouter l'emploi") %></button>
+                <button type="submit" class="btn btn-primary"><%= __('profile.employment.addEmploymentButton') %></button>
             </form>
         </div>
     </div>
@@ -49,7 +49,7 @@
     <% if (employment && employment.length > 0) { %>
     <div class="card mb-4">
         <div class="card-body">
-            <h5 class="card-title mb-3"><%= __("Historique d'emplois") %></h5>
+            <h5 class="card-title mb-3"><%= __('profile.employment.historyTitle') %></h5>
             <ul class="list-group list-group-flush">
                 <% employment.forEach(job => { %>
                 <li class="list-group-item">
@@ -57,15 +57,15 @@
                     <p class="text-muted mb-1">
                         <%= new Date(job.date_debut).toLocaleDateString('fr-FR', { year: 'numeric', month: 'long' }) %> -
                         <% if (job.is_current) { %>
-                            <%= __('Actuel') %>
+                            <%= __('profile.employment.current') %>
                         <% } else if (job.date_fin) { %>
                             <%= new Date(job.date_fin).toLocaleDateString('fr-FR', { year: 'numeric', month: 'long' }) %>
                         <% } else { %>
-                            <%= __('Date de fin non spécifiée') %>
+                            <%= __('profile.employment.endDateNotSpecified') %>
                         <% } %>
                     </p>
-                    <% if (job.secteur) { %><p class="text-muted mb-1"><small><%= __('Secteur') %>: <%= job.secteur %></small></p><% } %>
-                    <% if (job.ville) { %><p class="text-muted mb-0"><small><%= __('Ville') %>: <%= job.ville %></small></p><% } %>
+                    <% if (job.secteur) { %><p class="text-muted mb-1"><small><%= __('profile.employment.sector') %>: <%= job.secteur %></small></p><% } %>
+                    <% if (job.ville) { %><p class="text-muted mb-0"><small><%= __('profile.employment.city') %>: <%= job.ville %></small></p><% } %>
                 </li>
                 <% }); %>
             </ul>
@@ -73,7 +73,7 @@
     </div>
     <% } else { %>
     <div class="alert alert-info" role="alert">
-        <%= __('Aucun emploi enregistré.') %>
+        <%= __('profile.employment.noEmploymentRecorded') %>
     </div>
     <% } %>
 </div>
