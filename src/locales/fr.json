@@ -118,7 +118,12 @@
 				},
 				"description": "Description (optionnel)"
 			},
-			"saveButton": "Enregistrer les modifications"
+			"saveButton": "Enregistrer les modifications",
+			"isAdmin": "Est administrateur",
+			"isApproved": "Est approuvé",
+			"isActive": "Est actif",
+			"optOutContact": "Masquer les infos de contact",
+			"optOutDirectory": "Masquer le profil dans l'annuaire"
 		}
 	},
 	"Photo de profil": "Photo de profil",
