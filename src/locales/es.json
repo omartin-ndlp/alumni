@@ -1,0 +1,268 @@
+{
+  "admin": {
+    "dashboard": {
+      "title": "Panel de administración",
+      "welcome": "¡Bienvenido, {{prenom}}!",
+      "pendingRequests": {
+        "title": "Solicitudes pendientes",
+        "description": "Gestionar nuevas solicitudes de registro",
+        "button": "Consultar"
+      },
+      "sectionManagement": {
+        "title": "Gestión de secciones",
+        "description": "Añadir, modificar o eliminar secciones",
+        "button": "Gestionar"
+      },
+      "statistics": {
+        "title": "Estadísticas",
+        "description": "Consultar estadísticas generales y por sección",
+        "button": "Ver estadísticas"
+      },
+      "employerExport": {
+        "title": "Exportación de empleadores",
+        "description": "Descargar la lista de empleadores",
+        "button": "Exportar"
+      },
+      "newMembers": "Nuevos miembros"
+    },
+    "sections": {
+      "title": "Gestión de secciones",
+      "alerts": {
+        "addedSuccess": "¡Sección añadida con éxito!",
+        "updatedSuccess": "¡Sección actualizada con éxito!",
+        "deletedSuccess": "¡Sección eliminada con éxito!",
+        "duplicateError": "Error: Ya existe una sección con este nombre.",
+        "addFailed": "Error al añadir la sección.",
+        "updateFailed": "Error al actualizar la sección.",
+        "deleteFailed": "Error al eliminar la sección.",
+        "sectionInUse": "No se puede eliminar la sección: hay usuarios asociados a ella.",
+        "noSectionFound": "No se encontró ninguna sección."
+      },
+      "addSection": {
+        "cardHeader": "Añadir nueva sección",
+        "nameLabel": "Nombre de la sección",
+        "descriptionLabel": "Descripción (opcional)",
+        "button": "Añadir sección"
+      },
+      "existingSections": {
+        "cardHeader": "Secciones existentes",
+        "tableHeaders": {
+          "name": "Nombre",
+          "description": "Descripción",
+          "users": "Usuarios",
+          "actions": "Acciones"
+        },
+        "readMore": "Mostrar más",
+        "notApplicable": "N/A",
+        "editButton": "Editar",
+        "deleteButton": "Eliminar"
+      },
+      "editModal": {
+        "title": "Editar sección",
+        "nameLabel": "Nombre de la sección",
+        "descriptionLabel": "Descripción (opcional)",
+        "cancelButton": "Cancelar",
+        "saveButton": "Guardar cambios"
+      },
+      "deleteModal": {
+        "title": "Confirmar eliminación",
+        "confirmation": "¿Está seguro de que desea eliminar la sección \"{{sectionName}}\"? Esta acción es irreversible.",
+        "cancelButton": "Cancelar",
+        "deleteButton": "Eliminar"
+      }
+    },
+    "statistics": {
+      "title": "Estadísticas del Administrador",
+      "generalStats": {
+        "cardHeader": "Estadísticas Generales",
+        "totalUsers": "Total de Usuarios:",
+        "pendingRequests": "Solicitudes pendientes:",
+        "totalEmployers": "Total de Empleadores:",
+        "currentEmployments": "Empleos Actuales:"
+      },
+      "usersByGraduationYear": {
+        "cardHeader": "Usuarios por Año de Graduación",
+        "year": "Año"
+      },
+      "usersBySection": {
+        "cardHeader": "Usuarios por Sección"
+      },
+      "backToDashboard": "Volver al panel de control"
+    },
+    "exportEmployers": {
+      "title": "Exportación de empleadores",
+      "filtersAndOptions": {
+        "cardHeader": "Filtros y Opciones de Exportación",
+        "filters": {
+          "legend": "Filtros",
+          "employerName": {
+            "label": "Nombre del empleador",
+            "helpText": "Búsqueda parcial e insensible a mayúsculas y minúsculas (ej: \"renault\")."
+          },
+          "cities": {
+            "label": "Ciudades",
+            "helpText": "Seleccione una o varias ciudades."
+          },
+          "sections": {
+            "label": "Secciones de antiguos alumnos",
+            "helpText": "Empleadores que contrataron estudiantes de estas secciones."
+          }
+        },
+        "fieldsToExport": {
+          "legend": "Campos a Exportar",
+          "fieldNames": {
+            "nom": "Nombre",
+            "secteur": "Sector",
+            "ville": "Ciudad"
+          }
+        },
+        "sortAndFormat": {
+          "legend": "Ordenar y Formato",
+          "sortBy": {
+            "label": "Ordenar por",
+            "options": {
+              "name": "Nombre (A-Z)",
+              "city": "Ciudad (A-Z)"
+            }
+          },
+          "exportFormat": {
+            "label": "Formato de Exportación",
+            "csv": "CSV",
+            "plainText": "Texto sin formato"
+          }
+        },
+        "exportButton": "Exportar datos"
+      }
+    }
+  },
+  "profile": {
+    "view": {
+      "title": "Perfil de {{prenom}} {{nom}}",
+      "editProfileButton": "Editar mi perfil",
+      "myEmploymentsButton": "Mis empleos",
+      "personalInfo": {
+        "cardHeader": "Información personal",
+        "email": "Correo electrónico:",
+        "graduationYear": "Año de graduación:",
+        "section": "Sección:",
+        "employmentStatus": "Estado de empleo:",
+        "employmentStatusOptions": {
+          "etudiant": "Estudiante",
+          "employe": "Empleado",
+          "freelance": "Freelance",
+          "chomeur": "Desempleado",
+          "entrepreneur": "Emprendedor",
+          "retraite": "Jubilado",
+          "autre": "Otro"
+        },
+        "address": "Dirección:",
+        "description": "Descripción:",
+        "seeMore": "Ver más",
+        "seeLess": "Ver menos"
+      },
+      "contact": {
+        "cardHeader": "Contacto",
+        "phone": "Teléfono:",
+        "notProvided": "No proporcionado",
+        "linkedIn": "LinkedIn:",
+        "twitter": "Twitter:",
+        "facebook": "Facebook:",
+        "website": "Sitio web:",
+        "contactInfoHidden": "La información de contacto está oculta por el usuario."
+      },
+      "employmentHistory": {
+        "cardHeader": "Historial de empleo",
+        "current": "Actual",
+        "endDateNotSpecified": "Fecha de finalización no especificada",
+        "sector": "Sector:",
+        "location": "Ubicación:",
+        "noEmploymentRecorded": "Ningún empleo registrado."
+      },
+      "profilePicture": {
+        "cardHeader": "Foto de perfil"
+      }
+    },
+    "edit": {
+      "title": "Editar mi perfil",
+      "alerts": {
+        "error": "{{error}}"
+      },
+      "personalInfo": {
+        "firstName": "Nombre",
+        "lastName": "Apellido",
+        "email": {
+          "label": "Correo electrónico",
+          "disabledText": "El correo electrónico no se puede modificar aquí."
+        },
+        "graduationYear": {
+          "label": "Año de graduación",
+          "disabledText": "El año de graduación no se puede modificar aquí."
+        },
+        "section": {
+          "label": "Sección",
+          "disabledText": "La sección no se puede modificar aquí."
+        },
+        "phone": "Teléfono",
+        "address": "Dirección",
+        "city": "Ciudad",
+        "postalCode": "Código Postal",
+        "country": "País",
+        "linkedin": "URL de LinkedIn",
+        "twitter": "URL de Twitter",
+        "facebook": "URL de Facebook",
+        "website": "URL del sitio web",
+        "employmentStatus": {
+          "label": "Estado de empleo",
+          "notSpecified": "No especificado",
+          "etudiant": "Estudiante",
+          "employe": "Empleado",
+          "freelance": "Freelance",
+          "chomeur": "Desempleado",
+          "entrepreneur": "Emprendedor",
+          "retraite": "Jubilado",
+          "autre": "Otro"
+        },
+        "description": "Descripción (opcional)"
+      },
+      "saveButton": "Guardar cambios"
+    }
+  },
+  "users": {
+    "profile": {
+      "alerts": {
+        "userUpdated": "¡Perfil actualizado con éxito!"
+      },
+      "cardHeader": {
+        "section": "Sección:",
+        "year": "Año:",
+        "at": "en"
+      },
+      "editProfileButton": "Editar perfil",
+      "contactInfo": {
+        "cardHeader": "Información de contacto",
+        "linkedin": "LinkedIn",
+        "twitter": "Twitter",
+        "facebook": "Facebook",
+        "website": "Sitio web"
+      },
+      "profileDetails": {
+        "cardHeader": "Detalles del perfil",
+        "fullName": "Nombre completo",
+        "email": "Correo electrónico",
+        "graduationYear": "Año de graduación",
+        "section": "Sección",
+        "address": "Dirección",
+        "description": "Descripción",
+        "notApplicable": "N/A",
+        "seeMore": "Mostrar más"
+      },
+      "employmentHistory": {
+        "cardHeader": "Historial de empleo",
+        "current": "Actual",
+        "endDateNotSpecified": "Fecha de finalización no especificada",
+        "sector": "Sector:",
+        "city": "Ciudad:"
+      }
+    }
+  }
+}

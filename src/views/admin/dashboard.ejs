@@ -1,8 +1,8 @@
 <div class="row">
     <div class="col-12">
         <div class="d-flex justify-content-between align-items-center mb-4">
-            <h1>Tableau de bord Administrateur</h1>
-            <span class="text-muted">Bienvenue, <%= user.prenom %> !</span>
+            <h1><%= __('admin.dashboard.title') %></h1>
+            <span class="text-muted"><%= __('admin.dashboard.welcome', { prenom: user.prenom }) %></span>
         </div>
     </div>
 </div>
@@ -13,10 +13,10 @@
         <div class="card h-100">
             <div class="card-body text-center">
                 <i class="bi bi-person-plus text-warning" style="font-size: 3rem;"></i>
-                <h5 class="card-title mt-3">Demandes en attente</h5>
-                <p class="card-text">Gérer les nouvelles demandes d'inscription</p>
+                <h5 class="card-title mt-3"><%= __('admin.dashboard.pendingRequests.title') %></h5>
+                <p class="card-text"><%= __('admin.dashboard.pendingRequests.description') %></p>
                 <a href="/admin/requests" class="btn btn-warning">
-                    <i class="bi bi-hourglass-split"></i> Consulter
+                    <i class="bi bi-hourglass-split"></i> <%= __('admin.dashboard.pendingRequests.button') %>
                 </a>
             </div>
         </div>
@@ -26,10 +26,10 @@
         <div class="card h-100">
             <div class="card-body text-center">
                 <i class="bi bi-collection text-info" style="font-size: 3rem;"></i>
-                <h5 class="card-title mt-3">Gestion des sections</h5>
-                <p class="card-text">Ajouter, modifier ou supprimer des sections</p>
+                <h5 class="card-title mt-3"><%= __('admin.dashboard.sectionManagement.title') %></h5>
+                <p class="card-text"><%= __('admin.dashboard.sectionManagement.description') %></p>
                 <a href="/admin/sections" class="btn btn-info">
-                    <i class="bi bi-gear"></i> Gérer
+                    <i class="bi bi-gear"></i> <%= __('admin.dashboard.sectionManagement.button') %>
                 </a>
             </div>
         </div>
@@ -39,10 +39,10 @@
         <div class="card h-100">
             <div class="card-body text-center">
                 <i class="bi bi-bar-chart-line text-primary" style="font-size: 3rem;"></i>
-                <h5 class="card-title mt-3">Statistiques</h5>
-                <p class="card-text">Consulter les statistiques générales et par section</p>
+                <h5 class="card-title mt-3"><%= __('admin.dashboard.statistics.title') %></h5>
+                <p class="card-text"><%= __('admin.dashboard.statistics.description') %></p>
                 <a href="/admin/statistics" class="btn btn-primary">
-                    <i class="bi bi-eye"></i> Voir les stats
+                    <i class="bi bi-eye"></i> <%= __('admin.dashboard.statistics.button') %>
                 </a>
             </div>
         </div>
@@ -52,10 +52,10 @@
         <div class="card h-100">
             <div class="card-body text-center">
                 <i class="bi bi-building text-success" style="font-size: 3rem;"></i>
-                <h5 class="card-title mt-3">Exportation des employeurs</h5>
-                <p class="card-text">Télécharger la liste des employeurs</p>
+                <h5 class="card-title mt-3"><%= __('admin.dashboard.employerExport.title') %></h5>
+                <p class="card-text"><%= __('admin.dashboard.employerExport.description') %></p>
                 <a href="/admin/export/employers" class="btn btn-success">
-                    <i class="bi bi-download"></i> Exporter
+                    <i class="bi bi-download"></i> <%= __('admin.dashboard.employerExport.button') %>
                 </a>
             </div>
         </div>
@@ -66,7 +66,7 @@
 <% if (recentUsers && recentUsers.length > 0) { %>
 <div class="row mt-5">
     <div class="col-12">
-        <h3>Nouveaux membres</h3>
+        <h3><%= __('admin.dashboard.newMembers') %></h3>
         <div class="row">
             <% recentUsers.forEach(user => {
             %>

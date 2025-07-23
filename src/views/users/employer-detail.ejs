@@ -1,19 +1,19 @@
 <div class="container-fluid">
-    <h1 class="mb-4"><%= employer.nom %></h1>
+    <h1 class="mb-4"><%= __('users.employerDetail.title', { employerName: employer.nom }) %></h1>
 
     <div class="card mb-4">
         <div class="card-body">
-            <h5 class="card-title">Détails de l'employeur</h5>
-            <p class="card-text"><strong>Secteur:</strong> <%= employer.secteur || 'N/A' %></p>
-            <p class="card-text"><strong>Ville:</strong> <%= employer.ville || 'N/A' %></p>
-            <p class="card-text"><strong>Description:</strong> <%= employer.description || 'N/A' %></p>
+            <h5 class="card-title"><%= __('users.employerDetail.employerDetails') %></h5>
+            <p class="card-text"><strong><%= __('users.employerDetail.sector') %></strong> <%= employer.secteur || 'N/A' %></p>
+            <p class="card-text"><strong><%= __('users.employerDetail.city') %></strong> <%= employer.ville || 'N/A' %></p>
+            <p class="card-text"><strong><%= __('users.employerDetail.description') %></strong> <%= employer.description || 'N/A' %></p>
         </div>
     </div>
 
     <% if (employees && employees.length > 0) { %>
     <div class="card mb-4">
         <div class="card-body">
-            <h5 class="card-title">Employés (<%= employees.length %>)</h5>
+            <h5 class="card-title"><%= __('users.employerDetail.employees', { count: employees.length }) %></h5>
             <div class="list-group list-group-flush">
                 <% employees.forEach(employee => { %>
                 <a href="/users/<%= employee.user_id %>" class="list-group-item bg-info-subtle d-flex align-items-center">
@@ -21,7 +21,7 @@
                          style="width: 40px; height: 40px; object-fit: cover;">
                     <div>
                         <h6 class="mb-0 text-dark"><%= employee.prenom %> <%= employee.nom %></h6>
-                        <small class="text-muted"><%= employee.poste %> (<%= new Date(employee.date_debut).getFullYear() %> - <%= employee.is_current ? 'Actuel' : (employee.date_fin ? new Date(employee.date_fin).getFullYear() : 'N/A') %>)</small>
+                        <small class="text-muted"><%= employee.poste %> (<%= new Date(employee.date_debut).getFullYear() %> - <%= employee.is_current ? __('users.employerDetail.current') : (employee.date_fin ? new Date(employee.date_fin).getFullYear() : 'N/A') %>)</small>
                     </div>
                 </a>
                 <% }); %>
@@ -30,7 +30,7 @@
     </div>
     <% } else { %>
     <div class="alert alert-info" role="alert">
-        Aucun employé trouvé pour cet employeur.
+        <%= __('users.employerDetail.noEmployees') %>
     </div>
     <% } %>
 </div>

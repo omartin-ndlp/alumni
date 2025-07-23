@@ -1,5 +1,5 @@
 <div class="container-fluid">
-    <h1 class="mb-4">Liste des employeurs</h1>
+    <h1 class="mb-4"><%= __('Liste des employeurs') %></h1>
 
     <% if (employers && employers.length > 0) { %>
     <div class="row">
@@ -17,7 +17,7 @@
                         <% } %>
                     </p>
                     <a href="/users/employers/<%= employer.id %>" class="btn btn-primary btn-sm">
-                        Voir les employés
+                        <%= __('Voir les employés') %>
                     </a>
                 </div>
             </div>
@@ -26,7 +26,7 @@
     </div>
     <% } else { %>
     <div class="alert alert-info" role="alert">
-        Aucun employeur trouvé.
+        <%= __('Aucun employeur trouvé.') %>
     </div>
     <% } %>
 </div>

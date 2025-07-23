@@ -1,10 +1,10 @@
 <div class="container-fluid">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1 class="mt-4">Profil de <%= displayUser.prenom %> <%= displayUser.nom %></h1>
+        <h1 class="mt-4"><%= __('profile.view.title', { prenom: displayUser.prenom, nom: displayUser.nom }) %></h1>
         <% if (isOwnProfile) { %>
             <div>
-                <a href="/profile/edit" class="btn btn-primary me-2">Modifier mon profil</a>
-                <a href="/profile/employment" class="btn btn-info">Mes emplois</a>
+                <a href="/profile/edit" class="btn btn-primary me-2"><%= __('profile.view.editProfileButton') %></a>
+                <a href="/profile/employment" class="btn btn-info"><%= __('profile.view.myEmploymentsButton') %></a>
             </div>
         <% } %>
     </div>
@@ -12,31 +12,31 @@
     <div class="row">
         <div class="col-lg-8">
             <div class="card mb-4">
-                <div class="card-header">Informations personnelles</div>
+                <div class="card-header"><%= __('profile.view.personalInfo.cardHeader') %></div>
                 <div class="card-body">
-                    <p><strong>Email:</strong> <%= displayUser.email %></p>
-                    <p><strong>Année de diplôme:</strong> <%= displayUser.annee_diplome %></p>
-                    <p><strong>Section:</strong> <%= displayUser.section_nom %></p>
+                    <p><strong><%= __('profile.view.personalInfo.email') %></strong> <%= displayUser.email %></p>
+                    <p><strong><%= __('profile.view.personalInfo.graduationYear') %></strong> <%= displayUser.annee_diplome %></p>
+                    <p><strong><%= __('profile.view.personalInfo.section') %></strong> <%= displayUser.section_nom %></p>
                     <% if (displayUser.statut_emploi) { %>
-                        <p><strong>Statut d'emploi:</strong> <%
+                        <p><strong><%= __('profile.view.personalInfo.employmentStatus') %></strong> <%
                             const employmentStatusMap = {
-                                'etudiant': 'Étudiant',
-                                'employe': 'Employé',
-                                'freelance': 'Freelance',
-                                'chomeur': 'Sans emploi',
-                                'entrepreneur': 'Entrepreneur',
-                                'retraite': 'Retraité',
-                                'autre': 'Autre'
+                                'etudiant': __('profile.view.personalInfo.employmentStatusOptions.etudiant'),
+                                'employe': __('profile.view.personalInfo.employmentStatusOptions.employe'),
+                                'freelance': __('profile.view.personalInfo.employmentStatusOptions.freelance'),
+                                'chomeur': __('profile.view.personalInfo.employmentStatusOptions.chomeur'),
+                                'entrepreneur': __('profile.view.personalInfo.employmentStatusOptions.entrepreneur'),
+                                'retraite': __('profile.view.personalInfo.employmentStatusOptions.retraite'),
+                                'autre': __('profile.view.personalInfo.employmentStatusOptions.autre')
                             };
                             %><%= employmentStatusMap[displayUser.statut_emploi] || displayUser.statut_emploi %></p>
                     <% } %>
                     <% if (displayUser.adresse && displayUser.ville && displayUser.code_postal) { %>
-                        <p><strong>Adresse:</strong> <%= displayUser.adresse %>, <%= displayUser.code_postal %> <%= displayUser.ville %>, <%= displayUser.pays %></p>
+                        <p><strong><%= __('profile.view.personalInfo.address') %></strong> <%= displayUser.adresse %>, <%= displayUser.code_postal %> <%= displayUser.ville %>, <%= displayUser.pays %></p>
                     <% } %>
 
                     <% if (displayUser.description) { %>
                         <hr>
-                        <p><strong>Description:</strong></p>
+                        <p><strong><%= __('profile.view.personalInfo.description') %></strong></p>
                         <%
                             const description = displayUser.description;
                             const maxLength = 150; // Adjust as needed
@@ -52,8 +52,8 @@
                             <span class="description-truncated"><%= displayDescription %></span>
                             <span class="description-full" style="display: none;"><%= description %></span>
                             <% if (truncated) { %>
-                                <a href="#" class="read-more-link" data-target="description">Voir plus</a>
-                                <a href="#" class="read-less-link" data-target="description" style="display: none;">Voir moins</a>
+                                <a href="#" class="read-more-link" data-target="description"><%= __('profile.view.personalInfo.seeMore') %></a>
+                                <a href="#" class="read-less-link" data-target="description" style="display: none;"><%= __('profile.view.personalInfo.seeLess') %></a>
                             <% } %>
                         </p>
                     <% } %>
@@ -61,33 +61,33 @@
             </div>
 
             <div class="card mb-4">
-                <div class="card-header">Contact</div>
+                <div class="card-header"><%= __('profile.view.contact.cardHeader') %></div>
                 <div class="card-body">
                     <% if (canViewContact) { %>
-                        <p><strong>Téléphone:</strong> <%= displayUser.telephone || 'Non renseigné' %></p>
-                        <p><strong>LinkedIn:</strong> <%= displayUser.linkedin ? `<a href="${displayUser.linkedin}" target="_blank">${displayUser.linkedin}</a>` : 'Non renseigné' %></p>
-                        <p><strong>Twitter:</strong> <%= displayUser.twitter ? `<a href="${displayUser.twitter}" target="_blank">${displayUser.twitter}</a>` : 'Non renseigné' %></p>
-                        <p><strong>Facebook:</strong> <%= displayUser.facebook ? `<a href="${displayUser.facebook}" target="_blank">${displayUser.facebook}</a>` : 'Non renseigné' %></p>
-                        <p><strong>Site Web:</strong> <%= displayUser.site_web ? `<a href="${displayUser.site_web}" target="_blank">${displayUser.site_web}</a>` : 'Non renseigné' %></p>
+                        <p><strong><%= __('profile.view.contact.phone') %></strong> <%= displayUser.telephone || __('profile.view.contact.notProvided') %></p>
+                        <p><strong><%= __('profile.view.contact.linkedIn') %></strong> <%= displayUser.linkedin ? `<a href="${displayUser.linkedin}" target="_blank">${displayUser.linkedin}</a>` : __('profile.view.contact.notProvided') %></p>
+                        <p><strong><%= __('profile.view.contact.twitter') %></strong> <%= displayUser.twitter ? `<a href="${displayUser.twitter}" target="_blank">${displayUser.twitter}</a>` : __('profile.view.contact.notProvided') %></p>
+                        <p><strong><%= __('profile.view.contact.facebook') %></strong> <%= displayUser.facebook ? `<a href="${displayUser.facebook}" target="_blank">${displayUser.facebook}</a>` : __('profile.view.contact.notProvided') %></p>
+                        <p><strong><%= __('profile.view.contact.website') %></strong> <%= displayUser.site_web ? `<a href="${displayUser.site_web}" target="_blank">${displayUser.site_web}</a>` : __('profile.view.contact.notProvided') %></p>
                     <% } else { %>
-                        <p class="text-muted">Les informations de contact sont masquées par l'utilisateur.</p>
+                        <p class="text-muted"><%= __('profile.view.contact.contactInfoHidden') %></p>
                     <% } %>
                 </div>
             </div>
 
             <div class="card mb-4">
-                <div class="card-header">Historique des emplois</div>
+                <div class="card-header"><%= __('profile.view.employmentHistory.cardHeader') %></div>
                 <div class="card-body">
                     <% if (employment && employment.length > 0) { %>
                         <% employment.forEach(job => {
                             const startDate = formatDate(job.date_debut);
                             let endDate = '';
                             if (job.is_current) {
-                                endDate = 'Actuel';
+                                endDate = __('profile.view.employmentHistory.current');
                             } else if (job.date_fin) {
                                 endDate = formatDate(job.date_fin);
                             } else {
-                                endDate = 'Date de fin non spécifiée';
+                                endDate = __('profile.view.employmentHistory.endDateNotSpecified');
                             }
                         %>
                         <div class="mb-3">
@@ -95,13 +95,13 @@
                             <p class="text-muted mb-1">
                                 <%= startDate %> - <%= endDate %>
                             </p>
-                            <% if (job.secteur) { %><p class="text-muted mb-1"><small>Secteur: <%= job.secteur %></small></p><% } %>
-                            <% if (job.ville) { %><p class="text-muted mb-0"><small>Lieu: <%= job.ville %></small></p><% } %>
+                            <% if (job.secteur) { %><p class="text-muted mb-1"><small><%= __('profile.view.employmentHistory.sector') %> <%= job.secteur %></small></p><% } %>
+                            <% if (job.ville) { %><p class="text-muted mb-0"><small><%= __('profile.view.employmentHistory.location') %> <%= job.ville %></small></p><% } %>
                         </div>
                         <% if (employment.indexOf(job) < employment.length - 1) { %><hr><% } %>
                         <% }); %>
                     <% } else { %>
-                        <p>Aucun emploi enregistré.</p>
+                        <p><%= __('profile.view.employmentHistory.noEmploymentRecorded') %></p>
                     <% } %>
                 </div>
             </div>
@@ -109,7 +109,7 @@
 
         <div class="col-lg-4">
             <div class="card mb-4">
-                <div class="card-header">Photo de profil</div>
+                <div class="card-header"><%= __('Photo de profil') %></div>
                 <div class="card-body text-center">
                     <img src="<%= User.getGravatarUrl(displayUser.email, 150) %>" class="rounded-circle img-fluid gravatar-img" style="width: 150px; height: 150px; object-fit: cover;">
                 </div>

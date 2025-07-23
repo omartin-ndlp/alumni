@@ -1,5 +1,5 @@
 <div class="container-fluid">
-    <h1 class="mb-4">Modifier l'utilisateur</h1>
+    <h1 class="mb-4"><%= __('admin.userEdit.title') %></h1>
 
     <% if (errors && Object.keys(errors).length > 0) { %>
     <div class="alert alert-danger" role="alert">
@@ -14,29 +14,29 @@
             <form action="/admin/users/edit/<%= editUser.id %>" method="POST" enctype="multipart/form-data">
                 <div class="row mb-3">
                     <div class="col-md-6">
-                        <label for="prenom" class="form-label">Prénom</label>
+                        <label for="prenom" class="form-label"><%= __('admin.userEdit.firstName') %></label>
                         <input type="text" class="form-control" id="prenom" name="prenom" value="<%= oldInput.prenom || editUser.prenom %>" required>
                     </div>
                     <div class="col-md-6">
-                        <label for="nom" class="form-label">Nom</label>
+                        <label for="nom" class="form-label"><%= __('admin.userEdit.lastName') %></label>
                         <input type="text" class="form-control" id="nom" name="nom" value="<%= oldInput.nom || editUser.nom %>" required>
                     </div>
                 </div>
 
                 <div class="row mb-3">
                     <div class="col-md-6">
-                        <label for="email" class="form-label">Email</label>
+                        <label for="email" class="form-label"><%= __('admin.userEdit.email') %></label>
                         <input type="email" class="form-control" id="email" name="email" value="<%= oldInput.email || editUser.email %>" required>
                     </div>
                     <div class="col-md-6">
-                        <label for="annee_diplome" class="form-label">Année de diplôme</label>
+                        <label for="annee_diplome" class="form-label"><%= __('admin.userEdit.graduationYear') %></label>
                         <input type="number" class="form-control" id="annee_diplome" name="annee_diplome" value="<%= oldInput.annee_diplome || editUser.annee_diplome %>" required>
                     </div>
                 </div>
 
                 <div class="row mb-3">
                     <div class="col-md-6">
-                        <label for="section_id" class="form-label">Section</label>
+                        <label for="section_id" class="form-label"><%= __('admin.userEdit.section') %></label>
                         <select class="form-select" id="section_id" name="section_id" required>
                             <% sections.forEach(section => { %>
                                 <option value="<%= section.id %>" <%= (oldInput.section_id || editUser.section_id) == section.id ? 'selected' : '' %>><%= section.nom %></option>
@@ -44,66 +44,66 @@
                         </select>
                     </div>
                     <div class="col-md-6">
-                        <label for="telephone" class="form-label">Téléphone</label>
+                        <label for="telephone" class="form-label"><%= __('admin.userEdit.phone') %></label>
                         <input type="tel" class="form-control" id="telephone" name="telephone" value="<%= oldInput.telephone || editUser.telephone || '' %>">
                     </div>
                 </div>
 
                 <div class="row mb-3">
                     <div class="col-md-6">
-                        <label for="adresse" class="form-label">Adresse</label>
+                        <label for="adresse" class="form-label"><%= __('admin.userEdit.address') %></label>
                         <input type="text" class="form-control" id="adresse" name="adresse" value="<%= oldInput.adresse || editUser.adresse || '' %>">
                     </div>
                     <div class="col-md-6">
-                        <label for="ville" class="form-label">Ville</label>
+                        <label for="ville" class="form-label"><%= __('admin.userEdit.city') %></label>
                         <input type="text" class="form-control" id="ville" name="ville" value="<%= oldInput.ville || editUser.ville || '' %>">
                     </div>
                 </div>
 
                 <div class="row mb-3">
                     <div class="col-md-6">
-                        <label for="code_postal" class="form-label">Code Postal</label>
+                        <label for="code_postal" class="form-label"><%= __('admin.userEdit.postalCode') %></label>
                         <input type="text" class="form-control" id="code_postal" name="code_postal" value="<%= oldInput.code_postal || editUser.code_postal || '' %>">
                     </div>
                     <div class="col-md-6">
-                        <label for="pays" class="form-label">Pays</label>
+                        <label for="pays" class="form-label"><%= __('admin.userEdit.country') %></label>
                         <input type="text" class="form-control" id="pays" name="pays" value="<%= oldInput.pays || editUser.pays || 'France' %>">
                     </div>
                 </div>
 
                 <div class="row mb-3">
                     <div class="col-md-6">
-                        <label for="linkedin" class="form-label">LinkedIn URL</label>
+                        <label for="linkedin" class="form-label"><%= __('admin.userEdit.linkedin') %></label>
                         <input type="url" class="form-control" id="linkedin" name="linkedin" value="<%= oldInput.linkedin || editUser.linkedin || '' %>">
                     </div>
                     <div class="col-md-6">
-                        <label for="twitter" class="form-label">Twitter URL</label>
+                        <label for="twitter" class="form-label"><%= __('admin.userEdit.twitter') %></label>
                         <input type="url" class="form-control" id="twitter" name="twitter" value="<%= oldInput.twitter || editUser.twitter || '' %>">
                     </div>
                 </div>
 
                 <div class="row mb-3">
                     <div class="col-md-6">
-                        <label for="facebook" class="form-label">Facebook URL</label>
+                        <label for="facebook" class="form-label"><%= __('admin.userEdit.facebook') %></label>
                         <input type="url" class="form-control" id="facebook" name="facebook" value="<%= oldInput.facebook || editUser.facebook || '' %>">
                     </div>
                     <div class="col-md-6">
-                        <label for="site_web" class="form-label">Site Web URL</label>
+                        <label for="site_web" class="form-label"><%= __('admin.userEdit.website') %></label>
                         <input type="url" class="form-control" id="site_web" name="site_web" value="<%= oldInput.site_web || editUser.site_web || '' %>">
                     </div>
                 </div>
 
                 <div class="mb-3">
-                    <label for="statut_emploi" class="form-label">Statut d'emploi</label>
+                    <label for="statut_emploi" class="form-label"><%= __('admin.userEdit.employmentStatus.label') %></label>
                     <select class="form-select" id="statut_emploi" name="statut_emploi">
-                        <option value="" <%= (oldInput.statut_emploi || editUser.statut_emploi) == null ? 'selected' : '' %>>Non spécifié</option>
-                        <option value="etudiant" <%= (oldInput.statut_emploi || editUser.statut_emploi) == 'etudiant' ? 'selected' : '' %>>Étudiant</option>
-                        <option value="employe" <%= (oldInput.statut_emploi || editUser.statut_emploi) == 'employe' ? 'selected' : '' %>>Employé</option>
-                        <option value="freelance" <%= (oldInput.statut_emploi || editUser.statut_emploi) == 'freelance' ? 'selected' : '' %>>Freelance</option>
-                        <option value="chomeur" <%= (oldInput.statut_emploi || editUser.statut_emploi) == 'chomeur' ? 'selected' : '' %>>Sans emploi</option>
-                        <option value="entrepreneur" <%= (oldInput.statut_emploi || editUser.statut_emploi) == 'entrepreneur' ? 'selected' : '' %>>Entrepreneur</option>
-                        <option value="retraite" <%= (oldInput.statut_emploi || editUser.statut_emploi) == 'retraite' ? 'selected' : '' %>>Retraité</option>
-                        <option value="autre" <%= (oldInput.statut_emploi || editUser.statut_emploi) == 'autre' ? 'selected' : '' %>>Autre</option>
+                        <option value="" <%= (oldInput.statut_emploi || editUser.statut_emploi) == null ? 'selected' : '' %>><%= __('admin.userEdit.employmentStatus.notSpecified') %></option>
+                        <option value="etudiant" <%= (oldInput.statut_emploi || editUser.statut_emploi) == 'etudiant' ? 'selected' : '' %>><%= __('admin.userEdit.employmentStatus.etudiant') %></option>
+                        <option value="employe" <%= (oldInput.statut_emploi || editUser.statut_emploi) == 'employe' ? 'selected' : '' %>><%= __('admin.userEdit.employmentStatus.employe') %></option>
+                        <option value="freelance" <%= (oldInput.statut_emploi || editUser.statut_emploi) == 'freelance' ? 'selected' : '' %>><%= __('admin.userEdit.employmentStatus.freelance') %></option>
+                        <option value="chomeur" <%= (oldInput.statut_emploi || editUser.statut_emploi) == 'chomeur' ? 'selected' : '' %>><%= __('admin.userEdit.employmentStatus.chomeur') %></option>
+                        <option value="entrepreneur" <%= (oldInput.statut_emploi || editUser.statut_emploi) == 'entrepreneur' ? 'selected' : '' %>><%= __('admin.userEdit.employmentStatus.entrepreneur') %></option>
+                        <option value="retraite" <%= (oldInput.statut_emploi || editUser.statut_emploi) == 'retraite' ? 'selected' : '' %>><%= __('admin.userEdit.employmentStatus.retraite') %></option>
+                        <option value="autre" <%= (oldInput.statut_emploi || editUser.statut_emploi) == 'autre' ? 'selected' : '' %>><%= __('admin.userEdit.employmentStatus.autre') %></option>
                     </select>
                 </div>
 
@@ -111,19 +111,19 @@
                     <div class="col-md-4">
                         <div class="form-check">
                             <input class="form-check-input" type="checkbox" id="is_admin" name="is_admin" value="true" <%= (oldInput.is_admin || editUser.is_admin) ? 'checked' : '' %>>
-                            <label class="form-check-label" for="is_admin">Est administrateur</label>
+                            <label class="form-check-label" for="is_admin"><%= __('admin.userEdit.isAdmin') %></label>
                         </div>
                     </div>
                     <div class="col-md-4">
                         <div class="form-check">
                             <input class="form-check-input" type="checkbox" id="is_approved" name="is_approved" value="true" <%= (oldInput.is_approved || editUser.is_approved) ? 'checked' : '' %>>
-                            <label class="form-check-label" for="is_approved">Est approuvé</label>
+                            <label class="form-check-label" for="is_approved"><%= __('admin.userEdit.isApproved') %></label>
                         </div>
                     </div>
                     <div class="col-md-4">
                         <div class="form-check">
                             <input class="form-check-input" type="checkbox" id="is_active" name="is_active" value="true" <%= (oldInput.is_active || editUser.is_active) ? 'checked' : '' %>>
-                            <label class="form-check-label" for="is_active">Est actif</label>
+                            <label class="form-check-label" for="is_active"><%= __('admin.userEdit.isActive') %></label>
                         </div>
                     </div>
                 </div>
@@ -132,23 +132,23 @@
                     <div class="col-md-6">
                         <div class="form-check">
                             <input class="form-check-input" type="checkbox" id="opt_out_contact" name="opt_out_contact" value="true" <%= (oldInput.opt_out_contact || editUser.opt_out_contact) ? 'checked' : '' %>>
-                            <label class="form-check-label" for="opt_out_contact">Opt-out contact (masquer mes infos de contact)</label>
+                            <label class="form-check-label" for="opt_out_contact"><%= __('admin.userEdit.optOutContact') %></label>
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="form-check">
                             <input class="form-check-input" type="checkbox" id="opt_out_directory" name="opt_out_directory" value="true" <%= (oldInput.opt_out_directory || editUser.opt_out_directory) ? 'checked' : '' %>>
-                            <label class="form-check-label" for="opt_out_directory">Opt-out annuaire (masquer mon profil de l'annuaire)</label>
+                            <label class="form-check-label" for="opt_out_directory"><%= __('admin.userEdit.optOutDirectory') %></label>
                         </div>
                     </div>
                 </div>
 
                 <div class="mb-3">
-                    <label for="description" class="form-label">Description (optionnel)</label>
+                    <label for="description" class="form-label"><%= __('admin.userEdit.description') %></label>
                     <textarea class="form-control" id="description" name="description" rows="3"><%= oldInput.description || editUser.description || '' %></textarea>
                 </div>
 
-                <button type="submit" class="btn btn-primary">Enregistrer les modifications</button>
+                <button type="submit" class="btn btn-primary"><%= __('admin.userEdit.saveChanges') %></button>
             </form>
         </div>
     </div>

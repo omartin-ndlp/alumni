@@ -16,18 +16,18 @@
         <div class="bg-dark border-right" id="sidebar-wrapper">
             <div class="sidebar-heading text-white py-4 px-4">Menu</div>
             <div class="list-group list-group-flush">
-                <a href="/dashboard" class="list-group-item list-group-item-action bg-dark text-white p-3"><i class="bi bi-house me-2"></i> Accueil</a>
-                <a href="/users" class="list-group-item list-group-item-action bg-dark text-white p-3"><i class="bi bi-people me-2"></i> Annuaire</a>
-                <a href="/users/employers/list" class="list-group-item list-group-item-action bg-dark text-white p-3"><i class="bi bi-building me-2"></i> Employeurs</a>
-                <a href="/profile" class="list-group-item list-group-item-action bg-dark text-white p-3"><i class="bi bi-person-circle me-2"></i> Mon profil</a>
+                <a href="/dashboard" class="list-group-item list-group-item-action bg-dark text-white p-3"><i class="bi bi-house me-2"></i> <%= __('Accueil') %></a>
+                <a href="/users" class="list-group-item list-group-item-action bg-dark text-white p-3"><i class="bi bi-people me-2"></i> <%= __('Annuaire') %></a>
+                <a href="/users/employers/list" class="list-group-item list-group-item-action bg-dark text-white p-3"><i class="bi bi-building me-2"></i> <%= __('Employeurs') %></a>
+                <a href="/profile" class="list-group-item list-group-item-action bg-dark text-white p-3"><i class="bi bi-person-circle me-2"></i> <%= __('Mon profil') %></a>
                 <% if (isAdmin) { %>
-                <a href="/admin" class="list-group-item list-group-item-action bg-dark text-white p-3"><i class="bi bi-gear me-2"></i> Admin Dashboard</a>
+                <a href="/admin" class="list-group-item list-group-item-action bg-dark text-white p-3"><i class="bi bi-gear me-2"></i> <%= __('Admin Dashboard') %></a>
                 
                 
                 <% } %>
                 <form method="POST" action="/logout" class="list-group-item list-group-item-action bg-dark text-white p-3">
                     <button type="submit" class="btn btn-link text-white p-0" style="text-decoration: none;">
-                        <i class="bi bi-box-arrow-right me-2"></i> Déconnexion
+                        <i class="bi bi-box-arrow-right me-2"></i> <%= __('Déconnexion') %>
                     </button>
                 </form>
             </div>
@@ -46,13 +46,13 @@
                                     <i class="bi bi-person-circle"></i> <%= user.prenom %> <%= user.nom %>
                                 </a>
                                 <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                                    <a class="dropdown-item" href="/profile">Mon profil</a>
-                                    <a class="dropdown-item" href="/profile/edit">Modifier mon profil</a>
-                                    <a class="dropdown-item" href="/profile/employment">Mes emplois</a>
+                                    <a class="dropdown-item" href="/profile"><%= __('Mon profil') %></a>
+                                    <a class="dropdown-item" href="/profile/edit"><%= __('Modifier mon profil') %></a>
+                                    <a class="dropdown-item" href="/profile/employment"><%= __('Mes emplois') %></a>
                                     <div class="dropdown-divider"></div>
                                     <form method="POST" action="/logout">
                                         <button type="submit" class="dropdown-item">
-                                            <i class="bi bi-box-arrow-right"></i> Déconnexion
+                                            <i class="bi bi-box-arrow-right"></i> <%= __('Déconnexion') %>
                                         </button>
                                     </form>
                                 </div>
@@ -73,12 +73,12 @@
         <div class="container-fluid">
             <div class="row">
                 <div class="col-md-6">
-                    <h6>Anciens BTS SN/CIEL LJV</h6>
-                    <p class="text-muted">Réseau des anciens étudiants</p>
+                    <h6><%= __('Anciens BTS SN/CIEL LJV') %></h6>
+                    <p class="text-muted"><%= __('Réseau des anciens étudiants') %></p>
                 </div>
                 <div class="col-md-6 text-end">
                     <p class="text-muted">
-                        <small>&copy; <%= new Date().getFullYear() %> Olivier Martin - Tous droits réservés</small>
+                        <small>&copy; <%= new Date().getFullYear() %> <%= __('Olivier Martin - Tous droits réservés') %></small>
                     </p>
                 </div>
             </div>

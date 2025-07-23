@@ -1,59 +1,59 @@
 <div class="container-fluid">
-    <h1 class="mb-4">Annuaire des anciens</h1>
+    <h1 class="mb-4"><%= __('Annuaire des anciens') %></h1>
 
     <!-- Filter and Search Form -->
     <div class="card mb-4">
         <div class="card-body">
             <form action="/users" method="GET" class="row g-3 align-items-end">
                 <div class="col-md-4">
-                    <label for="search" class="form-label">Recherche</label>
-                    <input type="text" class="form-control" id="search" name="search" placeholder="Nom, prénom, employeur..." value="<%= filters.search || '' %>">
+                    <label for="search" class="form-label"><%= __('Recherche') %></label>
+                    <input type="text" class="form-control" id="search" name="search" placeholder="<%= __('Nom, prénom, employeur...') %>" value="<%= filters.search || '' %>">
                 </div>
                 <div class="col-md-2">
-                    <label for="annee_diplome" class="form-label">Année</label>
+                    <label for="annee_diplome" class="form-label"><%= __('Année') %></label>
                     <select class="form-select" id="annee_diplome" name="annee_diplome">
-                        <option value="">Toutes</option>
+                        <option value=""><%= __('Toutes') %></option>
                         <% years.forEach(year => { %>
                             <option value="<%= year %>" <%= filters.annee_diplome == year ? 'selected' : '' %>><%= year %></option>
                         <% }); %>
                     </select>
                 </div>
                 <div class="col-md-3">
-                    <label for="section_id" class="form-label">Section</label>
+                    <label for="section_id" class="form-label"><%= __('Section') %></label>
                     <select class="form-select" id="section_id" name="section_id">
-                        <option value="">Toutes</option>
+                        <option value=""><%= __('Toutes') %></option>
                         <% sections.forEach(section => { %>
                             <option value="<%= section.id %>" <%= filters.section_id == section.id ? 'selected' : '' %>><%= section.nom %></option>
                         <% }); %>
                     </select>
                 </div>
                 <div class="col-md-3">
-                    <label for="employer_id" class="form-label">Employeur</label>
+                    <label for="employer_id" class="form-label"><%= __('Employeur') %></label>
                     <select class="form-select" id="employer_id" name="employer_id">
-                        <option value="">Tous</option>
+                        <option value=""><%= __('Tous') %></option>
                         <% employers.forEach(employer => { %>
                             <option value="<%= employer.id %>" <%= filters.employer_id == employer.id ? 'selected' : '' %>><%= employer.nom %></option>
                         <% }); %>
                     </select>
                 </div>
                 <div class="col-md-3">
-                    <label for="sort" class="form-label">Trier par</label>
+                    <label for="sort" class="form-label"><%= __('Trier par') %></label>
                     <select class="form-select" id="sort" name="sort">
-                        <option value="name" <%= filters.sort == 'name' ? 'selected' : '' %>>Nom</option>
-                        <option value="year" <%= filters.sort == 'year' ? 'selected' : '' %>>Année de diplôme</option>
+                        <option value="name" <%= filters.sort == 'name' ? 'selected' : '' %>><%= __('Nom') %></option>
+                        <option value="year" <%= filters.sort == 'year' ? 'selected' : '' %>><%= __('Année de diplôme') %></option>
                     </select>
                 </div>
                 <div class="col-md-auto d-flex align-items-center">
                     <div class="form-check form-switch">
                         <input class="form-check-input" type="checkbox" id="showAdminsSwitch" name="show_admins" value="true" data-initial-state="<%= filters.show_admins ? 'true' : 'false' %>" <%= filters.show_admins ? 'checked' : '' %>>
-                        <label class="form-check-label" for="showAdminsSwitch">Afficher les administrateurs</label>
+                        <label class="form-check-label" for="showAdminsSwitch"><%= __('Afficher les administrateurs') %></label>
                     </div>
                 </div>
                 <div class="col-md-auto">
-                    <button type="submit" class="btn btn-primary"><i class="bi bi-funnel"></i> Filtrer</button>
+                    <button type="submit" class="btn btn-primary"><i class="bi bi-funnel"></i> <%= __('Filtrer') %></button>
                 </div>
                 <div class="col-md-auto">
-                    <a href="/users" class="btn btn-outline-secondary"><i class="bi bi-x-circle"></i> Réinitialiser</a>
+                    <a href="/users" class="btn btn-outline-secondary"><i class="bi bi-x-circle"></i> <%= __('Réinitialiser') %></a>
                 </div>
             </form>
         </div>
@@ -112,7 +112,7 @@
 
     <% } else { %>
     <div class="alert alert-info" role="alert">
-        Aucun ancien trouvé correspondant à vos critères.
+        <%= __('Aucun ancien trouvé correspondant à vos critères.') %>
     </div>
     <% } %>
 </div>

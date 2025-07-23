@@ -1,0 +1,293 @@
+{
+	"auth": {
+		"login": {
+			"subtitle": "Connectez-vous à votre compte",
+			"emailLabel": "Adresse email",
+			"passwordLabel": "Mot de passe",
+			"loginButton": "Se connecter",
+			"registerPrompt": "Pas encore de compte ?",
+			"registerButton": "Demander un compte",
+			"title": "Anciens BTS SN/CIEL LJV"
+		}
+	},
+	"Tableau de bord": "Tableau de bord",
+	"Bienvenue": "Bienvenue",
+	"Annuaire": "Annuaire",
+	"Parcourez la liste des anciens étudiants": "Parcourez la liste des anciens étudiants",
+	"Consulter": "Consulter",
+	"Employeurs": "Employeurs",
+	"Découvrez où travaillent les anciens": "Découvrez où travaillent les anciens",
+	"Voir la liste": "Voir la liste",
+	"Mon profil": "Mon profil",
+	"Gérez vos informations personnelles": "Gérez vos informations personnelles",
+	"Voir mon profil": "Voir mon profil",
+	"Accueil": "Accueil",
+	"Admin Dashboard": "Tableau de bord administrateur",
+	"Déconnexion": "Déconnexion",
+	"Modifier mon profil": "Modifier mon profil",
+	"Mes emplois": "Mes emplois",
+	"Anciens BTS SN/CIEL LJV": "Anciens BTS SN/CIEL LJV",
+	"Réseau des anciens étudiants": "Réseau des anciens étudiants",
+	"Olivier Martin - Tous droits réservés": "Olivier Martin - Tous droits réservés",
+	"Annuaire des anciens": "Annuaire des anciens",
+	"Recherche": "Recherche",
+	"Nom, prénom, employeur...": "Nom, prénom, employeur...",
+	"Année": "Année",
+	"Toutes": "Toutes",
+	"Section": "Section",
+	"Employeur": "Employeur",
+	"Tous": "Tous",
+	"Trier par": "Trier par",
+	"Nom": "Nom",
+	"Année de diplôme": "Année de diplôme",
+	"Afficher les administrateurs": "Afficher les administrateurs",
+	"Filtrer": "Filtrer",
+	"Réinitialiser": "Réinitialiser",
+	"Liste des employeurs": "Liste des employeurs",
+	"Voir les employés": "Voir les employés",
+	"profile": {
+		"view": {
+			"title": "Profil de {{prenom}} {{nom}}",
+			"editProfileButton": "Modifier mon profil",
+			"myEmploymentsButton": "Mes emplois",
+			"personalInfo": {
+				"cardHeader": "Informations personnelles",
+				"email": "Email :",
+				"graduationYear": "Année de diplôme :",
+				"section": "Section :",
+				"employmentStatus": "Statut d'emploi :",
+				"employmentStatusOptions": {
+					"etudiant": "Étudiant",
+					"employe": "Employé",
+					"freelance": "Freelance",
+					"chomeur": "Sans emploi",
+					"entrepreneur": "Entrepreneur",
+					"retraite": "Retraité",
+					"autre": "Autre"
+				}
+			},
+			"contact": {
+				"cardHeader": "Contact",
+				"phone": "Téléphone :",
+				"notProvided": "Non renseigné",
+				"linkedIn": "LinkedIn :",
+				"twitter": "Twitter :",
+				"facebook": "Facebook :",
+				"website": "Site Web :"
+			},
+			"employmentHistory": {
+				"cardHeader": "Historique des emplois",
+				"sector": "Secteur :",
+				"location": "Lieu :",
+				"endDateNotSpecified": "Date de fin non spécifiée"
+			}
+		},
+		"edit": {
+			"title": "profile.edit.title",
+			"personalInfo": {
+				"firstName": "profile.edit.personalInfo.firstName",
+				"lastName": "profile.edit.personalInfo.lastName",
+				"email": {
+					"label": "profile.edit.personalInfo.email.label"
+				},
+				"graduationYear": {
+					"label": "profile.edit.personalInfo.graduationYear.label"
+				},
+				"section": {
+					"label": "profile.edit.personalInfo.section.label"
+				},
+				"phone": "profile.edit.personalInfo.phone",
+				"address": "profile.edit.personalInfo.address",
+				"city": "profile.edit.personalInfo.city",
+				"postalCode": "profile.edit.personalInfo.postalCode",
+				"country": "profile.edit.personalInfo.country",
+				"linkedin": "profile.edit.personalInfo.linkedin",
+				"twitter": "profile.edit.personalInfo.twitter",
+				"facebook": "profile.edit.personalInfo.facebook",
+				"website": "profile.edit.personalInfo.website",
+				"employmentStatus": {
+					"label": "profile.edit.personalInfo.employmentStatus.label",
+					"notSpecified": "profile.edit.personalInfo.employmentStatus.notSpecified",
+					"etudiant": "profile.edit.personalInfo.employmentStatus.etudiant",
+					"employe": "profile.edit.personalInfo.employmentStatus.employe",
+					"freelance": "profile.edit.personalInfo.employmentStatus.freelance",
+					"chomeur": "profile.edit.personalInfo.employmentStatus.chomeur",
+					"entrepreneur": "profile.edit.personalInfo.employmentStatus.entrepreneur",
+					"retraite": "profile.edit.personalInfo.employmentStatus.retraite",
+					"autre": "profile.edit.personalInfo.employmentStatus.autre"
+				},
+				"description": "profile.edit.personalInfo.description"
+			},
+			"saveButton": "profile.edit.saveButton"
+		}
+	},
+	"Photo de profil": "Photo de profil",
+	"admin": {
+		"dashboard": {
+			"title": "Tableau de bord Administrateur",
+			"welcome": "Bienvenue, {{prenom}} !",
+			"pendingRequests": {
+				"title": "Demandes en attente",
+				"description": "Gérer les nouvelles demandes d'inscription",
+				"button": "Consulter"
+			},
+			"sectionManagement": {
+				"title": "Gestion des sections",
+				"description": "Ajouter, modifier ou supprimer des sections",
+				"button": "Gérer"
+			},
+			"statistics": {
+				"title": "Statistiques",
+				"description": "Consulter les statistiques générales et par section",
+				"button": "Voir les stats"
+			},
+			"employerExport": {
+				"title": "Exportation des employeurs",
+				"description": "Télécharger la liste des employeurs",
+				"button": "Exporter"
+			},
+			"newMembers": "Nouveaux membres"
+		},
+		"requests": {
+			"title": "Demandes d'inscription en attente",
+			"noRequests": "Aucune demande d'inscription en attente pour le moment.",
+			"modals": {
+				"fullMessage": {
+					"title": "Message complet"
+				},
+				"close": "Fermer",
+				"magicLink": {
+					"title": "Lien d'inscription",
+					"instruction": "Copiez le message ci-dessous et envoyez-le à l'utilisateur :",
+					"sendEmail": "Envoyer e-mail"
+				}
+			},
+			"copyMessage": "Copier le message"
+		},
+		"statistics": {
+			"title": "Statistiques Administrateur",
+			"generalStats": {
+				"cardHeader": "Statistiques Générales",
+				"totalUsers": "Total Utilisateurs:",
+				"pendingRequests": "Demandes en attente:",
+				"totalEmployers": "Total Employeurs:",
+				"currentEmployments": "Emplois Actuels:"
+			},
+			"usersByGraduationYear": {
+				"cardHeader": "Utilisateurs par Année de Diplôme",
+				"year": "Année"
+			},
+			"usersBySection": {
+				"cardHeader": "Utilisateurs par Section"
+			},
+			"backToDashboard": "Retour au tableau de bord"
+		},
+		"sections": {
+			"title": "Gestion des sections",
+			"addSection": {
+				"cardHeader": "Ajouter une nouvelle section",
+				"nameLabel": "Nom de la section",
+				"descriptionLabel": "Description (optionnel)",
+				"button": "Ajouter la section"
+			},
+			"existingSections": {
+				"cardHeader": "Sections existantes",
+				"tableHeaders": {
+					"name": "Nom",
+					"description": "Description",
+					"users": "Utilisateurs",
+					"actions": "Actions"
+				},
+				"editButton": "Modifier",
+				"deleteButton": "Supprimer",
+				"readMore": "Afficher plus"
+			},
+			"editModal": {
+				"title": "Modifier la section",
+				"nameLabel": "Nom de la section",
+				"descriptionLabel": "Description (optionnel)",
+				"cancelButton": "Annuler",
+				"saveButton": "Enregistrer les modifications"
+			},
+			"deleteModal": {
+				"title": "Confirmer la suppression",
+				"confirmation": "Êtes-vous sûr de vouloir supprimer la section \"{{sectionName}}\" ? Cette action est irréversible.",
+				"cancelButton": "Annuler",
+				"deleteButton": "Supprimer"
+			}
+		},
+		"exportEmployers": {
+			"title": "Exportation des Employeurs",
+			"filtersAndOptions": {
+				"cardHeader": "Filtres et Options d'Exportation",
+				"filters": {
+					"legend": "Filtres",
+					"employerName": {
+						"label": "Nom de l'employeur",
+						"helpText": "Recherche partielle et insensible à la casse (ex: \"renault\")."
+					},
+					"cities": {
+						"label": "Villes",
+						"helpText": "Sélectionnez une ou plusieurs villes."
+					},
+					"sections": {
+						"label": "Sections des anciens élèves",
+						"helpText": "Employeurs ayant recruté des élèves de ces sections."
+					}
+				},
+				"fieldsToExport": {
+					"legend": "Champs à Exporter",
+					"fieldNames": {
+						"nom": "Nom",
+						"secteur": "Secteur",
+						"ville": "Ville"
+					}
+				},
+				"sortAndFormat": {
+					"legend": "Tri et Format",
+					"sortBy": {
+						"label": "Trier par",
+						"options": {
+							"name": "Nom (A-Z)",
+							"city": "Ville (A-Z)"
+						}
+					},
+					"exportFormat": {
+						"label": "Format d'Exportation",
+						"csv": "CSV",
+						"plainText": "Texte brut"
+					}
+				},
+				"exportButton": "Exporter les données"
+			}
+		}
+	},
+	"users": {
+		"profile": {
+			"cardHeader": {
+				"section": "Section :",
+				"year": "Année :"
+			},
+			"editProfileButton": "Modifier le profil",
+			"contactInfo": {
+				"cardHeader": "Informations de contact"
+			},
+			"profileDetails": {
+				"cardHeader": "Détails du profil",
+				"fullName": "Nom complet",
+				"email": "Email",
+				"graduationYear": "Année de diplôme",
+				"section": "Section",
+				"address": "Adresse"
+			}
+		},
+		"employerDetail": {
+			"title": "Profil de l'employeur",
+			"employerDetails": "Détails de l'employeur",
+			"sector": "Secteur",
+			"city": "Ville",
+			"description": "Description",
+			"employees": "Employés"
+		}
+	}
+}

@@ -1,0 +1,93 @@
+{
+  "admin": {
+    "dashboard": {
+      "title": "Administrator-Dashboard",
+      "welcome": "Willkommen, {{prenom}}!",
+      "pendingRequests": {
+        "title": "Ausstehende Anfragen",
+        "description": "Neue Registrierungsanfragen verwalten",
+        "button": "Anzeigen"
+      },
+      "sectionManagement": {
+        "title": "Sektionsverwaltung",
+        "description": "Sektionen hinzufügen, ändern oder löschen",
+        "button": "Verwalten"
+      },
+      "statistics": {
+        "title": "Statistiken",
+        "description": "Allgemeine und sektionsspezifische Statistiken anzeigen",
+        "button": "Statistiken ansehen"
+      },
+      "employerExport": {
+        "title": "Arbeitgeber-Export",
+        "description": "Liste der Arbeitgeber herunterladen",
+        "button": "Exportieren"
+      },
+      "newMembers": "Neue Mitglieder"
+    },
+    "sections": {
+      "title": "Sektionsverwaltung",
+      "alerts": {
+        "addedSuccess": "Sektion erfolgreich hinzugefügt!",
+        "updatedSuccess": "Sektion erfolgreich aktualisiert!",
+        "deletedSuccess": "Sektion erfolgreich gelöscht!",
+        "duplicateError": "Fehler: Eine Sektion mit diesem Namen existiert bereits.",
+        "addFailed": "Fehler beim Hinzufügen der Sektion.",
+        "updateFailed": "Fehler beim Aktualisieren der Sektion.",
+        "deleteFailed": "Fehler beim Löschen der Sektion.",
+        "sectionInUse": "Sektion kann nicht gelöscht werden: Benutzer sind damit verknüpft.",
+        "noSectionFound": "Keine Sektion gefunden."
+      },
+      "addSection": {
+        "cardHeader": "Neue Sektion hinzufügen",
+        "nameLabel": "Name der Sektion",
+        "descriptionLabel": "Beschreibung (optional)",
+        "button": "Sektion hinzufügen"
+      },
+      "existingSections": {
+        "cardHeader": "Bestehende Sektionen",
+        "tableHeaders": {
+          "name": "Name",
+          "description": "Beschreibung",
+          "users": "Benutzer",
+          "actions": "Aktionen"
+        },
+        "readMore": "Mehr anzeigen",
+        "notApplicable": "N/A",
+        "editButton": "Bearbeiten",
+        "deleteButton": "Löschen"
+      },
+      "editModal": {
+        "title": "Sektion bearbeiten",
+        "nameLabel": "Name der Sektion",
+        "descriptionLabel": "Beschreibung (optional)",
+        "cancelButton": "Abbrechen",
+        "saveButton": "Änderungen speichern"
+      },
+      "deleteModal": {
+        "title": "Löschen bestätigen",
+        "confirmation": "Sind Sie sicher, dass Sie die Sektion \"{{sectionName}}\" löschen möchten? Diese Aktion ist irreversibel.",
+        "cancelButton": "Abbrechen",
+        "deleteButton": "Löschen"
+      }
+    },
+    "statistics": {
+      "title": "Administrator-Statistiken",
+      "generalStats": {
+        "cardHeader": "Allgemeine Statistiken",
+        "totalUsers": "Gesamtzahl der Benutzer:",
+        "pendingRequests": "Ausstehende Anfragen:",
+        "totalEmployers": "Gesamtzahl der Arbeitgeber:",
+        "currentEmployments": "Aktuelle Beschäftigungen:"
+      },
+      "usersByGraduationYear": {
+        "cardHeader": "Benutzer nach Abschlussjahr",
+        "year": "Jahr"
+      },
+      "usersBySection": {
+        "cardHeader": "Benutzer nach Sektion"
+      },
+      "backToDashboard": "Zurück zum Dashboard"
+    }
+  }
+}

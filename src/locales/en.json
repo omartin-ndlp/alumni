@@ -1,0 +1,371 @@
+{
+	"Accueil": "Home",
+	"Annuaire": "Directory",
+	"Employeurs": "Employers",
+	"Mon profil": "My Profile",
+	"Modifier mon profil": "Edit My Profile",
+	"Mes emplois": "My Employments",
+	"Déconnexion": "Logout",
+	"Admin Dashboard": "Admin Dashboard",
+	"Anciens BTS SN/CIEL LJV": "Former BTS SN/CIEL LJV",
+	"Réseau des anciens étudiants": "Alumni Network",
+	"Olivier Martin - Tous droits réservés": "Olivier Martin - All rights reserved",
+	"Tableau de bord": "Dashboard",
+	"Bienvenue": "Welcome",
+	"Parcourez la liste des anciens étudiants": "Browse the list of alumni",
+	"Consulter": "Consult",
+	"Découvrez où travaillent les anciens": "Discover where alumni work",
+	"Voir la liste": "View list",
+	"Gérez vos informations personnelles": "Manage your personal information",
+	"Voir mon profil": "View my profile",
+	"Annuaire des anciens": "Alumni Directory",
+	"Recherche": "Search",
+	"Nom, prénom, employeur...": "Last name, first name, employer...",
+	"Année": "Year",
+	"Toutes": "All",
+	"Section": "Section",
+	"Employeur": "Employer",
+	"Tous": "All",
+	"Trier par": "Sort by",
+	"Nom": "Name",
+	"Année de diplôme": "Graduation Year",
+	"Afficher les administrateurs": "Show administrators",
+	"Filtrer": "Filter",
+	"Réinitialiser": "Reset",
+	"Liste des employeurs": "List of Employers",
+	"Voir les employés": "View Employees",
+	"Aucun ancien trouvé correspondant à vos critères.": "No alumni found matching your criteria.",
+	"Aucun employeur trouvé.": "No employer found.",
+	"admin": {
+		"userEdit": {
+			"title": "Edit User",
+			"firstName": "First Name",
+			"lastName": "Last Name",
+			"email": "Email",
+			"graduationYear": "Graduation Year",
+			"section": "Section",
+			"phone": "Phone",
+			"address": "Address",
+			"city": "City",
+			"postalCode": "Postal Code",
+			"country": "Country",
+			"linkedin": "LinkedIn URL",
+			"twitter": "Twitter URL",
+			"facebook": "Facebook URL",
+			"website": "Website URL",
+			"employmentStatus": {
+				"label": "Employment Status",
+				"notSpecified": "Not specified",
+				"etudiant": "Student",
+				"employe": "Employee",
+				"freelance": "Freelance",
+				"chomeur": "Unemployed",
+				"entrepreneur": "Entrepreneur",
+				"retraite": "Retired",
+				"autre": "Other"
+			},
+			"isAdmin": "Is administrator",
+			"isApproved": "Is approved",
+			"isActive": "Is active",
+			"optOutContact": "Opt-out contact (hide my contact info)",
+			"optOutDirectory": "Opt-out directory (hide my profile from the directory)",
+			"description": "Description (optional)",
+			"saveChanges": "Save Changes"
+		},
+		"dashboard": {
+			"title": "Administrator Dashboard",
+			"welcome": "Welcome, {{prenom}}!",
+			"pendingRequests": {
+				"title": "Pending Requests",
+				"description": "Manage new registration requests",
+				"button": "Consult"
+			},
+			"sectionManagement": {
+				"title": "Section Management",
+				"description": "Add, modify or delete sections",
+				"button": "Manage"
+			},
+			"statistics": {
+				"title": "Statistics",
+				"description": "View general and per-section statistics",
+				"button": "View stats"
+			},
+			"employerExport": {
+				"title": "Employer Export",
+				"description": "Download the list of employers",
+				"button": "Export"
+			},
+			"newMembers": "New members"
+		},
+		"requests": {
+			"title": "Pending Registration Requests",
+			"noRequests": "No pending registration requests at the moment.",
+			"modals": {
+				"fullMessage": {
+					"title": "Full Message"
+				},
+				"close": "Close",
+				"magicLink": {
+					"title": "Registration Link",
+					"instruction": "Copy the message below and send it to the user:",
+					"sendEmail": "Send Email"
+				}
+			},
+			"copyMessage": "Copy message"
+		},
+		"sections": {
+			"title": "Section Management",
+			"addSection": {
+				"cardHeader": "Add a new section",
+				"nameLabel": "Section name",
+				"descriptionLabel": "Description (optional)",
+				"button": "Add section"
+			},
+			"existingSections": {
+				"cardHeader": "Existing Sections",
+				"tableHeaders": {
+					"name": "Name",
+					"description": "Description",
+					"users": "Users",
+					"actions": "Actions"
+				},
+				"editButton": "Edit",
+				"deleteButton": "Delete",
+				"readMore": "Show more"
+			},
+			"editModal": {
+				"title": "Edit section",
+				"nameLabel": "Section name",
+				"descriptionLabel": "Description (optional)",
+				"cancelButton": "Cancel",
+				"saveButton": "Save changes"
+			},
+			"deleteModal": {
+				"title": "Confirm deletion",
+				"confirmation": "Are you sure you want to delete the section \"{{sectionName}}\"? This action is irreversible.",
+				"cancelButton": "Cancel",
+				"deleteButton": "Delete"
+			}
+		},
+		"statistics": {
+			"title": "Administrator Statistics",
+			"generalStats": {
+				"cardHeader": "General Statistics",
+				"totalUsers": "Total Users:",
+				"pendingRequests": "Pending Requests:",
+				"totalEmployers": "Total Employers:",
+				"currentEmployments": "Current Employments:"
+			},
+			"usersByGraduationYear": {
+				"cardHeader": "Users by Graduation Year",
+				"year": "Year"
+			},
+			"usersBySection": {
+				"cardHeader": "Users by Section"
+			},
+			"backToDashboard": "Back to dashboard"
+		},
+		"exportEmployers": {
+			"title": "Employer Export",
+			"filtersAndOptions": {
+				"cardHeader": "Filters and Export Options",
+				"filters": {
+					"legend": "Filters",
+					"employerName": {
+						"label": "Employer Name",
+						"helpText": "Partial and case-insensitive search (e.g., \"renault\")."
+					},
+					"cities": {
+						"label": "Cities",
+						"helpText": "Select one or more cities."
+					},
+					"sections": {
+						"label": "Alumni Sections",
+						"helpText": "Employers who have recruited students from these sections."
+					}
+				},
+				"fieldsToExport": {
+					"legend": "Fields to Export",
+					"fieldNames": {
+						"nom": "Name",
+						"secteur": "Sector",
+						"ville": "City"
+					}
+				},
+				"sortAndFormat": {
+					"legend": "Sort and Format",
+					"sortBy": {
+						"label": "Sort by",
+						"options": {
+							"name": "Name (A-Z)",
+							"city": "City (A-Z)"
+						}
+					},
+					"exportFormat": {
+						"label": "Export Format",
+						"csv": "CSV",
+						"plainText": "Plain text"
+					}
+				},
+				"exportButton": "Export data"
+			}
+		}
+	},
+	"profile": {
+		"view": {
+			"title": "Profile of {{prenom}} {{nom}}",
+			"editProfileButton": "Edit My Profile",
+			"myEmploymentsButton": "My Employments",
+			"personalInfo": {
+				"cardHeader": "Personal Information",
+				"email": "Email:",
+				"graduationYear": "Graduation Year:",
+				"section": "Section:",
+				"employmentStatus": "Employment Status:",
+				"employmentStatusOptions": {
+					"etudiant": "Student",
+					"employe": "Employee",
+					"freelance": "Freelance",
+					"chomeur": "Unemployed",
+					"entrepreneur": "Entrepreneur",
+					"retraite": "Retired",
+					"autre": "Other"
+				},
+				"address": "Address:",
+				"description": "Description:",
+				"seeMore": "See more",
+				"seeLess": "See less"
+			},
+			"contact": {
+				"cardHeader": "Contact",
+				"phone": "Phone:",
+				"notProvided": "Not provided",
+				"linkedIn": "LinkedIn:",
+				"twitter": "Twitter:",
+				"facebook": "Facebook:",
+				"website": "Website:",
+				"contactInfoHidden": "Contact information is hidden by the user."
+			},
+			"employmentHistory": {
+				"cardHeader": "Employment History",
+				"current": "Current",
+				"endDateNotSpecified": "End date not specified",
+				"sector": "Sector:",
+				"location": "Location:",
+				"noEmploymentRecorded": "No employment recorded."
+			},
+			"profilePicture": {
+				"cardHeader": "Profile Picture"
+			}
+		},
+		"edit": {
+			"title": "Edit My Profile",
+			"alerts": {
+				"error": "{{error}}"
+			},
+			"personalInfo": {
+				"firstName": "First Name",
+				"lastName": "Last Name",
+				"email": {
+					"label": "Email",
+					"disabledText": "Email cannot be modified here."
+				},
+				"graduationYear": {
+					"label": "Graduation Year",
+					"disabledText": "Graduation year cannot be modified here."
+				},
+				"section": {
+					"label": "Section",
+					"disabledText": "Section cannot be modified here."
+				},
+				"phone": "Phone",
+				"address": "Address",
+				"city": "City",
+				"postalCode": "Postal Code",
+				"country": "Country",
+				"linkedin": "LinkedIn URL",
+				"twitter": "Twitter URL",
+				"facebook": "Facebook URL",
+				"website": "Website URL",
+				"employmentStatus": {
+					"label": "Employment Status",
+					"notSpecified": "Not specified",
+					"etudiant": "Student",
+					"employe": "Employee",
+					"freelance": "Freelance",
+					"chomeur": "Unemployed",
+					"entrepreneur": "Entrepreneur",
+					"retraite": "Retired",
+					"autre": "Other"
+				},
+				"description": "Description (optional)"
+			},
+			"saveButton": "Save Changes"
+		}
+	},
+	"users": {
+		"profile": {
+			"alerts": {
+				"userUpdated": "Profile updated successfully!"
+			},
+			"cardHeader": {
+				"section": "Section:",
+				"year": "Year:",
+				"at": "at"
+			},
+			"editProfileButton": "Edit Profile",
+			"contactInfo": {
+				"cardHeader": "Contact Information",
+				"linkedin": "LinkedIn",
+				"twitter": "Twitter",
+				"facebook": "Facebook",
+				"website": "Website"
+			},
+			"profileDetails": {
+				"cardHeader": "Profile Details",
+				"fullName": "Full Name",
+				"email": "Email",
+				"graduationYear": "Graduation Year",
+				"section": "Section",
+				"address": "Address",
+				"description": "Description",
+				"notApplicable": "N/A",
+				"seeMore": "Show more"
+			},
+			"employmentHistory": {
+				"cardHeader": "Employment History",
+				"current": "Current",
+				"endDateNotSpecified": "End date not specified",
+				"sector": "Sector:",
+				"city": "City:"
+			}
+		},
+		"directory": {
+			"title": "User Directory"
+		},
+		"employers": {
+			"title": "Employers"
+		},
+		"employerDetail": {
+			"title": "Employer Profile",
+			"employerDetails": "Employer Details",
+			"sector": "Sector",
+			"city": "City",
+			"description": "Description",
+			"employees": "Employees"
+		}
+	},
+	"Access denied - Administrator rights required": "Access denied - Administrator rights required",
+	"Photo de profil": "Profile picture",
+	"auth": {
+		"login": {
+			"title": "Former BTS SN/CIEL LJV",
+			"subtitle": "Login to your account",
+			"emailLabel": "Email address",
+			"passwordLabel": "Password",
+			"loginButton": "Login",
+			"registerPrompt": "Don't have an account yet?",
+			"registerButton": "Request an account"
+		}
+	}
+}

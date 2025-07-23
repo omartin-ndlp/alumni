@@ -1,9 +1,9 @@
 <div class="container-fluid">
-    <h1 class="mb-4">Modifier mon profil</h1>
+    <h1 class="mb-4"><%= __('profile.edit.title') %></h1>
 
     <% if (error) { %>
     <div class="alert alert-danger" role="alert">
-        <%= error %>
+        <%= __('profile.edit.alerts.error', { error: error }) %>
     </div>
     <% } %>
 
@@ -12,39 +12,39 @@
             <form action="/profile/edit" method="POST" enctype="multipart/form-data">
                 <div class="row mb-3">
                     <div class="col-md-6">
-                        <label for="prenom" class="form-label">Prénom</label>
+                        <label for="prenom" class="form-label"><%= __('profile.edit.personalInfo.firstName') %></label>
                         <input type="text" class="form-control" id="prenom" name="prenom" value="<%= user.prenom %>" required>
                     </div>
                     <div class="col-md-6">
-                        <label for="nom" class="form-label">Nom</label>
+                        <label for="nom" class="form-label"><%= __('profile.edit.personalInfo.lastName') %></label>
                         <input type="text" class="form-control" id="nom" name="nom" value="<%= user.nom %>" required>
                     </div>
                 </div>
 
                 <div class="row mb-3">
                     <div class="col-md-6">
-                        <label for="email" class="form-label">Email</label>
+                        <label for="email" class="form-label"><%= __('profile.edit.personalInfo.email.label') %></label>
                         <% if (isAdmin) { %>
                         <input type="email" class="form-control" id="email" name="email" value="<%= user.email %>" required>
                         <% } else { %>
                         <input type="email" class="form-control" id="email" name="email" value="<%= user.email %>" disabled>
-                        <small class="form-text text-muted">L'email ne peut pas être modifié ici.</small>
+                        <small class="form-text text-muted"><%= __('profile.edit.personalInfo.email.disabledText') %></small>
                         <% } %>
                     </div>
                     <div class="col-md-6">
-                        <label for="annee_diplome" class="form-label">Année de diplôme</label>
+                        <label for="annee_diplome" class="form-label"><%= __('profile.edit.personalInfo.graduationYear.label') %></label>
                         <% if (isAdmin) { %>
                         <input type="number" class="form-control" id="annee_diplome" name="annee_diplome" value="<%= user.annee_diplome %>" required>
                         <% } else { %>
                         <input type="number" class="form-control" id="annee_diplome" name="annee_diplome" value="<%= user.annee_diplome %>" disabled>
-                        <small class="form-text text-muted">L'année de diplôme ne peut pas être modifiée ici.</small>
+                        <small class="form-text text-muted"><%= __('profile.edit.personalInfo.graduationYear.disabledText') %></small>
                         <% } %>
                     </div>
                 </div>
 
                 <div class="row mb-3">
                     <div class="col-md-6">
-                        <label for="section_id" class="form-label">Section</label>
+                        <label for="section_id" class="form-label"><%= __('profile.edit.personalInfo.section.label') %></label>
                         <% if (isAdmin) { %>
                         <select class="form-select" id="section_id" name="section_id" required>
                             <% sections.forEach(section => { %>
@@ -57,78 +57,78 @@
                                 <option value="<%= section.id %>" <%= user.section_id == section.id ? 'selected' : '' %>><%= section.nom %></option>
                             <% }); %>
                         </select>
-                        <small class="form-text text-muted">La section ne peut pas être modifiée ici.</small>
+                        <small class="form-text text-muted"><%= __('profile.edit.personalInfo.section.disabledText') %></small>
                         <% } %>
                     <div class="col-md-6">
-                        <label for="telephone" class="form-label">Téléphone</label>
+                        <label for="telephone" class="form-label"><%= __('profile.edit.personalInfo.phone') %></label>
                         <input type="tel" class="form-control" id="telephone" name="telephone" value="<%= user.telephone || '' %>">
                     </div>
                 </div>
 
                 <div class="row mb-3">
                     <div class="col-md-6">
-                        <label for="adresse" class="form-label">Adresse</label>
+                        <label for="adresse" class="form-label"><%= __('profile.edit.personalInfo.address') %></label>
                         <input type="text" class="form-control" id="adresse" name="adresse" value="<%= user.adresse || '' %>">
                     </div>
                     <div class="col-md-6">
-                        <label for="ville" class="form-label">Ville</label>
+                        <label for="ville" class="form-label"><%= __('profile.edit.personalInfo.city') %></label>
                         <input type="text" class="form-control" id="ville" name="ville" value="<%= user.ville || '' %>">
                     </div>
                 </div>
 
                 <div class="row mb-3">
                     <div class="col-md-6">
-                        <label for="code_postal" class="form-label">Code Postal</label>
+                        <label for="code_postal" class="form-label"><%= __('profile.edit.personalInfo.postalCode') %></label>
                         <input type="text" class="form-control" id="code_postal" name="code_postal" value="<%= user.code_postal || '' %>">
                     </div>
                     <div class="col-md-6">
-                        <label for="pays" class="form-label">Pays</label>
+                        <label for="pays" class="form-label"><%= __('profile.edit.personalInfo.country') %></label>
                         <input type="text" class="form-control" id="pays" name="pays" value="<%= user.pays || 'France' %>">
                     </div>
                 </div>
 
                 <div class="row mb-3">
                     <div class="col-md-6">
-                        <label for="linkedin" class="form-label">LinkedIn URL</label>
+                        <label for="linkedin" class="form-label"><%= __('profile.edit.personalInfo.linkedin') %></label>
                         <input type="url" class="form-control" id="linkedin" name="linkedin" value="<%= user.linkedin || '' %>">
                     </div>
                     <div class="col-md-6">
-                        <label for="twitter" class="form-label">Twitter URL</label>
+                        <label for="twitter" class="form-label"><%= __('profile.edit.personalInfo.twitter') %></label>
                         <input type="url" class="form-control" id="twitter" name="twitter" value="<%= user.twitter || '' %>">
                     </div>
                 </div>
 
                 <div class="row mb-3">
                     <div class="col-md-6">
-                        <label for="facebook" class="form-label">Facebook URL</label>
+                        <label for="facebook" class="form-label"><%= __('profile.edit.personalInfo.facebook') %></label>
                         <input type="url" class="form-control" id="facebook" name="facebook" value="<%= user.facebook || '' %>">
                     </div>
                     <div class="col-md-6">
-                        <label for="site_web" class="form-label">Site Web URL</label>
+                        <label for="site_web" class="form-label"><%= __('profile.edit.personalInfo.website') %></label>
                         <input type="url" class="form-control" id="site_web" name="site_web" value="<%= user.site_web || '' %>">
                     </div>
                 </div>
 
                 <div class="mb-3">
-                    <label for="statut_emploi" class="form-label">Statut d'emploi</label>
+                    <label for="statut_emploi" class="form-label"><%= __('profile.edit.personalInfo.employmentStatus.label') %></label>
                     <select class="form-select" id="statut_emploi" name="statut_emploi">
-                        <option value="" <%= !user.statut_emploi ? 'selected' : '' %>>Non spécifié</option>
-                        <option value="etudiant" <%= user.statut_emploi == 'etudiant' ? 'selected' : '' %>>Étudiant</option>
-                        <option value="employe" <%= user.statut_emploi == 'employe' ? 'selected' : '' %>>Employé</option>
-                        <option value="freelance" <%= user.statut_emploi == 'freelance' ? 'selected' : '' %>>Freelance</option>
-                        <option value="chomeur" <%= user.statut_emploi == 'chomeur' ? 'selected' : '' %>>Sans emploi</option>
-                        <option value="entrepreneur" <%= user.statut_emploi == 'entrepreneur' ? 'selected' : '' %>>Entrepreneur</option>
-                        <option value="retraite" <%= user.statut_emploi == 'retraite' ? 'selected' : '' %>>Retraité</option>
-                        <option value="autre" <%= user.statut_emploi == 'autre' ? 'selected' : '' %>>Autre</option>
+                        <option value="" <%= !user.statut_emploi ? 'selected' : '' %>><%= __('profile.edit.personalInfo.employmentStatus.notSpecified') %></option>
+                        <option value="etudiant" <%= user.statut_emploi == 'etudiant' ? 'selected' : '' %>><%= __('profile.edit.personalInfo.employmentStatus.etudiant') %></option>
+                        <option value="employe" <%= user.statut_emploi == 'employe' ? 'selected' : '' %>><%= __('profile.edit.personalInfo.employmentStatus.employe') %></option>
+                        <option value="freelance" <%= user.statut_emploi == 'freelance' ? 'selected' : '' %>><%= __('profile.edit.personalInfo.employmentStatus.freelance') %></option>
+                        <option value="chomeur" <%= user.statut_emploi == 'chomeur' ? 'selected' : '' %>><%= __('profile.edit.personalInfo.employmentStatus.chomeur') %></option>
+                        <option value="entrepreneur" <%= user.statut_emploi == 'entrepreneur' ? 'selected' : '' %>><%= __('profile.edit.personalInfo.employmentStatus.entrepreneur') %></option>
+                        <option value="retraite" <%= user.statut_emploi == 'retraite' ? 'selected' : '' %>><%= __('profile.edit.personalInfo.employmentStatus.retraite') %></option>
+                        <option value="autre" <%= user.statut_emploi == 'autre' ? 'selected' : '' %>><%= __('profile.edit.personalInfo.employmentStatus.autre') %></option>
                     </select>
                 </div>
 
                 <div class="mb-3">
-                    <label for="description" class="form-label">Description (optionnel)</label>
+                    <label for="description" class="form-label"><%= __('profile.edit.personalInfo.description') %></label>
                     <textarea class="form-control" id="description" name="description" rows="5"><%= user.description || '' %></textarea>
                 </div>
 
-                <button type="submit" class="btn btn-primary">Enregistrer les modifications</button>
+                <button type="submit" class="btn btn-primary"><%= __('profile.edit.saveButton') %></button>
             </form>
         </div>
     </div>

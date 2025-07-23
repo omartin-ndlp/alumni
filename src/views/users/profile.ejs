@@ -1,7 +1,7 @@
 <div class="container-fluid">
     <% if (query.success === 'user_updated') { %>
     <div id="user-updated-alert" class="alert alert-success alert-dismissible fade show" role="alert">
-        Profil mis à jour avec succès !
+        <%= __('users.profile.alerts.userUpdated') %>
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
     <% } %>
@@ -12,17 +12,17 @@
                                                 <img src="<%= User.getGravatarUrl(displayUser.email, 150) %>" class="rounded-circle img-fluid gravatar-img" style="width: 150px; height: 150px; object-fit: cover;">
                 <h5 class="my-3"><%= displayUser.prenom %> <%= displayUser.nom %></h5>
                 <p class="text-muted mb-1">
-                    Section: <%= displayUser.section_nom %> | Année: <%= displayUser.annee_diplome %>
+                    <%= __('users.profile.cardHeader.section') %> <%= displayUser.section_nom %> | <%= __('users.profile.cardHeader.year') %> <%= displayUser.annee_diplome %>
                 </p>
                 <% if (displayUser.current_position && displayUser.current_employer) { %>
-                <p class="text-muted mb-4"><%= displayUser.current_position %> chez <%= displayUser.current_employer %></p>
+                <p class="text-muted mb-4"><%= displayUser.current_position %> <%= __('users.profile.cardHeader.at') %> <%= displayUser.current_employer %></p>
                 <% } %>
                 <% if (isOwnProfile || isAdmin) { %>
                 <div class="d-flex justify-content-center mb-2">
                     <% if (isOwnProfile) { %>
-                    <a href="/profile/edit" class="btn btn-primary">Modifier le profil</a>
+                    <a href="/profile/edit" class="btn btn-primary"><%= __('users.profile.editProfileButton') %></a>
                     <% } else if (isAdmin) { %>
-                    <a href="/admin/users/edit/<%= displayUser.id %>" class="btn btn-primary">Modifier le profil</a>
+                    <a href="/admin/users/edit/<%= displayUser.id %>" class="btn btn-primary"><%= __('users.profile.editProfileButton') %></a>
                     <% } %>
                 </div>
                 <% } %>
@@ -31,7 +31,7 @@
         <% if (canViewContact) { %>
         <div class="card mb-4 mb-lg-0">
             <div class="card-body">
-                <h5 class="mb-4">Informations de contact</h5>
+                <h5 class="mb-4"><%= __('users.profile.contactInfo.cardHeader') %></h5>
                 <ul class="list-group list-group-flush rounded-3">
                     <% if (displayUser.email) { %>
                     <li class="list-group-item d-flex justify-content-between align-items-center p-3">
@@ -48,25 +48,25 @@
                     <% if (displayUser.linkedin) { %>
                     <li class="list-group-item d-flex justify-content-between align-items-center p-3">
                         <i class="bi bi-linkedin text-primary me-2"></i>
-                        <a href="<%= displayUser.linkedin %>" target="_blank" class="mb-0">LinkedIn</a>
+                        <a href="<%= displayUser.linkedin %>" target="_blank" class="mb-0"><%= __('users.profile.contactInfo.linkedin') %></a>
                     </li>
                     <% } %>
                     <% if (displayUser.twitter) { %>
                     <li class="list-group-item d-flex justify-content-between align-items-center p-3">
                         <i class="bi bi-twitter text-info me-2"></i>
-                        <a href="<%= displayUser.twitter %>" target="_blank" class="mb-0">Twitter</a>
+                        <a href="<%= displayUser.twitter %>" target="_blank" class="mb-0"><%= __('users.profile.contactInfo.twitter') %></a>
                     </li>
                     <% } %>
                     <% if (displayUser.facebook) { %>
                     <li class="list-group-item d-flex justify-content-between align-items-center p-3">
                         <i class="bi bi-facebook text-primary me-2"></i>
-                        <a href="<%= displayUser.facebook %>" target="_blank" class="mb-0">Facebook</a>
+                        <a href="<%= displayUser.facebook %>" target="_blank" class="mb-0"><%= __('users.profile.contactInfo.facebook') %></a>
                     </li>
                     <% } %>
                     <% if (displayUser.site_web) { %>
                     <li class="list-group-item d-flex justify-content-between align-items-center p-3">
                         <i class="bi bi-globe text-secondary me-2"></i>
-                        <a href="<%= displayUser.site_web %>" target="_blank" class="mb-0">Site Web</a>
+                        <a href="<%= displayUser.site_web %>" target="_blank" class="mb-0"><%= __('users.profile.contactInfo.website') %></a>
                     </li>
                     <% } %>
                 </ul>
@@ -77,10 +77,10 @@
     <div class="col-lg-8">
         <div class="card mb-4">
             <div class="card-body">
-                <h5 class="mb-4">Détails du profil</h5>
+                <h5 class="mb-4"><%= __('users.profile.profileDetails.cardHeader') %></h5>
                 <div class="row">
                     <div class="col-sm-3">
-                        <p class="mb-0">Nom complet</p>
+                        <p class="mb-0"><%= __('users.profile.profileDetails.fullName') %></p>
                     </div>
                     <div class="col-sm-9">
                         <p class="text-muted mb-0"><%= displayUser.prenom %> <%= displayUser.nom %></p>
@@ -89,7 +89,7 @@
                 <hr>
                 <div class="row">
                     <div class="col-sm-3">
-                        <p class="mb-0">Email</p>
+                        <p class="mb-0"><%= __('users.profile.profileDetails.email') %></p>
                     </div>
                     <div class="col-sm-9">
                         <p class="text-muted mb-0"><%= displayUser.email %></p>
@@ -98,7 +98,7 @@
                 <hr>
                 <div class="row">
                     <div class="col-sm-3">
-                        <p class="mb-0">Année de diplôme</p>
+                        <p class="mb-0"><%= __('users.profile.profileDetails.graduationYear') %></p>
                     </div>
                     <div class="col-sm-9">
                         <p class="text-muted mb-0"><%= displayUser.annee_diplome %></p>
@@ -107,7 +107,7 @@
                 <hr>
                 <div class="row">
                     <div class="col-sm-3">
-                        <p class="mb-0">Section</p>
+                        <p class="mb-0"><%= __('users.profile.profileDetails.section') %></p>
                     </div>
                     <div class="col-sm-9">
                         <p class="text-muted mb-0"><%= displayUser.section_nom %></p>
@@ -116,7 +116,7 @@
                 <hr>
                 <div class="row">
                     <div class="col-sm-3">
-                        <p class="mb-0">Adresse</p>
+                        <p class="mb-0"><%= __('users.profile.profileDetails.address') %></p>
                     </div>
                     <div class="col-sm-9">
                         <p class="text-muted mb-0">
@@ -130,7 +130,7 @@
                                 if (addressParts.length > 0) {
                                     %><%= addressParts.join(', ') %><% 
                                 } else {
-                                    %>N/A<% 
+                                    %><%= __('users.profile.profileDetails.notApplicable') %><% 
                                 }
                             %>
                         </p>
@@ -140,7 +140,7 @@
                 <hr>
                 <div class="row">
                     <div class="col-sm-3">
-                        <p class="mb-0">Description</p>
+                        <p class="mb-0"><%= __('users.profile.profileDetails.description') %></p>
                     </div>
                     <div class="col-sm-9">
                         <% if (displayUser.description && displayUser.description.length > 200) { %>
@@ -150,7 +150,7 @@
                             <p class="text-muted mb-0 description-full d-none" id="description-full-<%= displayUser.id %>">
                                 <%= displayUser.description %>
                             </p>
-                            <a href="#" class="read-more-toggle" data-target="#description-<%= displayUser.id %>" data-full-target="#description-full-<%= displayUser.id %>">Afficher plus</a>
+                            <a href="#" class="read-more-toggle" data-target="#description-<%= displayUser.id %>" data-full-target="#description-full-<%= displayUser.id %>"><%= __('users.profile.profileDetails.seeMore') %></a>
                         <% } else { %>
                             <p class="text-muted mb-0"><%= displayUser.description %></p>
                         <% } %>
@@ -163,25 +163,25 @@
         <% if (employment && employment.length > 0) { %>
         <div class="card mb-4">
             <div class="card-body">
-                <h5 class="mb-4">Historique d'emplois</h5>
+                <h5 class="mb-4"><%= __('users.profile.employmentHistory.cardHeader') %></h5>
                 <% employment.forEach(job => {
                     const startDate = new Date(job.date_debut).toLocaleDateString('fr-FR', { year: 'numeric', month: 'long' });
                     let endDate = '';
                     if (job.is_current) {
-                        endDate = 'Actuel';
+                        endDate = __('users.profile.employmentHistory.current');
                     } else if (job.date_fin) {
                         endDate = new Date(job.date_fin).toLocaleDateString('fr-FR', { year: 'numeric', month: 'long' });
                     } else {
-                        endDate = 'Date de fin non spécifiée';
+                        endDate = __('users.profile.employmentHistory.endDateNotSpecified');
                     }
                 %>
                 <div class="mb-3">
-                    <h6><%= job.poste %> chez <%= job.employer_name %></h6>
+                    <h6><%= job.poste %> <%= __('users.profile.cardHeader.at') %> <%= job.employer_name %></h6>
                     <p class="text-muted mb-1">
                         <%= startDate %> - <%= endDate %>
                     </p>
-                    <% if (job.secteur) { %><p class="text-muted mb-1"><small>Secteur: <%= job.secteur %></small></p><% } %>
-                    <% if (job.ville) { %><p class="text-muted mb-0"><small>Ville: <%= job.ville %></small></p><% } %>
+                    <% if (job.secteur) { %><p class="text-muted mb-1"><small><%= __('users.profile.employmentHistory.sector') %> <%= job.secteur %></small></p><% } %>
+                    <% if (job.ville) { %><p class="text-muted mb-0"><small><%= __('users.profile.employmentHistory.city') %> <%= job.ville %></small></p><% } %>
                 </div>
                 <% if (employment.indexOf(job) < employment.length - 1) { %><hr><% } %>
                 <% }); %>

@@ -105,7 +105,8 @@ router.get('/:id', auth.requireAuth, async (req, res) => {
       isOwnProfile: req.session.user.id === user.id,
       isAdmin: req.session.user.is_admin,
       User, // Pass the User model
-      query: req.query // Pass the query object
+      query: req.query, // Pass the query object
+      __: res.__ // Explicitly pass the translation function
     });
     
 

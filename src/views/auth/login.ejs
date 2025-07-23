@@ -6,8 +6,8 @@
                     <div class="card-body p-5">
                         <div class="text-center mb-4">
                             <i class="bi bi-mortarboard text-primary" style="font-size: 3rem;"></i>
-                            <h1 class="h3 mt-3">Anciens BTS SN/CIEL LJV</h1>
-                            <p class="text-muted">Connectez-vous à votre compte</p>
+                            <h1 class="h3 mt-3"><%= __('auth.login.title') %></h1>
+                            <p class="text-muted"><%= __('auth.login.subtitle') %></p>
                         </div>
 
                         <% if (error) { %>
@@ -20,24 +20,24 @@
                             <input type="hidden" name="redirect" value="<%= redirect %>">
                             
                             <div class="mb-3">
-                                <label for="email" class="form-label">Adresse email</label>
+                                <label for="email" class="form-label"><%= __('auth.login.emailLabel') %></label>
                                 <input type="email" class="form-control" id="email" name="email" required>
                             </div>
 
                             <div class="mb-3">
-                                <label for="password" class="form-label">Mot de passe</label>
+                                <label for="password" class="form-label"><%= __('auth.login.passwordLabel') %></label>
                                 <input type="password" class="form-control" id="password" name="password" required>
                             </div>
 
                             <button type="submit" class="btn btn-primary w-100 mb-3">
-                                <i class="bi bi-box-arrow-in-right"></i> Se connecter
+                                <i class="bi bi-box-arrow-in-right"></i> <%= __('auth.login.loginButton') %>
                             </button>
                         </form>
 
                         <div class="text-center">
-                            <p class="text-muted">Pas encore de compte ?</p>
+                            <p class="text-muted"><%= __('auth.login.registerPrompt') %></p>
                             <a href="/register" class="btn btn-outline-primary">
-                                <i class="bi bi-person-plus"></i> Demander un compte
+                                <i class="bi bi-person-plus"></i> <%= __('auth.login.registerButton') %>
                             </a>
                         </div>
                     </div>

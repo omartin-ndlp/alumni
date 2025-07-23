@@ -1,46 +1,46 @@
 <div class="container-fluid">
-    <h1 class="mb-4">Exportation des Employeurs</h1>
+    <h1 class="mb-4"><%= __('admin.exportEmployers.title') %></h1>
 
     <div class="card">
-        <div class="card-header">Filtres et Options d'Exportation</div>
+        <div class="card-header"><%= __('admin.exportEmployers.filtersAndOptions.cardHeader') %></div>
         <div class="card-body">
             <form action="/admin/export/employers" method="POST">
                 
                 <!-- Filtres -->
                 <fieldset class="mb-4">
-                    <legend class="h5">Filtres</legend>
+                    <legend class="h5"><%= __('admin.exportEmployers.filtersAndOptions.filters.legend') %></legend>
                     <div class="row">
                         <div class="col-md-6 mb-3">
-                            <label for="nom" class="form-label">Nom de l'employeur</label>
+                            <label for="nom" class="form-label"><%= __('admin.exportEmployers.filtersAndOptions.filters.employerName.label') %></label>
                             <input type="text" class="form-control" id="nom" name="nom" value="<%= oldInput.nom || '' %>">
-                            <div class="form-text">Recherche partielle et insensible à la casse (ex: "renault").</div>
+                            <div class="form-text"><%= __('admin.exportEmployers.filtersAndOptions.filters.employerName.helpText') %></div>
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-md-6 mb-3">
-                            <label for="villes" class="form-label">Villes</label>
+                            <label for="villes" class="form-label"><%= __('admin.exportEmployers.filtersAndOptions.filters.cities.label') %></label>
                             <select multiple class="form-control" id="villes" name="villes">
                                 <% cities.forEach(city => { %>
                                     <option value="<%= city %>" <%= (oldInput.villes || []).includes(city) ? 'selected' : '' %>><%= city %></option>
                                 <% }); %>
                             </select>
-                            <div class="form-text">Sélectionnez une ou plusieurs villes.</div>
+                            <div class="form-text"><%= __('admin.exportEmployers.filtersAndOptions.filters.cities.helpText') %></div>
                         </div>
                         <div class="col-md-6 mb-3">
-                            <label for="sections" class="form-label">Sections des anciens élèves</label>
+                            <label for="sections" class="form-label"><%= __('admin.exportEmployers.filtersAndOptions.filters.sections.label') %></label>
                             <select multiple class="form-control" id="sections" name="sections">
                                 <% sections.forEach(section => { %>
                                     <option value="<%= section.id %>" <%= (oldInput.sections || []).includes(String(section.id)) ? 'selected' : '' %>><%= section.nom %></option>
                                 <% }); %>
                             </select>
-                            <div class="form-text">Employeurs ayant recruté des élèves de ces sections.</div>
+                            <div class="form-text"><%= __('admin.exportEmployers.filtersAndOptions.filters.sections.helpText') %></div>
                         </div>
                     </div>
                 </fieldset>
 
                 <!-- Champs à Exporter -->
                 <fieldset class="mb-4">
-                    <legend class="h5">Champs à Exporter</legend>
+                    <legend class="h5"><%= __('admin.exportEmployers.filtersAndOptions.fieldsToExport.legend') %></legend>
                     <% const fields = ['nom', 'secteur', 'ville']; %>
                     <div class="row">
                         <% fields.forEach(field => { %>
@@ -48,7 +48,7 @@
                                 <div class="form-check">
                                     <input class="form-check-input" type="checkbox" name="fields" value="<%= field %>" id="field_<%= field %>" checked>
                                     <label class="form-check-label" for="field_<%= field %>">
-                                        <%= field.charAt(0).toUpperCase() + field.slice(1).replace('_', ' ') %>
+                                        <%= __('admin.exportEmployers.filtersAndOptions.fieldsToExport.fieldNames.' + field) %>
                                     </label>
                                 </div>
                             </div>
@@ -58,30 +58,30 @@
 
                 <!-- Tri et Format -->
                 <fieldset class="mb-4">
-                    <legend class="h5">Tri et Format</legend>
+                    <legend class="h5"><%= __('admin.exportEmployers.filtersAndOptions.sortAndFormat.legend') %></legend>
                     <div class="row">
                         <div class="col-md-6 mb-3">
-                            <label for="sort" class="form-label">Trier par</label>
+                            <label for="sort" class="form-label"><%= __('admin.exportEmployers.filtersAndOptions.sortAndFormat.sortBy.label') %></label>
                             <select class="form-control" id="sort" name="sort">
-                                <option value="nom" <%= oldInput.sort === 'nom' ? 'selected' : '' %>>Nom (A-Z)</option>
-                                <option value="ville" <%= oldInput.sort === 'ville' ? 'selected' : '' %>>Ville (A-Z)</option>
+                                <option value="nom" <%= oldInput.sort === 'nom' ? 'selected' : '' %>><%= __('admin.exportEmployers.filtersAndOptions.sortAndFormat.sortBy.options.name') %></option>
+                                <option value="ville" <%= oldInput.sort === 'ville' ? 'selected' : '' %>><%= __('admin.exportEmployers.filtersAndOptions.sortAndFormat.sortBy.options.city') %></option>
                             </select>
                         </div>
                         <div class="col-md-6 mb-3">
-                            <label class="form-label">Format d'Exportation</label>
+                            <label class="form-label"><%= __('admin.exportEmployers.filtersAndOptions.sortAndFormat.exportFormat.label') %></label>
                             <div class="form-check">
                                 <input class="form-check-input" type="radio" name="format" id="format_csv" value="csv" checked>
-                                <label class="form-check-label" for="format_csv">CSV</label>
+                                <label class="form-check-label" for="format_csv"><%= __('admin.exportEmployers.filtersAndOptions.sortAndFormat.exportFormat.csv') %></label>
                             </div>
                             <div class="form-check">
-                                <input class="form-check-input" type="radio" name="format" id="format_txt" value="txt" <%= oldInput.format === 'txt' ? 'checked' : '' %>>
-                                <label class="form-check-label" for="format_txt">Texte brut</label>
+                                <input class="form-check-input" type="radio" name="format" id="format_txt" value="txt" <%= oldInput.format === 'txt' ? 'checked' : '' %> >
+                                <label class="form-check-label" for="format_txt"><%= __('admin.exportEmployers.filtersAndOptions.sortAndFormat.exportFormat.plainText') %></label>
                             </div>
                         </div>
                     </div>
                 </fieldset>
 
-                <button type="submit" class="btn btn-primary"><i class="bi bi-download"></i> Exporter les données</button>
+                <button type="submit" class="btn btn-primary"><i class="bi bi-download"></i> <%= __('admin.exportEmployers.filtersAndOptions.exportButton') %></button>
             </form>
         </div>
     </div>

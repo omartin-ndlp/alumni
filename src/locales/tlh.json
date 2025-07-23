@@ -1,0 +1,93 @@
+{
+  "admin": {
+    "dashboard": {
+      "title": "tlhIngan Hol yIqaw!",
+      "welcome": "nuqneH, {{prenom}}!",
+      "pendingRequests": {
+        "title": "ghoS qaS",
+        "description": "Ha'DIbaH ghoS qaS yIqaw",
+        "button": "yIqaw"
+      },
+      "sectionManagement": {
+        "title": "tlhIngan Hol yIqaw!",
+        "description": "tlhIngan Hol yIqaw!",
+        "button": "yIqaw"
+      },
+      "statistics": {
+        "title": "tlhIngan Hol yIqaw!",
+        "description": "tlhIngan Hol yIqaw!",
+        "button": "yIqaw"
+      },
+      "employerExport": {
+        "title": "tlhIngan Hol yIqaw!",
+        "description": "tlhIngan Hol yIqaw!",
+        "button": "yIqaw"
+      },
+      "newMembers": "tlhIngan Hol yIqaw!"
+    },
+    "sections": {
+      "title": "tlhIngan Hol yIqaw!",
+      "alerts": {
+        "addedSuccess": "tlhIngan Hol yIqaw!",
+        "updatedSuccess": "tlhIngan Hol yIqaw!",
+        "deletedSuccess": "tlhIngan Hol yIqaw!",
+        "duplicateError": "tlhIngan Hol yIqaw!",
+        "addFailed": "tlhIngan Hol yIqaw!",
+        "updateFailed": "tlhIngan Hol yIqaw!",
+        "deleteFailed": "tlhIngan Hol yIqaw!",
+        "sectionInUse": "tlhIngan Hol yIqaw!",
+        "noSectionFound": "tlhIngan Hol yIqaw!"
+      },
+      "addSection": {
+        "cardHeader": "tlhIngan Hol yIqaw!",
+        "nameLabel": "tlhIngan Hol yIqaw!",
+        "descriptionLabel": "tlhIngan Hol yIqaw!",
+        "button": "tlhIngan Hol yIqaw!"
+      },
+      "existingSections": {
+        "cardHeader": "tlhIngan Hol yIqaw!",
+        "tableHeaders": {
+          "name": "tlhIngan Hol yIqaw!",
+          "description": "tlhIngan Hol yIqaw!",
+          "users": "tlhIngan Hol yIqaw!",
+          "actions": "tlhIngan Hol yIqaw!"
+        },
+        "readMore": "tlhIngan Hol yIqaw!",
+        "notApplicable": "tlhIngan Hol yIqaw!",
+        "editButton": "tlhIngan Hol yIqaw!",
+        "deleteButton": "tlhIngan Hol yIqaw!"
+      },
+      "editModal": {
+        "title": "tlhIngan Hol yIqaw!",
+        "nameLabel": "tlhIngan Hol yIqaw!",
+        "descriptionLabel": "tlhIngan Hol yIqaw!",
+        "cancelButton": "tlhIngan Hol yIqaw!",
+        "saveButton": "tlhIngan Hol yIqaw!"
+      },
+      "deleteModal": {
+        "title": "tlhIngan Hol yIqaw!",
+        "confirmation": "tlhIngan Hol yIqaw!",
+        "cancelButton": "tlhIngan Hol yIqaw!",
+        "deleteButton": "tlhIngan Hol yIqaw!"
+      }
+    },
+    "statistics": {
+      "title": "tlhIngan Hol yIqaw!",
+      "generalStats": {
+        "cardHeader": "tlhIngan Hol yIqaw!",
+        "totalUsers": "tlhIngan Hol yIqaw!",
+        "pendingRequests": "tlhIngan Hol yIqaw!",
+        "totalEmployers": "tlhIngan Hol yIqaw!",
+        "currentEmployments": "tlhIngan Hol yIqaw!"
+      },
+      "usersByGraduationYear": {
+        "cardHeader": "tlhIngan Hol yIqaw!",
+        "year": "tlhIngan Hol yIqaw!"
+      },
+      "usersBySection": {
+        "cardHeader": "tlhIngan Hol yIqaw!"
+      },
+      "backToDashboard": "tlhIngan Hol yIqaw!"
+    }
+  }
+}
