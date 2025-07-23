@@ -83,42 +83,42 @@
 			}
 		},
 		"edit": {
-			"title": "profile.edit.title",
+			"title": "Modifier mon profil",
 			"personalInfo": {
-				"firstName": "profile.edit.personalInfo.firstName",
-				"lastName": "profile.edit.personalInfo.lastName",
+				"firstName": "Prénom",
+				"lastName": "Nom",
 				"email": {
-					"label": "profile.edit.personalInfo.email.label"
+					"label": "Email"
 				},
 				"graduationYear": {
-					"label": "profile.edit.personalInfo.graduationYear.label"
+					"label": "Année de diplôme"
 				},
 				"section": {
-					"label": "profile.edit.personalInfo.section.label"
+					"label": "Section"
 				},
-				"phone": "profile.edit.personalInfo.phone",
-				"address": "profile.edit.personalInfo.address",
-				"city": "profile.edit.personalInfo.city",
-				"postalCode": "profile.edit.personalInfo.postalCode",
-				"country": "profile.edit.personalInfo.country",
-				"linkedin": "profile.edit.personalInfo.linkedin",
-				"twitter": "profile.edit.personalInfo.twitter",
-				"facebook": "profile.edit.personalInfo.facebook",
-				"website": "profile.edit.personalInfo.website",
+				"phone": "Téléphone",
+				"address": "Adresse",
+				"city": "Ville",
+				"postalCode": "Code Postal",
+				"country": "Pays",
+				"linkedin": "URL LinkedIn",
+				"twitter": "URL Twitter",
+				"facebook": "URL Facebook",
+				"website": "URL Site Web",
 				"employmentStatus": {
-					"label": "profile.edit.personalInfo.employmentStatus.label",
-					"notSpecified": "profile.edit.personalInfo.employmentStatus.notSpecified",
-					"etudiant": "profile.edit.personalInfo.employmentStatus.etudiant",
-					"employe": "profile.edit.personalInfo.employmentStatus.employe",
-					"freelance": "profile.edit.personalInfo.employmentStatus.freelance",
-					"chomeur": "profile.edit.personalInfo.employmentStatus.chomeur",
-					"entrepreneur": "profile.edit.personalInfo.employmentStatus.entrepreneur",
-					"retraite": "profile.edit.personalInfo.employmentStatus.retraite",
-					"autre": "profile.edit.personalInfo.employmentStatus.autre"
+					"label": "Statut d'emploi",
+					"notSpecified": "Non spécifié",
+					"etudiant": "Étudiant",
+					"employe": "Employé",
+					"freelance": "Freelance",
+					"chomeur": "Sans emploi",
+					"entrepreneur": "Entrepreneur",
+					"retraite": "Retraité",
+					"autre": "Autre"
 				},
-				"description": "profile.edit.personalInfo.description"
+				"description": "Description (optionnel)"
 			},
-			"saveButton": "profile.edit.saveButton"
+			"saveButton": "Enregistrer les modifications"
 		}
 	},
 	"Photo de profil": "Photo de profil",
