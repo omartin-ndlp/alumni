@@ -7,7 +7,7 @@
             <form action="/profile/employment/add" method="POST">
                 <div class="row mb-3">
                     <div class="col-md-6 employer-suggest">
-                        <label for="employer_name" class="form-label"><%= __('Nom de l'employeur') %></label>
+                        <label for="employer_name" class="form-label"><%= __("Nom de l'employeur") %></label>
                         <input type="text" class="form-control" id="employer_name" name="employer_name" required autocomplete="off">
                         <div id="employer-suggestions" class="list-group position-absolute employer-suggestions" style="z-index: 1000;"></div>
                         <input type="hidden" id="employer_id" name="employer_id">
@@ -41,7 +41,7 @@
                     <input type="checkbox" class="form-check-input" id="is_current" name="is_current">
                     <label class="form-check-label" for="is_current"><%= __('Emploi actuel') %></label>
                 </div>
-                <button type="submit" class="btn btn-primary"><%= __('Ajouter l'emploi') %></button>
+                <button type="submit" class="btn btn-primary"><%= __("Ajouter l'emploi") %></button>
             </form>
         </div>
     </div>
@@ -49,7 +49,7 @@
     <% if (employment && employment.length > 0) { %>
     <div class="card mb-4">
         <div class="card-body">
-            <h5 class="card-title mb-3"><%= __('Historique d'emplois') %></h5>
+            <h5 class="card-title mb-3"><%= __("Historique d'emplois") %></h5>
             <ul class="list-group list-group-flush">
                 <% employment.forEach(job => { %>
                 <li class="list-group-item">
