@@ -37,41 +37,6 @@
 	"Aucun ancien trouvé correspondant à vos critères.": "No alumni found matching your criteria.",
 	"Aucun employeur trouvé.": "No employer found.",
 	"admin": {
-		"userEdit": {
-			"title": "Edit User",
-			"firstName": "First Name",
-			"lastName": "Last Name",
-			"email": "Email",
-			"graduationYear": "Graduation Year",
-			"section": "Section",
-			"phone": "Phone",
-			"address": "Address",
-			"city": "City",
-			"postalCode": "Postal Code",
-			"country": "Country",
-			"linkedin": "LinkedIn URL",
-			"twitter": "Twitter URL",
-			"facebook": "Facebook URL",
-			"website": "Website URL",
-			"employmentStatus": {
-				"label": "Employment Status",
-				"notSpecified": "Not specified",
-				"etudiant": "Student",
-				"employe": "Employee",
-				"freelance": "Freelance",
-				"chomeur": "Unemployed",
-				"entrepreneur": "Entrepreneur",
-				"retraite": "Retired",
-				"autre": "Other"
-			},
-			"isAdmin": "Is administrator",
-			"isApproved": "Is approved",
-			"isActive": "Is active",
-			"optOutContact": "Opt-out contact (hide my contact info)",
-			"optOutDirectory": "Opt-out directory (hide my profile from the directory)",
-			"description": "Description (optional)",
-			"saveChanges": "Save Changes"
-		},
 		"dashboard": {
 			"title": "Administrator Dashboard",
 			"welcome": "Welcome, {{prenom}}!",
@@ -300,9 +265,14 @@
 				},
 				"description": "Description (optional)"
 			},
+			"isAdmin": "Is administrator",
+			"isApproved": "Is approved",
+			"isActive": "Is active",
+			"optOutContact": "Opt-out contact (hide my contact info)",
+			"optOutDirectory": "Opt-out directory (hide my profile from the directory)",
+			"saveChanges": "Save Changes",
 			"saveButton": "Save Changes"
-		}
-	},
+		},
 	"users": {
 		"profile": {
 			"alerts": {
