@@ -1,316 +1,93 @@
 {
-	"auth": {
-		"login": {
-			"subtitle": "Heghlu'meH QaQ jajvam",
-			"emailLabel": "mev'a' naQ",
-			"passwordLabel": "ghu'vam",
-			"loginButton": "Heghlu'",
-			"registerPrompt": "Heghlu'be'chugh, vaj...",
-			"registerButton": "Heghlu' 'oH",
-			"title": "tlhIngan Hol"
-		}
-	},
-	"Tableau de bord": "mu'qaD",
-	"Bienvenue": "yI'el",
-	"Annuaire": "pong'e'",
-	"Parcourez la liste des anciens étudiants": "tlhIngan Hol mu'qaD",
-	"Consulter": "yI'el",
-	"Employeurs": "nuv'e'",
-	"Découvrez où travaillent les anciens": "nuv'e' vum",
-	"Voir la liste": "yI'el",
-	"Mon profil": "jI'qaD",
-	"Gérez vos informations personnelles": "jI'qaD vum",
-	"Voir mon profil": "jI'qaD yI'el",
-	"Accueil": "juH",
-	"Admin Dashboard": "nuv'e' mu'qaD",
-	"Déconnexion": "Heghlu'be'",
-	"Modifier mon profil": "jI'qaD vum",
-	"Mes emplois": "jI'job",
-	"Anciens BTS SN/CIEL LJV": "tlhIngan Hol",
-	"Réseau des anciens étudiants": "tlhIngan Hol nuv'e'",
-	"Olivier Martin - Tous droits réservés": "Olivier Martin - tlhIngan Hol",
-	"Annuaire des anciens": "tlhIngan Hol pong'e'",
-	"Recherche": "yI'el",
-	"Nom, prénom, employeur...": "pong, pong'e', nuv'e'",
-	"Année": "DIS",
-	"Toutes": "Hoch",
-	"Section": "bI'",
-	"Employeur": "nuv'e'",
-	"Tous": "Hoch",
-	"Trier par": "yI'el",
-	"Nom": "pong",
-	"Année de diplôme": "DIS",
-	"Afficher les administrateurs": "nuv'e' yI'el",
-	"Filtrer": "yI'el",
-	"Réinitialiser": "yI'el",
-	"Liste des employeurs": "nuv'e' pong'e'",
-	"Voir les employés": "nuv'e' yI'el",
-	"profile": {
-		"view": {
-			"title": "pong'e' {{prenom}} {{nom}}",
-			"editProfileButton": "jI'qaD vum",
-			"myEmploymentsButton": "jI'job",
-			"personalInfo": {
-				"cardHeader": "jI'qaD",
-				"email": "mev'a' naQ:",
-				"graduationYear": "DIS:",
-				"section": "bI':",
-				"employmentStatus": "job:",
-				"employmentStatusOptions": {
-					"etudiant": "tlhIngan",
-					"employe": "nuv",
-					"freelance": "nuv'e'",
-					"chomeur": "jobbe'",
-					"entrepreneur": "nuv'e'",
-					"retraite": "jobbe'",
-					"autre": "Hoch"
-				}
-			},
-			"contact": {
-				"cardHeader": "yI'el",
-				"phone": "ghu'vam:",
-				"notProvided": "ghu'vam be'",
-				"linkedIn": "LinkedIn:",
-				"twitter": "Twitter:",
-				"facebook": "Facebook:",
-				"website": "Website:"
-			},
-			"employmentHistory": {
-				"cardHeader": "job pong'e'",
-				"sector": "bI':",
-				"location": "juH:",
-				"endDateNotSpecified": "DIS be'"
-			}
-		},
-		"edit": {
-			"title": "jI'qaD vum",
-			"personalInfo": {
-				"firstName": "pong",
-				"lastName": "pong'e'",
-				"email": {
-					"label": "mev'a' naQ"
-				},
-				"graduationYear": {
-					"label": "DIS"
-				},
-				"section": {
-					"label": "bI'"
-				},
-				"phone": "ghu'vam",
-				"address": "juH",
-				"city": "veng",
-				"postalCode": "veng ghu'vam",
-				"country": "yuQ",
-				"linkedin": "LinkedIn URL",
-				"twitter": "Twitter URL",
-				"facebook": "Facebook URL",
-				"website": "Website URL",
-				"employmentStatus": {
-					"label": "job",
-					"notSpecified": "jobbe'",
-					"etudiant": "tlhIngan",
-					"employe": "nuv",
-					"freelance": "nuv'e'",
-					"chomeur": "jobbe'",
-					"entrepreneur": "nuv'e'",
-					"retraite": "jobbe'",
-					"autre": "Hoch"
-				},
-				"description": "mu'qaD (optional)"
-			},
-			"saveButton": "yI'el",
-			"isAdmin": "nuv'e'",
-			"isApproved": "yI'el",
-			"isActive": "yI'el",
-			"optOutContact": "yI'el",
-			"optOutDirectory": "pong'e' yI'el"
-		},
-		"employment": {
-			"title": "jI'job",
-			"addEmploymentTitle": "job yI'el",
-			"employerName": "nuv'e' pong",
-			"position": "job",
-			"startDate": "DIS",
-			"endDateOptional": "DIS (optional)",
-			"sectorOptional": "bI' (optional)",
-			"cityOptional": "veng (optional)",
-			"currentEmployment": "job",
-			"addEmploymentButton": "job yI'el",
-			"historyTitle": "job pong'e'",
-			"current": "job",
-			"endDateNotSpecified": "DIS be'",
-			"sector": "bI'",
-			"city": "veng",
-			"noEmploymentRecorded": "jobbe'."
-		}
-	},
-	"Photo de profil": "pong'e' DIvI'",
-	"admin": {
-		"dashboard": {
-			"title": "nuv'e' mu'qaD",
-			"welcome": "yI'el, {{prenom}}!",
-			"pendingRequests": {
-				"title": "Heghlu' 'oH",
-				"description": "Heghlu' 'oH vum",
-				"button": "yI'el"
-			},
-			"sectionManagement": {
-				"title": "bI' vum",
-				"description": "bI' yI'el, vum, or Heghlu'be'",
-				"button": "vum"
-			},
-			"statistics": {
-				"title": "mu'qaD",
-				"description": "mu'qaD yI'el",
-				"button": "mu'qaD yI'el"
-			},
-			"employerExport": {
-				"title": "nuv'e' pong'e'",
-				"description": "nuv'e' pong'e' yI'el",
-				"button": "yI'el"
-			},
-			"newMembers": "tlhIngan Hol"
-		},
-		"requests": {
-			"title": "Heghlu' 'oH",
-			"noRequests": "Heghlu' 'oHbe'.",
-			"modals": {
-				"fullMessage": {
-					"title": "mu'qaD"
-				},
-				"close": "Heghlu'be'",
-				"magicLink": {
-					"title": "Heghlu' 'oH",
-					"instruction": "mu'qaD yI'el",
-					"sendEmail": "mev'a' naQ yI'el"
-				}
-			},
-			"copyMessage": "mu'qaD yI'el"
-		},
-		"statistics": {
-			"title": "nuv'e' mu'qaD",
-			"generalStats": {
-				"cardHeader": "mu'qaD",
-				"totalUsers": "Hoch tlhIngan:",
-				"pendingRequests": "Heghlu' 'oH:",
-				"totalEmployers": "Hoch nuv'e':",
-				"currentEmployments": "job:"
-			},
-			"usersByGraduationYear": {
-				"cardHeader": "tlhIngan Hol DIS",
-				"year": "DIS"
-			},
-			"usersBySection": {
-				"cardHeader": "tlhIngan Hol bI'"
-			},
-			"backToDashboard": "mu'qaD yI'el"
-		},
-		"sections": {
-			"title": "bI' vum",
-			"addSection": {
-				"cardHeader": "bI' yI'el",
-				"nameLabel": "bI' pong",
-				"descriptionLabel": "mu'qaD (optional)",
-				"button": "bI' yI'el"
-			},
-			"existingSections": {
-				"cardHeader": "bI' pong'e'",
-				"tableHeaders": {
-					"name": "pong",
-					"description": "mu'qaD",
-					"users": "tlhIngan",
-					"actions": "yI'el"
-				},
-				"editButton": "vum",
-				"deleteButton": "Heghlu'be'",
-				"readMore": "yI'el"
-			},
-			"editModal": {
-				"title": "bI' vum",
-				"nameLabel": "bI' pong",
-				"descriptionLabel": "mu'qaD (optional)",
-				"cancelButton": "Heghlu'be'",
-				"saveButton": "yI'el"
-			},
-			"deleteModal": {
-				"title": "Heghlu'be' yI'el",
-				"confirmation": "bI' \"{{sectionName}}\" Heghlu'be'?",
-				"cancelButton": "Heghlu'be'",
-				"deleteButton": "Heghlu'be'"
-			}
-		},
-		"exportEmployers": {
-			"title": "nuv'e' pong'e'",
-			"filtersAndOptions": {
-				"cardHeader": "yI'el",
-				"filters": {
-					"legend": "yI'el",
-					"employerName": {
-						"label": "nuv'e' pong",
-						"helpText": "yI'el (e.g. \"renault\")."
-					},
-					"cities": {
-						"label": "veng",
-						"helpText": "veng yI'el."
-					},
-					"sections": {
-						"label": "tlhIngan Hol bI'",
-						"helpText": "nuv'e' tlhIngan Hol bI'."
-					}
-				},
-				"fieldsToExport": {
-					"legend": "yI'el",
-					"fieldNames": {
-						"nom": "pong",
-						"secteur": "bI'",
-						"ville": "veng"
-					}
-				},
-				"sortAndFormat": {
-					"legend": "yI'el",
-					"sortBy": {
-						"label": "yI'el",
-						"options": {
-							"name": "pong (A-Z)",
-							"city": "veng (A-Z)"
-						}
-					},
-					"exportFormat": {
-						"label": "yI'el",
-						"csv": "CSV",
-						"plainText": "mu'qaD"
-					}
-				},
-				"exportButton": "yI'el"
-			}
-		}
-	},
-	"users": {
-		"profile": {
-			"cardHeader": {
-				"section": "bI':",
-				"year": "DIS:"
-			},
-			"editProfileButton": "jI'qaD vum",
-			"contactInfo": {
-				"cardHeader": "yI'el"
-			},
-			"profileDetails": {
-				"cardHeader": "jI'qaD",
-				"fullName": "pong",
-				"email": "mev'a' naQ",
-				"graduationYear": "DIS",
-				"section": "bI'",
-				"address": "juH"
-			}
-		},
-		"employerDetail": {
-			"title": "nuv'e' pong'e'",
-			"employerDetails": "nuv'e' pong'e'",
-			"sector": "bI'",
-			"city": "veng",
-			"description": "mu'qaD",
-			"employees": "nuv"
-		}
-	}
+  "admin": {
+    "dashboard": {
+      "title": "tlhIngan Hol yIqaw!",
+      "welcome": "nuqneH, {{prenom}}!",
+      "pendingRequests": {
+        "title": "ghoS qaS",
+        "description": "Ha'DIbaH ghoS qaS yIqaw",
+        "button": "yIqaw"
+      },
+      "sectionManagement": {
+        "title": "tlhIngan Hol yIqaw!",
+        "description": "tlhIngan Hol yIqaw!",
+        "button": "yIqaw"
+      },
+      "statistics": {
+        "title": "tlhIngan Hol yIqaw!",
+        "description": "tlhIngan Hol yIqaw!",
+        "button": "yIqaw"
+      },
+      "employerExport": {
+        "title": "tlhIngan Hol yIqaw!",
+        "description": "tlhIngan Hol yIqaw!",
+        "button": "yIqaw"
+      },
+      "newMembers": "tlhIngan Hol yIqaw!"
+    },
+    "sections": {
+      "title": "tlhIngan Hol yIqaw!",
+      "alerts": {
+        "addedSuccess": "tlhIngan Hol yIqaw!",
+        "updatedSuccess": "tlhIngan Hol yIqaw!",
+        "deletedSuccess": "tlhIngan Hol yIqaw!",
+        "duplicateError": "tlhIngan Hol yIqaw!",
+        "addFailed": "tlhIngan Hol yIqaw!",
+        "updateFailed": "tlhIngan Hol yIqaw!",
+        "deleteFailed": "tlhIngan Hol yIqaw!",
+        "sectionInUse": "tlhIngan Hol yIqaw!",
+        "noSectionFound": "tlhIngan Hol yIqaw!"
+      },
+      "addSection": {
+        "cardHeader": "tlhIngan Hol yIqaw!",
+        "nameLabel": "tlhIngan Hol yIqaw!",
+        "descriptionLabel": "tlhIngan Hol yIqaw!",
+        "button": "tlhIngan Hol yIqaw!"
+      },
+      "existingSections": {
+        "cardHeader": "tlhIngan Hol yIqaw!",
+        "tableHeaders": {
+          "name": "tlhIngan Hol yIqaw!",
+          "description": "tlhIngan Hol yIqaw!",
+          "users": "tlhIngan Hol yIqaw!",
+          "actions": "tlhIngan Hol yIqaw!"
+        },
+        "readMore": "tlhIngan Hol yIqaw!",
+        "notApplicable": "tlhIngan Hol yIqaw!",
+        "editButton": "tlhIngan Hol yIqaw!",
+        "deleteButton": "tlhIngan Hol yIqaw!"
+      },
+      "editModal": {
+        "title": "tlhIngan Hol yIqaw!",
+        "nameLabel": "tlhIngan Hol yIqaw!",
+        "descriptionLabel": "tlhIngan Hol yIqaw!",
+        "cancelButton": "tlhIngan Hol yIqaw!",
+        "saveButton": "tlhIngan Hol yIqaw!"
+      },
+      "deleteModal": {
+        "title": "tlhIngan Hol yIqaw!",
+        "confirmation": "tlhIngan Hol yIqaw!",
+        "cancelButton": "tlhIngan Hol yIqaw!",
+        "deleteButton": "tlhIngan Hol yIqaw!"
+      }
+    },
+    "statistics": {
+      "title": "tlhIngan Hol yIqaw!",
+      "generalStats": {
+        "cardHeader": "tlhIngan Hol yIqaw!",
+        "totalUsers": "tlhIngan Hol yIqaw!",
+        "pendingRequests": "tlhIngan Hol yIqaw!",
+        "totalEmployers": "tlhIngan Hol yIqaw!",
+        "currentEmployments": "tlhIngan Hol yIqaw!"
+      },
+      "usersByGraduationYear": {
+        "cardHeader": "tlhIngan Hol yIqaw!",
+        "year": "tlhIngan Hol yIqaw!"
+      },
+      "usersBySection": {
+        "cardHeader": "tlhIngan Hol yIqaw!"
+      },
+      "backToDashboard": "tlhIngan Hol yIqaw!"
+    }
+  }
 }
