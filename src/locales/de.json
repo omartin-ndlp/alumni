@@ -1,93 +1,316 @@
 {
-  "admin": {
-    "dashboard": {
-      "title": "Administrator-Dashboard",
-      "welcome": "Willkommen, {{prenom}}!",
-      "pendingRequests": {
-        "title": "Ausstehende Anfragen",
-        "description": "Neue Registrierungsanfragen verwalten",
-        "button": "Anzeigen"
-      },
-      "sectionManagement": {
-        "title": "Sektionsverwaltung",
-        "description": "Sektionen hinzufügen, ändern oder löschen",
-        "button": "Verwalten"
-      },
-      "statistics": {
-        "title": "Statistiken",
-        "description": "Allgemeine und sektionsspezifische Statistiken anzeigen",
-        "button": "Statistiken ansehen"
-      },
-      "employerExport": {
-        "title": "Arbeitgeber-Export",
-        "description": "Liste der Arbeitgeber herunterladen",
-        "button": "Exportieren"
-      },
-      "newMembers": "Neue Mitglieder"
-    },
-    "sections": {
-      "title": "Sektionsverwaltung",
-      "alerts": {
-        "addedSuccess": "Sektion erfolgreich hinzugefügt!",
-        "updatedSuccess": "Sektion erfolgreich aktualisiert!",
-        "deletedSuccess": "Sektion erfolgreich gelöscht!",
-        "duplicateError": "Fehler: Eine Sektion mit diesem Namen existiert bereits.",
-        "addFailed": "Fehler beim Hinzufügen der Sektion.",
-        "updateFailed": "Fehler beim Aktualisieren der Sektion.",
-        "deleteFailed": "Fehler beim Löschen der Sektion.",
-        "sectionInUse": "Sektion kann nicht gelöscht werden: Benutzer sind damit verknüpft.",
-        "noSectionFound": "Keine Sektion gefunden."
-      },
-      "addSection": {
-        "cardHeader": "Neue Sektion hinzufügen",
-        "nameLabel": "Name der Sektion",
-        "descriptionLabel": "Beschreibung (optional)",
-        "button": "Sektion hinzufügen"
-      },
-      "existingSections": {
-        "cardHeader": "Bestehende Sektionen",
-        "tableHeaders": {
-          "name": "Name",
-          "description": "Beschreibung",
-          "users": "Benutzer",
-          "actions": "Aktionen"
-        },
-        "readMore": "Mehr anzeigen",
-        "notApplicable": "N/A",
-        "editButton": "Bearbeiten",
-        "deleteButton": "Löschen"
-      },
-      "editModal": {
-        "title": "Sektion bearbeiten",
-        "nameLabel": "Name der Sektion",
-        "descriptionLabel": "Beschreibung (optional)",
-        "cancelButton": "Abbrechen",
-        "saveButton": "Änderungen speichern"
-      },
-      "deleteModal": {
-        "title": "Löschen bestätigen",
-        "confirmation": "Sind Sie sicher, dass Sie die Sektion \"{{sectionName}}\" löschen möchten? Diese Aktion ist irreversibel.",
-        "cancelButton": "Abbrechen",
-        "deleteButton": "Löschen"
-      }
-    },
-    "statistics": {
-      "title": "Administrator-Statistiken",
-      "generalStats": {
-        "cardHeader": "Allgemeine Statistiken",
-        "totalUsers": "Gesamtzahl der Benutzer:",
-        "pendingRequests": "Ausstehende Anfragen:",
-        "totalEmployers": "Gesamtzahl der Arbeitgeber:",
-        "currentEmployments": "Aktuelle Beschäftigungen:"
-      },
-      "usersByGraduationYear": {
-        "cardHeader": "Benutzer nach Abschlussjahr",
-        "year": "Jahr"
-      },
-      "usersBySection": {
-        "cardHeader": "Benutzer nach Sektion"
-      },
-      "backToDashboard": "Zurück zum Dashboard"
-    }
-  }
+	"auth": {
+		"login": {
+			"subtitle": "Melden Sie sich bei Ihrem Konto an",
+			"emailLabel": "E-Mail-Adresse",
+			"passwordLabel": "Passwort",
+			"loginButton": "Anmelden",
+			"registerPrompt": "Haben Sie noch kein Konto?",
+			"registerButton": "Konto anfordern",
+			"title": "Ehemalige BTS SN/CIEL LJV"
+		}
+	},
+	"Tableau de bord": "Dashboard",
+	"Bienvenue": "Willkommen",
+	"Annuaire": "Verzeichnis",
+	"Parcourez la liste des anciens étudiants": "Durchsuchen Sie die Liste der ehemaligen Studenten",
+	"Consulter": "Konsultieren",
+	"Employeurs": "Arbeitgeber",
+	"Découvrez où travaillent les anciens": "Entdecken Sie, wo Alumni arbeiten",
+	"Voir la liste": "Siehe die Liste",
+	"Mon profil": "Mein Profil",
+	"Gérez vos informations personnelles": "Verwalten Sie Ihre persönlichen Daten",
+	"Voir mon profil": "Mein Profil anzeigen",
+	"Accueil": "Startseite",
+	"Admin Dashboard": "Admin-Dashboard",
+	"Déconnexion": "Abmelden",
+	"Modifier mon profil": "Mein Profil bearbeiten",
+	"Mes emplois": "Meine Jobs",
+	"Anciens BTS SN/CIEL LJV": "Ehemalige BTS SN/CIEL LJV",
+	"Réseau des anciens étudiants": "Alumni-Netzwerk",
+	"Olivier Martin - Tous droits réservés": "Olivier Martin - Alle Rechte vorbehalten",
+	"Annuaire des anciens": "Alumni-Verzeichnis",
+	"Recherche": "Suche",
+	"Nom, prénom, employeur...": "Name, Vorname, Arbeitgeber...",
+	"Année": "Jahr",
+	"Toutes": "Alle",
+	"Section": "Sektion",
+	"Employeur": "Arbeitgeber",
+	"Tous": "Alle",
+	"Trier par": "Sortieren nach",
+	"Nom": "Name",
+	"Année de diplôme": "Abschlussjahr",
+	"Afficher les administrateurs": "Administratoren anzeigen",
+	"Filtrer": "Filter",
+	"Réinitialiser": "Zurücksetzen",
+	"Liste des employeurs": "Liste der Arbeitgeber",
+	"Voir les employés": "Mitarbeiter anzeigen",
+	"profile": {
+		"view": {
+			"title": "Profil von {{prenom}} {{nom}}",
+			"editProfileButton": "Mein Profil bearbeiten",
+			"myEmploymentsButton": "Meine Jobs",
+			"personalInfo": {
+				"cardHeader": "Persönliche Informationen",
+				"email": "E-Mail:",
+				"graduationYear": "Abschlussjahr:",
+				"section": "Sektion:",
+				"employmentStatus": "Beschäftigungsstatus:",
+				"employmentStatusOptions": {
+					"etudiant": "Student",
+					"employe": "Angestellter",
+					"freelance": "Freiberufler",
+					"chomeur": "Arbeitslos",
+					"entrepreneur": "Unternehmer",
+					"retraite": "Im Ruhestand",
+					"autre": "Andere"
+				}
+			},
+			"contact": {
+				"cardHeader": "Kontakt",
+				"phone": "Telefon:",
+				"notProvided": "Nicht angegeben",
+				"linkedIn": "LinkedIn:",
+				"twitter": "Twitter:",
+				"facebook": "Facebook:",
+				"website": "Webseite:"
+			},
+			"employmentHistory": {
+				"cardHeader": "Beruflicher Werdegang",
+				"sector": "Sektor:",
+				"location": "Ort:",
+				"endDateNotSpecified": "Enddatum nicht angegeben"
+			}
+		},
+		"edit": {
+			"title": "Mein Profil bearbeiten",
+			"personalInfo": {
+				"firstName": "Vorname",
+				"lastName": "Nachname",
+				"email": {
+					"label": "E-Mail"
+				},
+				"graduationYear": {
+					"label": "Abschlussjahr"
+				},
+				"section": {
+					"label": "Sektion"
+				},
+				"phone": "Telefon",
+				"address": "Adresse",
+				"city": "Stadt",
+				"postalCode": "Postleitzahl",
+				"country": "Land",
+				"linkedin": "LinkedIn-URL",
+				"twitter": "Twitter-URL",
+				"facebook": "Facebook-URL",
+				"website": "Website-URL",
+				"employmentStatus": {
+					"label": "Beschäftigungsstatus",
+					"notSpecified": "Nicht angegeben",
+					"etudiant": "Student",
+					"employe": "Angestellter",
+					"freelance": "Freiberufler",
+					"chomeur": "Arbeitslos",
+					"entrepreneur": "Unternehmer",
+					"retraite": "Im Ruhestand",
+					"autre": "Andere"
+				},
+				"description": "Beschreibung (optional)"
+			},
+			"saveButton": "Änderungen speichern",
+			"isAdmin": "Ist Administrator",
+			"isApproved": "Ist genehmigt",
+			"isActive": "Ist aktiv",
+			"optOutContact": "Kontaktinformationen ausblenden",
+			"optOutDirectory": "Profil aus dem Verzeichnis ausblenden"
+		},
+		"employment": {
+			"title": "Meine Jobs",
+			"addEmploymentTitle": "Einen neuen Job hinzufügen",
+			"employerName": "Name des Arbeitgebers",
+			"position": "Position",
+			"startDate": "Startdatum",
+			"endDateOptional": "Enddatum (optional)",
+			"sectorOptional": "Sektor (optional)",
+			"cityOptional": "Stadt (optional)",
+			"currentEmployment": "Aktuelle Beschäftigung",
+			"addEmploymentButton": "Job hinzufügen",
+			"historyTitle": "Jobverlauf",
+			"current": "Aktuell",
+			"endDateNotSpecified": "Enddatum nicht angegeben",
+			"sector": "Sektor",
+			"city": "Stadt",
+			"noEmploymentRecorded": "Keine Beschäftigung erfasst."
+		}
+	},
+	"Photo de profil": "Profilbild",
+	"admin": {
+		"dashboard": {
+			"title": "Admin-Dashboard",
+			"welcome": "Willkommen, {{prenom}}!",
+			"pendingRequests": {
+				"title": "Ausstehende Anfragen",
+				"description": "Neue Registrierungsanfragen verwalten",
+				"button": "Konsultieren"
+			},
+			"sectionManagement": {
+				"title": "Sektionsverwaltung",
+				"description": "Sektionen hinzufügen, ändern oder löschen",
+				"button": "Verwalten"
+			},
+			"statistics": {
+				"title": "Statistiken",
+				"description": "Allgemeine und pro-Sektion-Statistiken einsehen",
+				"button": "Statistiken anzeigen"
+			},
+			"employerExport": {
+				"title": "Arbeitgeber exportieren",
+				"description": "Die Liste der Arbeitgeber herunterladen",
+				"button": "Exportieren"
+			},
+			"newMembers": "Neue Mitglieder"
+		},
+		"requests": {
+			"title": "Ausstehende Registrierungsanfragen",
+			"noRequests": "Im Moment keine ausstehenden Registrierungsanfragen.",
+			"modals": {
+				"fullMessage": {
+					"title": "Vollständige Nachricht"
+				},
+				"close": "Schließen",
+				"magicLink": {
+					"title": "Registrierungslink",
+					"instruction": "Kopieren Sie die folgende Nachricht und senden Sie sie an den Benutzer:",
+					"sendEmail": "E-Mail senden"
+				}
+			},
+			"copyMessage": "Nachricht kopieren"
+		},
+		"statistics": {
+			"title": "Administratorstatistiken",
+			"generalStats": {
+				"cardHeader": "Allgemeine Statistiken",
+				"totalUsers": "Gesamtzahl der Benutzer:",
+				"pendingRequests": "Ausstehende Anfragen:",
+				"totalEmployers": "Gesamtzahl der Arbeitgeber:",
+				"currentEmployments": "Aktuelle Beschäftigungen:"
+			},
+			"usersByGraduationYear": {
+				"cardHeader": "Benutzer nach Abschlussjahr",
+				"year": "Jahr"
+			},
+			"usersBySection": {
+				"cardHeader": "Benutzer nach Sektion"
+			},
+			"backToDashboard": "Zurück zum Dashboard"
+		},
+		"sections": {
+			"title": "Sektionsverwaltung",
+			"addSection": {
+				"cardHeader": "Eine neue Sektion hinzufügen",
+				"nameLabel": "Name der Sektion",
+				"descriptionLabel": "Beschreibung (optional)",
+				"button": "Sektion hinzufügen"
+			},
+			"existingSections": {
+				"cardHeader": "Bestehende Sektionen",
+				"tableHeaders": {
+					"name": "Name",
+					"description": "Beschreibung",
+					"users": "Benutzer",
+					"actions": "Aktionen"
+				},
+				"editButton": "Bearbeiten",
+				"deleteButton": "Löschen",
+				"readMore": "Weiterlesen"
+			},
+			"editModal": {
+				"title": "Sektion bearbeiten",
+				"nameLabel": "Name der Sektion",
+				"descriptionLabel": "Beschreibung (optional)",
+				"cancelButton": "Abbrechen",
+				"saveButton": "Änderungen speichern"
+			},
+			"deleteModal": {
+				"title": "Löschung bestätigen",
+				"confirmation": "Sind Sie sicher, dass Sie die Sektion \"{{sectionName}}\" löschen möchten? Diese Aktion ist unumkehrbar.",
+				"cancelButton": "Abbrechen",
+				"deleteButton": "Löschen"
+			}
+		},
+		"exportEmployers": {
+			"title": "Arbeitgeber exportieren",
+			"filtersAndOptions": {
+				"cardHeader": "Filter und Exportoptionen",
+				"filters": {
+					"legend": "Filter",
+					"employerName": {
+						"label": "Name des Arbeitgebers",
+						"helpText": "Teilweise und von der Groß- und Kleinschreibung unabhängige Suche (z. B. \"renault\")."
+					},
+					"cities": {
+						"label": "Städte",
+						"helpText": "Wählen Sie eine oder mehrere Städte aus."
+					},
+					"sections": {
+						"label": "Alumni-Sektionen",
+						"helpText": "Arbeitgeber, die Studenten aus diesen Sektionen eingestellt haben."
+					}
+				},
+				"fieldsToExport": {
+					"legend": "Zu exportierende Felder",
+					"fieldNames": {
+						"nom": "Name",
+						"secteur": "Sektor",
+						"ville": "Stadt"
+					}
+				},
+				"sortAndFormat": {
+					"legend": "Sortieren und Formatieren",
+					"sortBy": {
+						"label": "Sortieren nach",
+						"options": {
+							"name": "Name (A-Z)",
+							"city": "Stadt (A-Z)"
+						}
+					},
+					"exportFormat": {
+						"label": "Exportformat",
+						"csv": "CSV",
+						"plainText": "Einfacher Text"
+					}
+				},
+				"exportButton": "Daten exportieren"
+			}
+		}
+	},
+	"users": {
+		"profile": {
+			"cardHeader": {
+				"section": "Sektion:",
+				"year": "Jahr:"
+			},
+			"editProfileButton": "Profil bearbeiten",
+			"contactInfo": {
+				"cardHeader": "Kontaktinformationen"
+			},
+			"profileDetails": {
+				"cardHeader": "Profildetails",
+				"fullName": "Vollständiger Name",
+				"email": "E-Mail",
+				"graduationYear": "Abschlussjahr",
+				"section": "Sektion",
+				"address": "Adresse"
+			}
+		},
+		"employerDetail": {
+			"title": "Arbeitgeberprofil",
+			"employerDetails": "Arbeitgeberdetails",
+			"sector": "Sektor",
+			"city": "Stadt",
+			"description": "Beschreibung",
+			"employees": "Mitarbeiter"
+		}
+	}
 }
