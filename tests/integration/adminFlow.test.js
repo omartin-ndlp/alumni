@@ -1,22 +1,32 @@
 const request = require('supertest');
-const app = require('../../server');
+const initApp = require('../../server');
 const { getConnection, releaseConnection } = require('../../src/config/database');
 const bcrypt = require('bcryptjs');
 const User = require('../../src/models/User');
 
 describe('End-to-End Admin Functionality Flow', () => {
   let connection;
-  let adminAgent; // supertest agent for maintaining admin session
+  let adminAgent;
   let adminEmail;
   let adminPassword;
   let adminId;
+  let app;
+  let server;
+
+  beforeAll((done) => {
+    app = initApp();
+    server = app.listen(done);
+  });
+
+  afterAll((done) => {
+    server.close(done);
+  });
 
   beforeEach(async () => {
     connection = await getConnection();
     await connection.beginTransaction();
-    global.__TEST_DB_CONNECTION__ = connection; // For transactional isolation
+    global.__TEST_DB_CONNECTION__ = connection;
 
-    // Create and log in an admin user for each test
     adminEmail = `admin_${Date.now()}@example.com`;
     adminPassword = 'adminpassword';
     const hashedPassword = await bcrypt.hash(adminPassword, 10);
@@ -27,7 +37,7 @@ describe('End-to-End Admin Functionality Flow', () => {
     );
     adminId = adminResult.insertId;
 
-    adminAgent = request.agent(app);
+    adminAgent = request.agent(server);
     await adminAgent.post('/login').send({ email: adminEmail, password: adminPassword });
   });
 

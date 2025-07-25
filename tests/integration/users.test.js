@@ -1,14 +1,25 @@
 const request = require('supertest');
-const app = require('../../server'); // Adjust this path if needed
+const initApp = require('../../server'); // Adjust this path if needed
 const { getConnection, releaseConnection } = require('../../src/config/database');
 const bcrypt = require('bcryptjs');
 
 describe('User and Employer Routes', () => {
   let agent;
   let connection;
+  let app;
+  let server;
+
+  beforeAll((done) => {
+    app = initApp();
+    server = app.listen(done);
+  });
+
+  afterAll((done) => {
+    server.close(done);
+  });
 
   beforeEach(async () => {
-    agent = request.agent(app);
+    agent = request.agent(server);
     connection = await getConnection();
     await connection.beginTransaction();
     global.__TEST_DB_CONNECTION__ = connection; // Share connection

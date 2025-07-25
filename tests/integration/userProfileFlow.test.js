@@ -1,39 +1,49 @@
 const request = require('supertest');
-const app = require('../../server');
+const initApp = require('../../server');
 const { getConnection, releaseConnection } = require('../../src/config/database');
 const bcrypt = require('bcryptjs');
 const User = require('../../src/models/User');
 
 describe('End-to-End User Profile Management Flow', () => {
   let connection;
-  let agent; // supertest agent for maintaining session
+  let agent;
   let userEmail;
   let userPassword;
   let userId;
+  let app;
+  let server;
 
-  beforeAll(async () => {
-    // Create and log in a user once for the entire suite
-    userEmail = `profile_${Date.now()}@example.com`;
-    userPassword = 'password123';
-    const hashedPassword = await bcrypt.hash(userPassword, 10);
+  beforeAll((done) => {
+    app = initApp();
+    server = app.listen(done);
 
-    // Use a temporary connection for initial user creation outside of test transaction
-    const tempConnection = await getConnection();
-    const [userResult] = await tempConnection.query(
-      'INSERT INTO users (email, password_hash, prenom, nom, annee_diplome, section_id, is_approved, is_active) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
-      [userEmail, hashedPassword, 'Profile', 'User', 2020, 1, true, true]
-    );
-    userId = userResult.insertId; // Capture the ID
-    releaseConnection(tempConnection); // Release the temporary connection
+    (async () => {
+      userEmail = `profile_${Date.now()}@example.com`;
+      userPassword = 'password123';
+      const hashedPassword = await bcrypt.hash(userPassword, 10);
 
-    agent = request.agent(app);
-    await agent.post('/login').send({ email: userEmail, password: userPassword });
+      const tempConnection = await getConnection();
+      const [userResult] = await tempConnection.query(
+        'INSERT INTO users (email, password_hash, prenom, nom, annee_diplome, section_id, is_approved, is_active) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+        [userEmail, hashedPassword, 'Profile', 'User', 2020, 1, true, true]
+      );
+      userId = userResult.insertId;
+      releaseConnection(tempConnection);
+
+      agent = request.agent(server);
+      await agent.post('/login').send({ email: userEmail, password: userPassword });
+      done();
+    })();
+  });
+
+  afterAll((done) => {
+    server.close(done);
   });
 
   beforeEach(async () => {
     connection = await getConnection();
     await connection.beginTransaction();
-    global.__TEST_DB_CONNECTION__ = connection; // For transactional isolation
+    global.__TEST_DB_CONNECTION__ = connection;
   });
 
   afterEach(async () => {
