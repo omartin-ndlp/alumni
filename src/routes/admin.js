@@ -150,6 +150,9 @@ router.get('/requests', async (req, res) => {
 router.post('/requests/:id/approve', async (req, res) => {
   try {
     const key = await User.generateRegistrationKey(req.params.id);
+    if (!key) {
+      return res.status(404).json({ success: false, error: 'Request not found' });
+    }
     res.json({ success: true, key: key, requestId: req.params.id });
   } catch (error) {
     console.error('Erreur génération clé:', error);
@@ -161,7 +164,11 @@ router.post('/requests/:id/approve', async (req, res) => {
 // Rejeter une demande
 router.post('/requests/:id/reject', async (req, res) => {
   try {
-    await User.rejectRegistrationRequest(req.params.id);
+    const rejected = await User.rejectRegistrationRequest(req.params.id);
+    if (!rejected) {
+      // If rejectRegistrationRequest returns false, it means the request didn't exist or couldn't be rejected
+      return res.redirect('/admin/requests?error=reject_failed');
+    }
     res.redirect('/admin/requests?success=rejected');
   } catch (error) {
     console.error('Erreur rejet:', error);
@@ -169,72 +176,7 @@ router.post('/requests/:id/reject', async (req, res) => {
   }
 });
 
-// Gestion des utilisateurs
-router.get('/users', async (req, res) => {
-  try {
-    const { search, sort = 'created_at', order = 'DESC', page = 1 } = req.query;
-    const limit = 20;
-    const offset = (page - 1) * limit;
-
-    let query = `
-      SELECT u.*, s.nom as section_nom,
-             ue.poste as current_position,
-             e.nom as current_employer
-      FROM users u 
-      JOIN sections s ON u.section_id = s.id 
-      LEFT JOIN user_employment ue ON u.id = ue.user_id AND ue.is_current = TRUE
-      LEFT JOIN employers e ON ue.employer_id = e.id
-      WHERE 1=1
-    `;
-
-    const params = [];
-
-    if (search) {
-      query += ' AND (u.nom LIKE ? OR u.prenom LIKE ? OR u.email LIKE ?)';
-      const searchTerm = `%${search}%`;
-      params.push(searchTerm, searchTerm, searchTerm);
-    }
-
-    query += ` ORDER BY u.${sort} ${order} LIMIT ? OFFSET ?`;
-    params.push(limit, offset);
-
-    const db = await getConnection();
-    const [users] = await db.execute(query, params);
-
-    // Compter le total pour la pagination
-    let countQuery = 'SELECT COUNT(*) as total FROM users u WHERE 1=1';
-    const countParams = [];
-
-    if (search) {
-      countQuery += ' AND (u.nom LIKE ? OR u.prenom LIKE ? OR u.email LIKE ?)';
-      const searchTerm = `%${search}%`;
-      countParams.push(searchTerm, searchTerm, searchTerm);
-    }
-
-    const [countResult] = await db.execute(countQuery, countParams);
-    const total = countResult[0].total;
-    const totalPages = Math.ceil(total / limit);
-
-    res.render('users/list', {
-      title: 'Gestion des utilisateurs - Administration',
-      users,
-      pagination: {
-        current: parseInt(page),
-        total: totalPages,
-        hasNext: page < totalPages,
-        hasPrev: page > 1
-      },
-      filters: req.query
-    });
-
-  } catch (error) {
-    console.error('Erreur gestion utilisateurs:', error);
-    res.render('error', {
-      message: 'Erreur lors du chargement des utilisateurs',
-      error: {}
-    });
-  }
-});
+// Gestion des utilisateurs (route supprimée, utilisez /users/:id pour l'édition)
 
 // Désactiver/Activer un utilisateur
 router.post('/users/:id/toggle-status', async (req, res) => {

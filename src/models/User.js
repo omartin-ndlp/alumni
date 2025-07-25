@@ -277,10 +277,13 @@ class User {
         connection = await getConnection();
       }
       const key = crypto.randomBytes(32).toString('hex');
-      await connection.execute(
+      const [result] = await connection.execute(
         'UPDATE registration_requests SET registration_key = ?, key_generated_at = NOW() WHERE id = ?',
         [key, requestId]
       );
+      if (result.affectedRows === 0) {
+        return null;
+      }
       return key;
     } finally {
       if (!dbConnection) {
