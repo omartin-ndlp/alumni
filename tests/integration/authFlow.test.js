@@ -1,11 +1,22 @@
 const request = require('supertest');
-const app = require('../../server'); // Assuming your Express app is exported from server.js
+const initApp = require('../../server'); // Use initApp to create a fresh app for testing
 const { getConnection, releaseConnection } = require('../../src/config/database');
 const bcrypt = require('bcryptjs');
 const User = require('../../src/models/User'); // Import User model
 
 describe('End-to-End Authentication Flow', () => {
   let connection;
+  let app;
+  let server;
+
+  beforeAll((done) => {
+    app = initApp();
+    server = app.listen(done); // Start server on a random available port
+  });
+
+  afterAll((done) => {
+    server.close(done); // Ensure server is closed after all tests
+  });
 
   beforeEach(async () => {
     connection = await getConnection();
@@ -29,7 +40,7 @@ describe('End-to-End Authentication Flow', () => {
     const annee_diplome = 2023;
     const section_id = 1; // Assuming section_id 1 exists
 
-    const res = await request(app)
+    const res = await request(server) // Test against the running server
       .post('/register')
       .send({
         email,
@@ -49,7 +60,6 @@ describe('End-to-End Authentication Flow', () => {
     const [rows] = await connection.query('SELECT * FROM registration_requests WHERE email = ?', [email]);
     expect(rows.length).toBe(1);
     expect(rows[0].email).toBe(email);
-    // No password hash to check in registration_requests
   });
 
   test('should allow a user to log in successfully after approval', async () => {
@@ -63,7 +73,7 @@ describe('End-to-End Authentication Flow', () => {
       [email, hashedPassword, 'Login', 'User', 2022, 1, true, true]
     );
 
-    const res = await request(app)
+    const res = await request(server) // Test against the running server
       .post('/login')
       .send({ email, password });
 
@@ -86,7 +96,7 @@ describe('End-to-End Authentication Flow', () => {
       [email, hashedPassword, 'Logout', 'User', 2022, 1, true, true]
     );
 
-    const agent = request.agent(app);
+    const agent = request.agent(server); // Create an agent to maintain session
 
     // First, log in the user using the agent
     const loginRes = await agent
@@ -111,16 +121,9 @@ describe('End-to-End Authentication Flow', () => {
 
   test('should redirect unauthenticated users from protected routes', async () => {
     // Attempt to access a protected route (e.g., /dashboard) without authentication
-    const res = await request(app).get('/dashboard');
+    const res = await request(server).get('/dashboard'); // Test against the running server
 
     expect(res.statusCode).toEqual(302); // Expect redirect
     expect(res.headers.location).toContain('/login'); // Redirect to login page
-  });
-
-  afterAll(async () => {
-    // Close the server if it was started
-    if (app.server && app.server.close) {
-      await new Promise(resolve => app.server.close(resolve));
-    }
   });
 });
