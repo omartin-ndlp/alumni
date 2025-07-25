@@ -66,6 +66,7 @@ DB_NAME=ljv_alumni
 # Configuration du serveur
 PORT=3000
 NODE_ENV=development
+SITE_LANGUAGE=fr # Langue par défaut de l'interface utilisateur (ex: fr, en, es, de, tlh)
 
 # Clé secrète pour les sessions (générer une clé aléatoire forte)
 SESSION_SECRET=votre_cle_secrete_tres_longue_et_aleatoire
@@ -152,6 +153,7 @@ ljv-alumni/
 │   └── uploads/           # Fichiers uploadés
 ├── src/                   # Code source
 │   ├── config/           # Configuration (base de données)
+│   ├── locales/          # Fichiers de localisation (i18n)
 │   ├── middleware/       # Middleware Express
 │   ├── models/           # Modèles de données
 │   ├── routes/           # Routes Express
