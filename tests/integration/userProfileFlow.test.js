@@ -3,6 +3,8 @@ const initApp = require('../../server');
 const { getConnection, releaseConnection } = require('../../src/config/database');
 const bcrypt = require('bcryptjs');
 const User = require('../../src/models/User');
+const i18n = require('i18n');
+const path = require('path');
 
 describe('End-to-End User Profile Management Flow', () => {
   let connection;
@@ -13,27 +15,40 @@ describe('End-to-End User Profile Management Flow', () => {
   let app;
   let server;
 
-  beforeAll((done) => {
+  beforeAll(async () => {
     app = initApp();
-    server = app.listen(done);
 
-    (async () => {
-      userEmail = `profile_${Date.now()}@example.com`;
-      userPassword = 'password123';
-      const hashedPassword = await bcrypt.hash(userPassword, 10);
+    // Initialize i18n for testing
+    i18n.configure({
+      locales: ['fr', 'en'],
+      directory: path.join(__dirname, '../../src/locales'),
+      defaultLocale: 'fr',
+      objectNotation: true,
+      updateFiles: false,
+    });
+    app.use(i18n.init);
+    app.use((req, res, next) => {
+      res.locals.__ = res.__;
+      next();
+    });
 
-      const tempConnection = await getConnection();
-      const [userResult] = await tempConnection.query(
-        'INSERT INTO users (email, password_hash, prenom, nom, annee_diplome, section_id, is_approved, is_active) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
-        [userEmail, hashedPassword, 'Profile', 'User', 2020, 1, true, true]
-      );
-      userId = userResult.insertId;
-      releaseConnection(tempConnection);
+    server = app.listen();
+    agent = request.agent(server);
 
-      agent = request.agent(server);
-      await agent.post('/login').send({ email: userEmail, password: userPassword });
-      done();
-    })();
+    // Create and log in a user once for the entire suite
+    userEmail = `profile_${Date.now()}@example.com`;
+    userPassword = 'password123';
+    const hashedPassword = await bcrypt.hash(userPassword, 10);
+
+    const tempConnection = await getConnection();
+    const [userResult] = await tempConnection.query(
+      'INSERT INTO users (email, password_hash, prenom, nom, annee_diplome, section_id, is_approved, is_active) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+      [userEmail, hashedPassword, 'Profile', 'User', 2020, 1, true, true]
+    );
+    userId = userResult.insertId;
+    releaseConnection(tempConnection);
+
+    await agent.post('/login').send({ email: userEmail, password: userPassword });
   });
 
   afterAll((done) => {

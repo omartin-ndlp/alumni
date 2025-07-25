@@ -3,6 +3,8 @@ const express = require('express');
 const session = require('express-session');
 const adminRoutes = require('../../src/routes/admin');
 const { getConnection, releaseConnection } = require('../../src/config/database');
+const i18n = require('i18n');
+const path = require('path');
 
 describe('Admin Statistics Page', () => {
   let app;
@@ -17,6 +19,20 @@ describe('Admin Statistics Page', () => {
       resave: false,
       saveUninitialized: true,
     }));
+
+    // Initialize i18n for testing
+    i18n.configure({
+      locales: ['fr', 'en'],
+      directory: path.join(__dirname, '../../src/locales'),
+      defaultLocale: 'fr',
+      objectNotation: true,
+      updateFiles: false,
+    });
+    app.use(i18n.init);
+    app.use((req, res, next) => {
+      res.locals.__ = res.__;
+      next();
+    });
 
     // Mock authentication middleware
     app.use((req, res, next) => {
