@@ -166,4 +166,5 @@ describe('Admin Routes', () => {
       expect(res.headers.location).toEqual('/admin/requests?error=reject_failed');
     });
   });
-});
+
+  });
