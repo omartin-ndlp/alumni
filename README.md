@@ -214,6 +214,57 @@ pm2 save
 
 Un Dockerfile peut être ajouté pour la containerisation.
 
+### Avec Docker Compose
+
+Le projet peut être démarré facilement en utilisant Docker Compose, qui gère le serveur d'application (Node.js), la base de données (MariaDB) et un proxy inverse (Nginx).
+
+**1. Configuration de l'environnement Docker**
+
+Créez un fichier `.env.docker` à la racine du projet en vous basant sur l'exemple fourni. Ce fichier contiendra les variables d'environnement spécifiques à l'environnement Docker.
+
+```bash
+cp .env.docker.example .env.docker
+```
+
+Éditez `.env.docker` avec vos informations de base de données et un secret de session fort :
+
+```env
+# Variables non sensibles
+DB_NAME=site_alumni_db
+DB_USER=site_alumni_user
+PORT=3000
+
+# Variables sensibles (à remplacer par vos propres valeurs)
+DB_ROOT_PASSWORD=votre_mot_de_passe_root_mariadb
+DB_PASSWORD=votre_mot_de_passe_utilisateur_mariadb
+SESSION_SECRET=une_chaine_secrete_tres_longue_et_aleatoire
+```
+
+**2. Démarrage de la pile Docker**
+
+Assurez-vous que Docker est en cours d'exécution sur votre machine. Ensuite, naviguez jusqu'à la racine de votre projet dans le terminal et exécutez la commande suivante. La première exécution peut prendre un certain temps car elle construira les images et initialisera la base de données.
+
+```bash
+docker-compose --env-file .env.docker up --build -d
+```
+
+*   `--env-file .env.docker` : Indique à Docker Compose d'utiliser les variables d'environnement définies dans `.env.docker`.
+*   `up` : Démarre les services définis dans `docker-compose.yaml`.
+*   `--build` : Reconstruit les images des services si des modifications ont été apportées au code ou au Dockerfile. Utilisez-le lors de la première exécution ou après des modifications du code source.
+*   `-d` : Démarre les conteneurs en arrière-plan (mode détaché).
+
+**3. Accès à l'application**
+
+Une fois que tous les services sont démarrés et sains, l'application sera accessible via Nginx à l'adresse : `http://localhost:80`
+
+**4. Arrêt de la pile Docker**
+
+Pour arrêter et supprimer tous les conteneurs, réseaux et volumes créés par Docker Compose :
+
+```bash
+docker-compose --env-file .env.docker down
+```
+
 ## 🤝 Contribution
 
 1. Fork le projet
