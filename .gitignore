@@ -1,3 +1,6 @@
+# Docker secrets directory
+docker-secrets/
+
 # Dependencies
 node_modules/
 npm-debug.log*

@@ -11,7 +11,7 @@ const createConnection = async () => {
 
     let dbPassword = process.env.DB_PASSWORD;
     let dbName = process.env.DB_NAME || 'ljv_alumni';
-    let dbHost = process.env.DB_HOST || 'localhost';
+    let dbHost = process.env.DB_HOST;
     let dbPort = process.env.DB_PORT || 3306;
     let dbUser = process.env.DB_USER || 'ljv_alumni';
 

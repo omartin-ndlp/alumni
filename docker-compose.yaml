@@ -1,0 +1,72 @@
+services:
+  db:
+    image: mariadb:10.6
+    container_name: site-alumni-db
+    env_file:
+      - ./.env.docker
+    environment:
+      MARIADB_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+      MARIADB_DATABASE: ${DB_NAME}
+      MARIADB_USER: ${DB_USER}
+      MARIADB_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - db_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mariadb-admin", "ping", "-h", "localhost"]
+      timeout: 20s
+      retries: 10
+    networks:
+      - site-alumni-network
+
+  db-init:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: site-alumni-db-init
+    env_file:
+      - ./.env.docker
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DB_HOST: db
+    command: sh -c "npm run db:migrate && npm run db:seed"
+    networks:
+      - site-alumni-network
+    restart: "no"
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: site-alumni-app
+    env_file:
+      - ./.env.docker
+    environment:
+      DB_HOST: db
+    depends_on:
+      db:
+        condition: service_healthy
+      db-init:
+        condition: service_completed_successfully
+    networks:
+      - site-alumni-network
+
+  nginx:
+    image: nginx:alpine
+    container_name: site-alumni-nginx
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - app
+    networks:
+      - site-alumni-network
+
+networks:
+  site-alumni-network:
+    driver: bridge
+
+volumes:
+  db_data:
