@@ -3,8 +3,19 @@
 
     <% if (error) { %>
     <div class="alert alert-danger" role="alert">
-        <%= __('profile.edit.alerts.error', { error: error }) %>
+        <%= error %>
     </div>
+    <% } %>
+
+    <% if (typeof validationErrors !== 'undefined' && validationErrors.length > 0) { %>
+        <div class="alert alert-danger" role="alert">
+            <p><%= __('profile.edit.validationError') %></p>
+            <ul>
+                <% validationErrors.forEach(function(error) { %>
+                    <li><%= error.msg %></li>
+                <% }); %>
+            </ul>
+        </div>
     <% } %>
 
     <div class="card mb-4">

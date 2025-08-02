@@ -107,7 +107,8 @@ router.post('/edit', upload.none(), [
         title: 'Modifier mon profil - Anciens BTS SN/CIEL LJV',
         user,
         sections,
-        error: 'Veuillez corriger les erreurs dans le formulaire',
+        error: req.__('profile.edit.alerts.error'), // Use translation key
+        validationErrors: errors.array(), // Pass validation errors to the template
         isAdmin: req.session.user.is_admin
       });
     }

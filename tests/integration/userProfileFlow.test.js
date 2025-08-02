@@ -69,6 +69,17 @@ describe('End-to-End User Profile Management Flow', () => {
     releaseConnection(connection);
   });
 
+  test('should handle errors when fetching profile', async () => {
+    const findByIdSpy = jest.spyOn(User, 'findById').mockRejectedValue(new Error('Database error'));
+
+    const res = await agent.get('/profile');
+
+    expect(res.statusCode).toEqual(200);
+    expect(res.text).toContain('Erreur lors du chargement du profil');
+
+    findByIdSpy.mockRestore();
+  });
+
   test('should allow a logged-in user to view their own profile', async () => {
     const res = await agent.get('/profile');
 
@@ -202,5 +213,139 @@ describe('End-to-End User Profile Management Flow', () => {
     if (agent && agent.server && agent.server.close) {
       await new Promise(resolve => agent.server.close(resolve));
     }
+  });
+
+  // New tests for validation and security
+
+  test('should show validation errors when updating profile with invalid data', async () => {
+    const res = await agent.post('/profile/edit').send({
+      prenom: 'a', // Too short
+      nom: 'b', // Too short
+      email: 'not-an-email', // Invalid email for admin
+      linkedin: 'not-a-url',
+      annee_diplome: 'not-a-year',
+      section_id: 1,
+    });
+
+    expect(res.statusCode).toEqual(200); // Re-renders the form with errors
+    expect(res.text).toContain('Veuillez corriger les erreurs suivantes :');
+    expect(res.text).toContain('Prénom requis');
+    expect(res.text).toContain('Nom requis');
+    expect(res.text).toContain('URL LinkedIn invalide');
+  });
+
+  test('should not allow a non-admin user to update admin-only fields', async () => {
+    const originalEmail = userEmail;
+    const originalYear = 2020;
+
+    const res = await agent.post('/profile/edit').send({
+      prenom: 'Normal',
+      nom: 'User',
+      // Attempt to change admin-only fields
+      email: 'new.email@example.com',
+      annee_diplome: 2022,
+      section_id: 2,
+    });
+
+    expect(res.statusCode).toEqual(302);
+    expect(res.headers.location).toEqual('/profile?success=1');
+
+    const [user] = await connection.query('SELECT * FROM users WHERE id = ?', [userId]);
+    expect(user[0].email).toBe(originalEmail); // Should NOT have changed
+    expect(user[0].annee_diplome).toBe(originalYear); // Should NOT have changed
+  });
+
+  test('should return error when adding an employment record with invalid data', async () => {
+    const res = await agent.post('/profile/employment/add').send({
+      employer_name: '', // Empty name
+      poste: 'Test',
+      date_debut: 'invalid-date',
+    });
+
+    expect(res.statusCode).toEqual(400);
+    expect(res.body.error).toEqual('Données invalides');
+  });
+
+  test('should prevent a user from updating another user’s employment record', async () => {
+    // Create another user and their employment record
+    const anotherUserEmail = `another_${Date.now()}@example.com`;
+    const hashedPassword = await bcrypt.hash('password', 10);
+    const [anotherUserResult] = await connection.query(
+      'INSERT INTO users (email, password_hash, prenom, nom, annee_diplome, section_id, is_approved, is_active) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+      [anotherUserEmail, hashedPassword, 'Another', 'User', 2021, 1, true, true]
+    );
+    const anotherUserId = anotherUserResult.insertId;
+
+    const [employerResult] = await connection.query('INSERT INTO employers (nom) VALUES (?)', ['Another Company']);
+    const employerId = employerResult.insertId;
+
+    const [employmentResult] = await connection.query(
+      'INSERT INTO user_employment (user_id, employer_id, poste, date_debut) VALUES (?, ?, ?, ?)',
+      [anotherUserId, employerId, 'Other Role', '2023-01-01']
+    );
+    const employmentId = employmentResult.insertId;
+
+    // Logged-in user (agent) tries to update the other user's record
+    const res = await agent.post(`/profile/employment/${employmentId}`).send({
+      poste: 'Updated by wrong user',
+      date_debut: '2023-01-01',
+    });
+
+    expect(res.statusCode).toEqual(403); // Forbidden
+    expect(res.body.error).toEqual('Accès non autorisé');
+  });
+
+  test('should prevent a user from deleting another user’s employment record', async () => {
+    // Create another user and their employment record
+    const anotherUserEmail = `another_delete_${Date.now()}@example.com`;
+    const hashedPassword = await bcrypt.hash('password', 10);
+    const [anotherUserResult] = await connection.query(
+      'INSERT INTO users (email, password_hash, prenom, nom, annee_diplome, section_id, is_approved, is_active) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+      [anotherUserEmail, hashedPassword, 'AnotherDelete', 'User', 2021, 1, true, true]
+    );
+    const anotherUserId = anotherUserResult.insertId;
+
+    const [employerResult] = await connection.query('INSERT INTO employers (nom) VALUES (?)', ['Delete Company']);
+    const employerId = employerResult.insertId;
+
+    const [employmentResult] = await connection.query(
+      'INSERT INTO user_employment (user_id, employer_id, poste, date_debut) VALUES (?, ?, ?, ?)',
+      [anotherUserId, employerId, 'Other Role to Delete', '2023-01-01']
+    );
+    const employmentId = employmentResult.insertId;
+
+    // Logged-in user (agent) tries to delete the other user's record
+    const res = await agent.post(`/profile/employment/${employmentId}/delete`);
+
+    expect(res.statusCode).toEqual(403); // Forbidden
+    expect(res.body.error).toEqual('Accès non autorisé');
+  });
+
+  describe('API /profile/api/employers/suggest', () => {
+    beforeAll(async () => {
+      const tempConnection = await getConnection();
+      await tempConnection.query("INSERT INTO employers (nom, ville) VALUES ('Stark Industries', 'New York'), ('Wayne Enterprises', 'Gotham'), ('Cyberdyne Systems', 'Sunnyvale')");
+      releaseConnection(tempConnection);
+    });
+
+    test('should return employer suggestions for a valid query', async () => {
+      const res = await agent.get('/profile/api/employers/suggest?q=Stark');
+      expect(res.statusCode).toEqual(200);
+      expect(res.body).toBeInstanceOf(Array);
+      expect(res.body.length).toBe(1);
+      expect(res.body[0].nom).toBe('Stark Industries');
+    });
+
+    test('should return an empty array for a query with no matches', async () => {
+      const res = await agent.get('/profile/api/employers/suggest?q=nonexistent');
+      expect(res.statusCode).toEqual(200);
+      expect(res.body).toEqual([]);
+    });
+
+    test('should return an empty array for a short query', async () => {
+      const res = await agent.get('/profile/api/employers/suggest?q=a');
+      expect(res.statusCode).toEqual(200);
+      expect(res.body).toEqual([]);
+    });
   });
 });

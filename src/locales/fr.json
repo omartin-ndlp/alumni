@@ -118,6 +118,7 @@
 				},
 				"description": "Description (optionnel)"
 			},
+			"validationError": "Veuillez corriger les erreurs suivantes :",
 			"saveButton": "Enregistrer les modifications",
 			"isAdmin": "Est administrateur",
 			"isApproved": "Est approuvé",
