@@ -45,9 +45,25 @@ jobs:
 
     - name: Run database migrations
       run: npm run db:migrate
+      env:
+        NODE_ENV: test
+        DB_HOST: mariadb
+        DB_USER: root
+        DB_PASSWORD: your_password
+        DB_NAME: site_alumni_test
+        PORT: 3000
+        SESSION_SECRET: your_very_long_random_secret_key_here
 
     - name: Seed database
       run: npm run db:seed
+      env:
+        NODE_ENV: test
+        DB_HOST: mariadb
+        DB_USER: root
+        DB_PASSWORD: your_password
+        DB_NAME: site_alumni_test
+        PORT: 3000
+        SESSION_SECRET: your_very_long_random_secret_key_here
 
     - name: Run tests
       run: npm test
