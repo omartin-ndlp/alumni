@@ -1,0 +1,63 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+      - '*' # Run on all branches for every commit
+  pull_request:
+    branches:
+      - main
+      - '*' # Run on all branches for every pull request
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    services:
+      mariadb:
+        image: mariadb:10.6
+        env:
+          MARIADB_ROOT_PASSWORD: your_password # Using default from .env.example
+          MARIADB_DATABASE: site_alumni_test # Dedicated test database
+          MARIADB_USER: root
+          MARIADB_PASSWORD: your_password # Using default from .env.example
+        ports:
+          - 3306:3306
+        options: --health-cmd "mysqladmin ping -h 127.0.0.1" --health-interval 10s --health-timeout 5s --health-retries 10
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18' # Use Node.js 18 as specified in .gitlab-ci.yml
+
+    - name: Install dependencies
+      run: npm install
+
+    - name: Wait for MariaDB to be ready
+      run: | 
+        for i in $(seq 1 30); do
+          nc -z localhost 3306 && echo "MariaDB ready" && break
+          echo "Waiting for MariaDB..." 
+          sleep 1
+        done
+
+    - name: Run database migrations
+      run: npm run db:migrate
+
+    - name: Seed database
+      run: npm run db:seed
+
+    - name: Run tests
+      run: npm test
+      env:
+        NODE_ENV: test # Ensure tests run in test environment
+        DB_HOST: mariadb # Connect to the mariadb service
+        DB_USER: root
+        DB_PASSWORD: your_password # Default password from .env.example
+        DB_NAME: site_alumni_test # Use a dedicated test database name
+        PORT: 3000
+        SESSION_SECRET: your_very_long_random_secret_key_here # Default secret from .env.example
