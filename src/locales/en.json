@@ -115,7 +115,8 @@
 					"retraite": "Retired",
 					"autre": "Other"
 				},
-				"description": "Description (optional)"
+				"description": "Description (optional)",
+      "validationError": "Please correct the following errors:"
 			},
 			"saveButton": "Save changes",
 			"isAdmin": "Is administrator",

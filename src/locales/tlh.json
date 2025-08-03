@@ -116,7 +116,8 @@
 					"retraite": "jobbe'",
 					"autre": "Hoch"
 				},
-				"description": "mu'qaD (optional)"
+				"description": "mu'qaD (optional)",
+      "validationError": "ghotlhwI'lIj, bIHech!"
 			},
 			"saveButton": "yI'el",
 			"isAdmin": "nuv'e'",

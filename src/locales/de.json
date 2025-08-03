@@ -116,7 +116,8 @@
 					"retraite": "Im Ruhestand",
 					"autre": "Andere"
 				},
-				"description": "Beschreibung (optional)"
+				"description": "Beschreibung (optional)",
+      "validationError": "Bitte korrigieren Sie die folgenden Fehler:"
 			},
 			"saveButton": "Änderungen speichern",
 			"isAdmin": "Ist Administrator",
