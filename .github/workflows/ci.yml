@@ -19,8 +19,6 @@ jobs:
         env:
           MARIADB_ROOT_PASSWORD: your_password # Using default from .env.example
           MARIADB_DATABASE: site_alumni_test # Dedicated test database
-          MARIADB_USER: root
-          MARIADB_PASSWORD: your_password # Using default from .env.example
         ports:
           - 3306:3306
         options: --health-cmd "mysqladmin ping -h 127.0.0.1" --health-interval 10s --health-timeout 5s --health-retries 10
