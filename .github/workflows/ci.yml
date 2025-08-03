@@ -19,6 +19,8 @@ jobs:
         env:
           MARIADB_ROOT_PASSWORD: your_password # Using default from .env.example
           MARIADB_DATABASE: site_alumni_test # Dedicated test database
+          MARIADB_USER: ljv_alumni
+          MARIADB_PASSWORD: your_password # Using default from .env.example
         ports:
           - 3306:3306
         options: --health-cmd "mysqladmin ping -h 127.0.0.1" --health-interval 10s --health-timeout 5s --health-retries 10
@@ -48,7 +50,7 @@ jobs:
       env:
         NODE_ENV: test
         DB_HOST: mariadb
-        DB_USER: root
+        DB_USER: ljv_alumni
         DB_PASSWORD: your_password
         DB_NAME: site_alumni_test
         PORT: 3000
@@ -59,7 +61,7 @@ jobs:
       env:
         NODE_ENV: test
         DB_HOST: mariadb
-        DB_USER: root
+        DB_USER: ljv_alumni
         DB_PASSWORD: your_password
         DB_NAME: site_alumni_test
         PORT: 3000
@@ -70,7 +72,7 @@ jobs:
       env:
         NODE_ENV: test # Ensure tests run in test environment
         DB_HOST: mariadb # Connect to the mariadb service
-        DB_USER: root
+        DB_USER: ljv_alumni
         DB_PASSWORD: your_password # Default password from .env.example
         DB_NAME: site_alumni_test # Use a dedicated test database name
         PORT: 3000
