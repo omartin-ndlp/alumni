@@ -147,7 +147,11 @@ router.post('/edit', upload.none(), [
       req.session.user.section_id = updateData.section_id;
     }
 
-    res.redirect('/profile?success=1');
+    if (req.session.user.is_admin && req.query.userId) {
+      res.redirect(`/profile/${req.query.userId}?success=1`);
+    } else {
+      res.redirect('/profile?success=1');
+    }
 
   } catch (error) {
     console.error('Erreur mise à jour profil:', error);

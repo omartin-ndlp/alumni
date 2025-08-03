@@ -6,6 +6,8 @@ const User = require('../../src/models/User');
 const i18n = require('i18n');
 const path = require('path');
 
+const Employer = require('../../src/models/Employer');
+
 describe('End-to-End User Profile Management Flow', () => {
   let connection;
   let agent;
@@ -88,6 +90,17 @@ describe('End-to-End User Profile Management Flow', () => {
     expect(res.text).toContain(userEmail);
   });
 
+  test('should handle errors when fetching profile for edit', async () => {
+    const findByIdSpy = jest.spyOn(User, 'findById').mockRejectedValue(new Error('Database error'));
+
+    const res = await agent.get('/profile/edit');
+
+    expect(res.statusCode).toEqual(200);
+    expect(res.text).toContain('Erreur lors du chargement du profil');
+
+    findByIdSpy.mockRestore();
+  });
+
   test('should allow a logged-in user to update their personal profile information', async () => {
     const updatedPrenom = 'UpdatedProfile';
     const updatedNom = 'UpdatedUser';
@@ -108,6 +121,188 @@ describe('End-to-End User Profile Management Flow', () => {
     expect(rows.length).toBe(1);
     expect(rows[0].prenom).toBe(updatedPrenom);
     expect(rows[0].nom).toBe(updatedNom);
+  });
+
+  
+
+  test('should handle errors when adding employment data', async () => {
+    const findOrCreateSpy = jest.spyOn(Employer, 'findOrCreate').mockRejectedValue(new Error('DB Error'));
+
+    const res = await agent.post('/profile/employment/add').send({
+      employer_name: 'Test Employer',
+      poste: 'Test Poste',
+      date_debut: '2023-01-01',
+    });
+
+    expect(res.statusCode).toEqual(500);
+    expect(res.body.error).toEqual('Erreur lors de l\'ajout de l\'emploi');
+
+    findOrCreateSpy.mockRestore();
+  });
+
+  test('should handle errors when adding employment data', async () => {
+    const findOrCreateSpy = jest.spyOn(Employer, 'findOrCreate').mockRejectedValue(new Error('DB Error'));
+
+    const res = await agent.post('/profile/employment/add').send({
+      employer_name: 'Test Employer',
+      poste: 'Test Poste',
+      date_debut: '2023-01-01',
+    });
+
+    expect(res.statusCode).toEqual(500);
+    expect(res.body.error).toEqual('Erreur lors de l\'ajout de l\'emploi');
+
+    findOrCreateSpy.mockRestore();
+  });
+
+  test('should handle errors when adding employment data', async () => {
+    const findOrCreateSpy = jest.spyOn(Employer, 'findOrCreate').mockRejectedValue(new Error('DB Error'));
+
+    const res = await agent.post('/profile/employment/add').send({
+      employer_name: 'Test Employer',
+      poste: 'Test Poste',
+      date_debut: '2023-01-01',
+    });
+
+    expect(res.statusCode).toEqual(500);
+    expect(res.body.error).toEqual('Erreur lors de l\'ajout de l\'emploi');
+
+    findOrCreateSpy.mockRestore();
+  });
+
+  test('should handle errors when adding employment data', async () => {
+    const findOrCreateSpy = jest.spyOn(Employer, 'findOrCreate').mockRejectedValue(new Error('DB Error'));
+
+    const res = await agent.post('/profile/employment/add').send({
+      employer_name: 'Test Employer',
+      poste: 'Test Poste',
+      date_debut: '2023-01-01',
+    });
+
+    expect(res.statusCode).toEqual(500);
+    expect(res.body.error).toEqual('Erreur lors de l\'ajout de l\'emploi');
+
+    findOrCreateSpy.mockRestore();
+  });
+
+  test('should handle errors when adding employment data', async () => {
+    const findOrCreateSpy = jest.spyOn(Employer, 'findOrCreate').mockRejectedValue(new Error('DB Error'));
+
+    const res = await agent.post('/profile/employment/add').send({
+      employer_name: 'Test Employer',
+      poste: 'Test Poste',
+      date_debut: '2023-01-01',
+    });
+
+    expect(res.statusCode).toEqual(500);
+    expect(res.body.error).toEqual('Erreur lors de l\'ajout de l\'emploi');
+
+    findOrCreateSpy.mockRestore();
+  });
+
+  test('should handle errors when adding employment data', async () => {
+    const findOrCreateSpy = jest.spyOn(Employer, 'findOrCreate').mockRejectedValue(new Error('DB Error'));
+
+    const res = await agent.post('/profile/employment/add').send({
+      employer_name: 'Test Employer',
+      poste: 'Test Poste',
+      date_debut: '2023-01-01',
+    });
+
+    expect(res.statusCode).toEqual(500);
+    expect(res.body.error).toEqual('Erreur lors de l\'ajout de l\'emploi');
+
+    findOrCreateSpy.mockRestore();
+  });
+
+  test('should handle errors when adding employment data', async () => {
+    const findOrCreateSpy = jest.spyOn(Employer, 'findOrCreate').mockRejectedValue(new Error('DB Error'));
+
+    const res = await agent.post('/profile/employment/add').send({
+      employer_name: 'Test Employer',
+      poste: 'Test Poste',
+      date_debut: '2023-01-01',
+    });
+
+    expect(res.statusCode).toEqual(500);
+    expect(res.body.error).toEqual('Erreur lors de l\'ajout de l\'emploi');
+
+    findOrCreateSpy.mockRestore();
+  });
+
+  test('should handle errors when adding employment data', async () => {
+    const findOrCreateSpy = jest.spyOn(Employer, 'findOrCreate').mockRejectedValue(new Error('DB Error'));
+
+    const res = await agent.post('/profile/employment/add').send({
+      employer_name: 'Test Employer',
+      poste: 'Test Poste',
+      date_debut: '2023-01-01',
+    });
+
+    expect(res.statusCode).toEqual(500);
+    expect(res.body.error).toEqual('Erreur lors de l\'ajout de l\'emploi');
+
+    findOrCreateSpy.mockRestore();
+  });
+
+  test('should handle errors when adding employment data', async () => {
+    const findOrCreateSpy = jest.spyOn(Employer, 'findOrCreate').mockRejectedValue(new Error('DB Error'));
+
+    const res = await agent.post('/profile/employment/add').send({
+      employer_name: 'Test Employer',
+      poste: 'Test Poste',
+      date_debut: '2023-01-01',
+    });
+
+    expect(res.statusCode).toEqual(500);
+    expect(res.body.error).toEqual('Erreur lors de l\'ajout de l\'emploi');
+
+    findOrCreateSpy.mockRestore();
+  });
+
+  test('should handle errors when adding employment data', async () => {
+    const findOrCreateSpy = jest.spyOn(Employer, 'findOrCreate').mockRejectedValue(new Error('DB Error'));
+
+    const res = await agent.post('/profile/employment/add').send({
+      employer_name: 'Test Employer',
+      poste: 'Test Poste',
+      date_debut: '2023-01-01',
+    });
+
+    expect(res.statusCode).toEqual(500);
+    expect(res.body.error).toEqual('Erreur lors de l\'ajout de l\'emploi');
+
+    findOrCreateSpy.mockRestore();
+  });
+
+  test('should handle errors when adding employment data', async () => {
+    const findOrCreateSpy = jest.spyOn(Employer, 'findOrCreate').mockRejectedValue(new Error('DB Error'));
+
+    const res = await agent.post('/profile/employment/add').send({
+      employer_name: 'Test Employer',
+      poste: 'Test Poste',
+      date_debut: '2023-01-01',
+    });
+
+    expect(res.statusCode).toEqual(500);
+    expect(res.body.error).toEqual('Erreur lors de l\'ajout de l\'emploi');
+
+    findOrCreateSpy.mockRestore();
+  });
+
+  test('should handle errors when adding employment data', async () => {
+    const findOrCreateSpy = jest.spyOn(Employer, 'findOrCreate').mockRejectedValue(new Error('DB Error'));
+
+    const res = await agent.post('/profile/employment/add').send({
+      employer_name: 'Test Employer',
+      poste: 'Test Poste',
+      date_debut: '2023-01-01',
+    });
+
+    expect(res.statusCode).toEqual(500);
+    expect(res.body.error).toEqual('Erreur lors de l\'ajout de l\'emploi');
+
+    findOrCreateSpy.mockRestore();
   });
 
   test('should allow a logged-in user to add a new employment record', async () => {
@@ -233,6 +428,23 @@ describe('End-to-End User Profile Management Flow', () => {
     expect(res.text).toContain('Nom requis');
     expect(res.text).toContain('URL LinkedIn invalide');
   });
+
+  test('should handle errors during profile update', async () => {
+    const updateProfileSpy = jest.spyOn(User, 'updateProfile').mockRejectedValue(new Error('Update failed'));
+
+    const res = await agent.post('/profile/edit').send({
+      prenom: 'Test',
+      nom: 'User',
+      section_id: 1,
+    });
+
+    expect(res.statusCode).toEqual(200);
+    expect(res.text).toContain('Erreur lors de la mise à jour du profil');
+
+    updateProfileSpy.mockRestore();
+  });
+
+  
 
   test('should not allow a non-admin user to update admin-only fields', async () => {
     const originalEmail = userEmail;
