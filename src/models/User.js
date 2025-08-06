@@ -38,7 +38,7 @@ class User {
       const [rows] = await connection.execute(`
         SELECT 
           u.id, u.email, u.password_hash, u.prenom, u.nom, u.annee_diplome, u.section_id,
-          u.is_admin, u.is_approved, u.is_active, u.profile_picture, u.adresse, u.ville,
+          u.is_admin, u.is_approved, u.is_active, u.adresse, u.ville,
           u.code_postal, u.pays, u.telephone, u.linkedin, u.twitter, u.facebook, u.site_web,
           u.statut_emploi, u.opt_out_contact, u.opt_out_directory, u.description, u.created_at, u.updated_at, u.last_login,
           s.nom as section_nom 
@@ -181,7 +181,14 @@ class User {
       `;
 
       const [users] = await connection.execute(dataQuery, [...params, ...limitParams]);
-      return { users, total };
+
+      // Add gravatar_url to each user
+      const usersWithGravatar = users.map(user => ({
+        ...user,
+        gravatar_url: User.getGravatarUrl(user.email)
+      }));
+
+      return { users: usersWithGravatar, total };
 
     } finally {
       if (!dbConnection) {
@@ -205,12 +212,12 @@ class User {
       if (updaterRole === 'admin') {
         allowedFields = [
           'prenom', 'nom', 'email', 'annee_diplome', 'section_id', 'is_admin', 'is_approved', 'is_active',
-          'profile_picture', 'adresse', 'ville', 'code_postal', 'pays', 'telephone', 'linkedin', 'twitter',
+          'adresse', 'ville', 'code_postal', 'pays', 'telephone', 'linkedin', 'twitter',
           'facebook', 'site_web', 'statut_emploi', 'opt_out_contact', 'opt_out_directory', 'description'
         ];
       } else if (updaterRole === 'user') {
         allowedFields = [
-          'prenom', 'nom', 'profile_picture', 'adresse', 'ville', 'code_postal', 'pays',
+          'prenom', 'nom', 'adresse', 'ville', 'code_postal', 'pays',
           'telephone', 'linkedin', 'twitter', 'facebook', 'site_web', 'statut_emploi',
           'opt_out_contact', 'opt_out_directory', 'description'
         ];

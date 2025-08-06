@@ -3,7 +3,7 @@ module.exports = {
     try {
       await connection.execute(`
         ALTER TABLE users
-        ADD COLUMN description TEXT NULL AFTER statut_emploi;
+        ADD COLUMN IF NOT EXISTS description TEXT NULL AFTER statut_emploi;
       `);
       console.log('Migration V003_add_description_to_users.js applied: description column added to users table.');
     } catch (error) {

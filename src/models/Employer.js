@@ -168,7 +168,7 @@ class Employer {
         WITH RankedEmployment AS (
           SELECT 
             ue.id as employment_id, ue.user_id, ue.employer_id, ue.poste, ue.date_debut, ue.date_fin, ue.is_current,
-            u.id as user_id_from_users, u.prenom, u.nom, u.email, u.annee_diplome, u.profile_picture, u.opt_out_contact,
+            u.id as user_id_from_users, u.prenom, u.nom, u.email, u.annee_diplome, u.opt_out_contact,
             s.nom as section_nom,
             ROW_NUMBER() OVER(PARTITION BY ue.user_id ORDER BY ue.is_current DESC, ue.date_debut DESC) as rn
           FROM user_employment ue
@@ -178,7 +178,14 @@ class Employer {
         )
         SELECT * FROM RankedEmployment WHERE rn = 1 ORDER BY date_debut DESC
       `, [employerId]);
-      return rows;
+
+      // Add gravatar_url to each employee
+      const employeesWithGravatar = rows.map(employee => ({
+        ...employee,
+        gravatar_url: require('./User').getGravatarUrl(employee.email) // Assuming User model is in the same dir
+      }));
+
+      return employeesWithGravatar;
     } finally {
       if (!dbConnection) {
         releaseConnection(connection);

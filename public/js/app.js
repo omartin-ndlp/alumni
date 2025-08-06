@@ -454,14 +454,8 @@ function initShowAdminsSwitch() {
                                         <div class="card h-100">
                                             <div class="card-body d-flex flex-column">
                                                 <div class="d-flex align-items-center mb-3">
-                                                    ${user.profile_picture ?
-    `<img src="${user.profile_picture}" class="rounded-circle me-3" 
-                                                            style="width: 60px; height: 60px; object-fit: cover;" alt="Photo de profil">` :
-    `<div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center me-3"
-                                                            style="width: 60px; height: 60px; font-size: 1.5rem;">
-                                                            ${user.prenom.charAt(0)}${user.nom.charAt(0)}
-                                                        </div>`
-}
+                                                    <img src="${user.gravatar_url}" class="rounded-circle me-3" 
+                                                            style="width: 60px; height: 60px; object-fit: cover;" alt="Photo de profil">
                                                     <div>
                                                         <h5 class="card-title mb-0">
                                                             <a href="/users/${user.id}" class="text-decoration-none text-dark">

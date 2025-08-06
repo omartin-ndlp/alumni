@@ -21,6 +21,11 @@ jest.mock('bcryptjs', () => ({
 // Mock crypto
 jest.mock('crypto', () => ({
   randomBytes: jest.fn(() => ({ toString: () => 'mock_key' })),
+  createHash: jest.fn(() => ({
+    update: jest.fn(() => ({
+      digest: jest.fn(() => 'mock_hash'),
+    })),
+  })),
 }));
 
 const User = require('../../src/models/User');
@@ -127,12 +132,13 @@ describe('User Model', () => {
   describe('getAll', () => {
     test('should return all approved and active users with default filters', async () => {
       const mockUsers = [{ id: 1, email: 'user1@example.com' }];
+      const expectedUsers = mockUsers.map(u => ({ ...u, gravatar_url: `https://www.gravatar.com/avatar/mock_hash?s=200&d=monsterid` }));
       // Mock for count and for data
       mockExecute.mockResolvedValueOnce([[{ total: 1 }]]).mockResolvedValueOnce([mockUsers]);
 
       const { users, total } = await User.getAll();
       expect(total).toBe(1);
-      expect(users).toEqual(mockUsers);
+      expect(users).toEqual(expectedUsers);
       // Check that both queries were executed
       expect(mockExecute).toHaveBeenCalledWith(expect.stringContaining('COUNT(DISTINCT u.id) as total'), expect.any(Array));
       expect(mockExecute).toHaveBeenCalledWith(expect.stringContaining('SELECT'), expect.any(Array));
