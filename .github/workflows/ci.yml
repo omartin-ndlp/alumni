@@ -26,8 +26,11 @@ jobs:
         options: --health-cmd "mysqladmin ping -h 127.0.0.1" --health-interval 10s --health-timeout 5s --health-retries 10
 
     steps:
-    - name: Checkout repository
+    - name: Load environment variables
       uses: actions/checkout@v4
+      with:
+        path: .
+    - run: cat .env.test.github >> $GITHUB_ENV
 
     - name: Set up Node.js
       uses: actions/setup-node@v4
@@ -36,6 +39,9 @@ jobs:
 
     - name: Install dependencies
       run: npm install
+
+    - name: Install netcat
+      run: sudo apt-get update && sudo apt-get install -y netcat-openbsd
 
     - name: Wait for MariaDB to be ready
       run: | 
@@ -47,33 +53,9 @@ jobs:
 
     - name: Run database migrations
       run: npm run db:migrate
-      env:
-        NODE_ENV: test
-        DB_HOST: mariadb
-        DB_USER: ljv_alumni
-        DB_PASSWORD: your_password
-        DB_NAME: site_alumni_test
-        PORT: 3000
-        SESSION_SECRET: your_very_long_random_secret_key_here
 
     - name: Seed database
       run: npm run db:seed
-      env:
-        NODE_ENV: test
-        DB_HOST: mariadb
-        DB_USER: ljv_alumni
-        DB_PASSWORD: your_password
-        DB_NAME: site_alumni_test
-        PORT: 3000
-        SESSION_SECRET: your_very_long_random_secret_key_here
 
     - name: Run tests
       run: npm test
-      env:
-        NODE_ENV: test # Ensure tests run in test environment
-        DB_HOST: mariadb # Connect to the mariadb service
-        DB_USER: ljv_alumni
-        DB_PASSWORD: your_password # Default password from .env.example
-        DB_NAME: site_alumni_test # Use a dedicated test database name
-        PORT: 3000
-        SESSION_SECRET: your_very_long_random_secret_key_here # Default secret from .env.example

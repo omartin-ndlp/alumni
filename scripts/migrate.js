@@ -1,11 +1,14 @@
 const dotenv = require('dotenv');
 const path = require('path');
 
-// Load .env.test if NODE_ENV is 'test'
-if (process.env.NODE_ENV === 'test') {
-  dotenv.config({ path: path.resolve(__dirname, '../.env.test'), override: true });
-} else {
-  dotenv.config();
+// Load .env files only in local environments, not in CI
+if (!process.env.CI) {
+  if (process.env.NODE_ENV === 'test') {
+    dotenv.config({ path: path.resolve(__dirname, '../.env.test'), override: true });
+  } else {
+    // For local development, we still want to override shell variables
+    dotenv.config({ override: true });
+  }
 }
 const mysql = require('mysql2/promise');
 const fs = require('fs');

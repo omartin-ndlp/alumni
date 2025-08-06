@@ -15,14 +15,16 @@ const createConnection = async () => {
     let dbPort = process.env.DB_PORT || 3306;
     let dbUser = process.env.DB_USER || 'ljv_alumni';
 
-    if (process.env.NODE_ENV === 'test') {
+    if (process.env.NODE_ENV === 'test' && !process.env.CI) {
       const envTestPath = path.resolve(__dirname, '../../.env.test');
-      const envConfig = dotenv.parse(fs.readFileSync(envTestPath));
-      dbPassword = envConfig.DB_PASSWORD;
-      dbName = envConfig.DB_NAME || dbName;
-      dbHost = envConfig.DB_HOST || dbHost;
-      dbPort = envConfig.DB_PORT || dbPort;
-      dbUser = envConfig.DB_USER || dbUser;
+      if (fs.existsSync(envTestPath)) {
+        const envConfig = dotenv.parse(fs.readFileSync(envTestPath));
+        dbPassword = envConfig.DB_PASSWORD || dbPassword;
+        dbName = envConfig.DB_NAME || dbName;
+        dbHost = envConfig.DB_HOST || dbHost;
+        dbPort = envConfig.DB_PORT || dbPort;
+        dbUser = envConfig.DB_USER || dbUser;
+      }
     }
 
     const config = {

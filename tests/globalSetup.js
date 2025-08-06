@@ -4,7 +4,10 @@ const { createConnection } = require('../src/config/database');
 
 module.exports = async () => {
   try {
-    dotenv.config({ path: path.resolve(__dirname, '../.env.test'), override: true });
+    // Load .env.test only in local environments, not in CI
+    if (!process.env.CI) {
+      dotenv.config({ path: path.resolve(__dirname, '../.env.test'), override: true });
+    }
     process.env.NODE_ENV = 'test';
 
     // Create the global connection pool
