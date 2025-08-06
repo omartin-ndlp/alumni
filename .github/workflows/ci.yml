@@ -41,6 +41,7 @@ jobs:
       run: npm install
 
     - name: Install netcat
+      if: env.ACT
       run: sudo apt-get update && sudo apt-get install -y netcat-openbsd
 
     - name: Wait for MariaDB to be ready
