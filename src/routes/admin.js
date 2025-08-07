@@ -4,7 +4,8 @@ const User = require('../models/User');
 const { getConnection, releaseConnection } = require('../config/database');
 const auth = require('../middleware/auth');
 const multer = require('multer');
-const upload = multer();
+const storage = multer.memoryStorage();
+const upload = multer({ storage: storage });
 
 const router = express.Router();
 

@@ -301,8 +301,16 @@
 				"email": "Email",
 				"graduationYear": "Graduation year",
 				"section": "Section",
-				"address": "Address"
-			}
+				"address": "Address",
+        "description": "Description"
+			},
+      "employmentHistory": {
+        "cardHeader": "Employment History",
+        "at": "at",
+        "endDateNotSpecified": "Present",
+        "sector": "Sector",
+        "city": "City"
+      }
 		},
 		"employerDetail": {
 			"title": "Employer profile",

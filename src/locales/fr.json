@@ -302,7 +302,15 @@
 				"email": "Email",
 				"graduationYear": "Année de diplôme",
 				"section": "Section",
-				"address": "Adresse"
+				"address": "Adresse",
+				"description": "Description"
+			},
+			"employmentHistory": {
+				"cardHeader": "Historique d'emploi",
+				"at": "chez",
+				"endDateNotSpecified": "Aujourd'hui",
+				"sector": "Secteur",
+				"city": "Ville"
 			}
 		},
 		"employerDetail": {

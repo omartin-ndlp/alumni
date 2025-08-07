@@ -73,7 +73,7 @@
 				"linkedIn": "LinkedIn:",
 				"twitter": "Twitter:",
 				"facebook": "Facebook:",
-				"website": "Website:"
+				"website": "Webseite:"
 			},
 			"employmentHistory": {
 				"cardHeader": "job pong'e'",
@@ -117,7 +117,7 @@
 					"autre": "Hoch"
 				},
 				"description": "mu'qaD (optional)",
-      "validationError": "ghotlhwI'lIj, bIHech!"
+      			"validationError": "ghotlhwI'lIj, bIHech!"
 			},
 			"saveButton": "yI'el",
 			"isAdmin": "nuv'e'",
@@ -302,8 +302,16 @@
 				"email": "mev'a' naQ",
 				"graduationYear": "DIS",
 				"section": "bI'",
-				"address": "juH"
-			}
+				"address": "juH",
+        		"description": "mu'qaD"
+			},
+      		"employmentHistory": {
+        		"cardHeader": "job pong'e'",
+        		"at": "ghu'vam",
+        		"endDateNotSpecified": "pa'",
+        		"sector": "bI'",
+        		"city": "veng"
+      		}
 		},
 		"employerDetail": {
 			"title": "nuv'e' pong'e'",

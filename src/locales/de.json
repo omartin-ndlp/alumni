@@ -302,9 +302,17 @@
 				"email": "E-Mail",
 				"graduationYear": "Abschlussjahr",
 				"section": "Sektion",
-				"address": "Adresse"
-			}
-		},
+				"address": "Adresse",
+        "description": "Beschreibung"
+			},
+      "employmentHistory": {
+        "cardHeader": "Beruflicher Werdegang",
+        "at": "bei",
+        "endDateNotSpecified": "Heute",
+        "sector": "Sektor",
+        "city": "Stadt"
+      }
+	},
 		"employerDetail": {
 			"title": "Arbeitgeberprofil",
 			"employerDetails": "Arbeitgeberdetails",

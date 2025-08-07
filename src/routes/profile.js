@@ -6,7 +6,8 @@ const Employer = require('../models/Employer');
 const { getConnection, releaseConnection } = require('../config/database');
 const auth = require('../middleware/auth');
 const multer = require('multer');
-const upload = multer();
+const storage = multer.memoryStorage();
+const upload = multer({ storage: storage });
 const { formatDate } = require('../utils/dateFormatter');
 
 const router = express.Router();

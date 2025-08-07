@@ -49,14 +49,14 @@ This file contains instructions for the Gemini AI agent working in this reposito
 - express-validator for input validation
 - Rate limiting with express-rate-limit
 
-## CI/CD (GitLab)
-- `.gitlab-ci.yml` - Pipeline configuration
-- Automated testing on all branches and MRs
-- Code quality checks with ESLint
-- Security audits with npm audit
-- Automated deployments to staging/production
-- Database migrations and backups
-- Multi-stage builds (test, build, deploy)
+## CI/CD (GitHub Actions)
+- `.github/workflows/ci.yml` - Pipeline configuration for GitHub Actions.
+- Automated testing on all branches and PRs.
+- Conditional `netcat` installation for `act` local debugging environment.
+- MariaDB service mapped to a non-standard port (`3307`) in `act` to avoid conflicts with local MariaDB instances.
+- Node.js version set to `20` (LTS) for consistency.
+- Code quality checks with ESLint.
+- Security audits with npm audit.
 
 ## Deployment
 - `npm run deploy:staging` - Deploy to staging
@@ -219,3 +219,32 @@ This is the **mandated and most critical part** of the parameter handling strate
     *   Other test code and setup files (like `setupEachTestFile.js`, `setupIntegrationTests.js`) read general variables from `process.env`.
 
 This comprehensive approach ensures that environment variables are handled securely, reliably, and consistently across all operational modes of the `site-alumni` project.
+
+## Recent Changes (since last update)
+
+### CI/CD (GitHub Actions)
+- **New Workflow:** Introduced `.github/workflows/ci.yml` for GitHub Actions, automating build and test processes.
+- **Conditional `netcat`:** Added `if: env.ACT` condition to the `netcat` installation step in `ci.yml`, ensuring it runs only in the `act` local debugging environment.
+- **MariaDB Port Mapping:** Configured MariaDB service in `ci.yml` to map to port `3307` (e.g., `3307:3306`) to avoid conflicts with local MariaDB instances running on `3306`.
+- **Node.js Version:** Updated Node.js version to `20` (LTS) in `ci.yml` for consistency and stability.
+
+### Parameter Handling Strategy
+- **CI-Specific `.env`:** Introduced `.env.test.github` to centralize CI-specific environment variables.
+- **CI-Aware `.env` Loading:** Refined `.env` loading logic in `server.js`, `scripts/migrate.js`, `src/config/database.js`, and `tests/globalSetup.js` to prevent loading local `.env` files when the `CI` environment variable is present.
+- **`DB_HOST` for `act`:** Ensured `DB_HOST` is set to `127.0.0.1` in `.env.test.github` for compatibility with `act`'s networking.
+- **Robust `DB_PORT` Parsing:** Improved `DB_PORT` parsing in `src/config/database.js` to handle potential edge cases.
+
+### Database Migrations
+- **`profile_picture` Refactoring:** Added `V004_refactor_user_profile_fields.js` migration to safely remove the `profile_picture` column and add `opt_out_contact` and `opt_out_directory` columns.
+- **Robust `ADD COLUMN`:** Added `IF NOT EXISTS` to `ALTER TABLE ADD COLUMN` statements in migration files (`V003_add_description_to_users.js`, `V004_refactor_user_profile_fields.js`) for re-runnability.
+
+### Code Refactoring
+- **Gravatar Unification:** Removed `profile_picture` column and unified user avatar handling to exclusively use Gravatar in `src/models/User.js`, `src/models/Employer.js`, and `public/js/app.js`.
+
+### Dependency Management
+- **`package.json` `engines`:** Updated `engines` field in `package.json` to `"node": ">=20.0.0 <21.0.0"` to enforce Node.js 20.
+- **Dependency Updates:** Updated `package.json` and `package-lock.json` to resolve deprecation warnings and update `jest`, `eslint`, `supertest`, and `multer` to their latest compatible versions.
+
+### Localization
+- **New Keys:** Added new localization keys for `users.profile` section in `fr.json`, `en.json`, `es.json`, `de.json`, and `tlh.json`.
+- **Key Usage Correction:** Corrected usage of localization keys in `src/views/users/profile.ejs` to use the newly added `users.profile.employmentHistory.at`.

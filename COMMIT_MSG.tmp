@@ -1,0 +1,10 @@
+feat: Add missing localization keys and update CI database port
+
+This commit adds new localization keys for the user profile pages
+across all supported languages (French, English, Spanish, German,
+and Klingon). It also corrects the usage of a localization key in
+`src/views/users/profile.ejs`.
+
+The MariaDB service in the CI workflow is now mapped to port 3307
+to avoid conflicts with local development databases.
+
