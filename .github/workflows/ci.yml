@@ -35,7 +35,7 @@ jobs:
     - name: Set up Node.js
       uses: actions/setup-node@v4
       with:
-        node-version: '18' # Use Node.js 18 as specified in .gitlab-ci.yml
+        node-version: '20' # Use Node.js 20 LTS
 
     - name: Install dependencies
       run: npm install
